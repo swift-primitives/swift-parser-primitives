@@ -101,7 +101,7 @@ struct ParsingTests {
         func consumesAll() throws {
             var input: Substring = "hello world"
             let parser = Parsing.Rest<Substring>()
-            let result = try parser.parse(&input)
+            let result = parser.parse(&input)
             #expect(result == "hello world")
             #expect(input.isEmpty)
         }
@@ -234,7 +234,7 @@ struct ParsingTests {
             #expect(input.isEmpty)
 
             // Print back
-            try parserPrinter.print(parsed, into: &input)
+            parserPrinter.print(parsed, into: &input)
             #expect(Array(input) == [0x42])
         }
 
@@ -244,7 +244,7 @@ struct ParsingTests {
             var input: ArraySlice<UInt8> = [][...]
 
             // Print
-            try parserPrinter.print(0x42, into: &input)
+            parserPrinter.print(0x42, into: &input)
             #expect(Array(input) == [0x42])
 
             // Parse back
@@ -279,7 +279,7 @@ struct ParsingTests {
 
             // Print
             var buffer: ArraySlice<UInt8> = [][...]
-            try literal.print((), into: &buffer)
+            literal.print((), into: &buffer)
             #expect(Array(buffer) == [0x48, 0x69])
 
             // Parse back
@@ -293,7 +293,7 @@ struct ParsingTests {
             let literal: Parsing.Literal<ArraySlice<UInt8>> = "Hello"
 
             var buffer: ArraySlice<UInt8> = [][...]
-            try literal.print((), into: &buffer)
+            literal.print((), into: &buffer)
             #expect(Array(buffer) == Array("Hello".utf8))
         }
 
@@ -303,7 +303,7 @@ struct ParsingTests {
 
             // Print
             var buffer: Substring = ""
-            try literal.print((), into: &buffer)
+            literal.print((), into: &buffer)
             #expect(buffer == "Hello")
 
             // Parse back
@@ -321,7 +321,7 @@ struct ParsingTests {
 
             // Print
             var buffer: ArraySlice<UInt8> = [][...]
-            try parser.print(0x42, into: &buffer)
+            parser.print(0x42, into: &buffer)
             #expect(Array(buffer) == [0x42])
 
             // Parse back
@@ -341,12 +341,12 @@ struct ParsingTests {
 
             // Print
             var buffer: ArraySlice<UInt8> = [][...]
-            try rest.print(content, into: &buffer)
+            rest.print(content, into: &buffer)
             #expect(Array(buffer) == [0x01, 0x02, 0x03])
 
             // Parse back
             var input = buffer
-            let result = try rest.parse(&input)
+            let result = rest.parse(&input)
             #expect(Array(result) == [0x01, 0x02, 0x03])
         }
     }
@@ -358,7 +358,7 @@ struct ParsingTests {
             let end = Parsing.End<ArraySlice<UInt8>>()
 
             var buffer: ArraySlice<UInt8> = [0x01, 0x02][...]
-            try end.print((), into: &buffer)
+            end.print((), into: &buffer)
             // End should not modify the buffer
             #expect(Array(buffer) == [0x01, 0x02])
         }
@@ -882,7 +882,7 @@ struct ParsingTests {
             var input: Substring = "<tag>"
             // Peek to check for '<', then actually consume
             let openAngle = "<"
-            let tagContent = Parsing.Prefix.While<Substring> { $0 != ">" }
+            _ = Parsing.Prefix.While<Substring> { $0 != ">" }
 
             // First peek
             try openAngle.peek().parse(&input)
@@ -992,7 +992,7 @@ struct ParsingTests {
         func worksWithAutoclosure() throws {
             var input: Substring = "abc"
             let parser = Parsing.Lazy(Parsing.Rest<Substring>())
-            let result = try parser.parse(&input)
+            let result = parser.parse(&input)
             #expect(result == "abc")
         }
 
@@ -1000,7 +1000,7 @@ struct ParsingTests {
         func worksWithClosure() throws {
             var input: Substring = "hello"
             let parser = Parsing.Lazy { Parsing.Rest<Substring>() }
-            let result = try parser.parse(&input)
+            let result = parser.parse(&input)
             #expect(result == "hello")
         }
 
@@ -1099,7 +1099,7 @@ struct ParsingTests {
         func wrapsTransparently() throws {
             var input: Substring = "hello world"
             let parser = Parsing.Rest<Substring>().trace("rest")
-            let result = try parser.parse(&input)
+            let result = parser.parse(&input)
             #expect(result == "hello world")
             #expect(input.isEmpty)
         }
