@@ -37,7 +37,7 @@ extension Parsing {
     ///
     /// ```swift
     /// struct IntParser: Parsing.Parser {
-    ///     typealias Input = Span<UInt8>
+    ///     typealias Input = Parsing.Bytes.Input
     ///     typealias Output = Int
     ///     typealias Failure = Parsing.Match.Error
     ///
@@ -47,7 +47,7 @@ extension Parsing {
     ///
     ///         while let byte = input.first, byte >= 0x30, byte <= 0x39 {
     ///             value = value * 10 + Int(byte - 0x30)
-    ///             input = input.dropFirst()
+    ///             input.removeFirst()
     ///             consumed = true
     ///         }
     ///
@@ -60,6 +60,10 @@ extension Parsing {
     /// ```
     public protocol Parser<Input, Output, Failure> {
         /// The input type this parser consumes.
+        ///
+        /// For bytes parsing, use `Parsing.Bytes.Input` (an escapable cursor type)
+        /// rather than `Span<UInt8>` directly. Swift 6.2 does not allow `~Escapable`
+        /// constraints on protocol associated types.
         associatedtype Input
 
         /// The output type this parser produces.
