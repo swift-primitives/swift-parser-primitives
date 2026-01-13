@@ -17,24 +17,21 @@ extension Parsing.Machine {
     /// ## Usage
     ///
     /// ```swift
-    /// let compiled = myParser.compiled(using: .leaf)
+    /// var compiled = myParser.compiled(using: .leaf)
     /// let result = try compiled.parse(&input)  // Compiles on first call
     /// let result2 = try compiled.parse(&input2) // Uses cached program
     /// ```
     ///
-    /// ## Eager Compilation
-    ///
-    /// Use `prepared()` when deterministic timing is needed:
-    /// ```swift
-    /// let compiled = myParser.compiled(using: .leaf).prepared()
-    /// // Benchmarking with consistent timing...
-    /// ```
-    ///
     /// ## Thread Safety
     ///
-    /// `Compiled` is NOT `Sendable` by default. Use it within a single
-    /// isolation domain. If cross-task sharing is needed, see the
-    /// conditional `Sendable` conformance.
+    /// `Compiled` is NOT `Sendable`. Use it within a single isolation domain.
+    /// For cross-task sharing, use `prepared()` which returns an immutable
+    /// `Prepared` wrapper that is conditionally `Sendable`.
+    ///
+    /// ```swift
+    /// let prepared = myParser.compiled(using: .leaf).prepared()
+    /// // `prepared` can be shared across tasks
+    /// ```
     public struct Compiled<P: Parsing.Parser>
     where P.Input: Parsing.Input & Sendable,
           P.Output: Sendable,
@@ -61,17 +58,17 @@ extension Parsing.Machine {
             self.cache = Cache()
         }
 
-        /// Eagerly compiles the parser for deterministic timing.
+        /// Compiles eagerly and returns an immutable, shareable parser.
         ///
-        /// Call this when you need compilation to happen at a specific time
-        /// rather than lazily on first parse.
+        /// The returned `Prepared` wrapper is conditionally `Sendable` and
+        /// safe for cross-task sharing. Use this when you need to share
+        /// a compiled parser across actors or concurrent operations.
         ///
-        /// - Returns: This same parser (after compilation).
+        /// - Returns: An immutable prepared parser.
         @inlinable
-        @discardableResult
-        public func prepared() -> Self {
-            _ = cache.getOrCompile(source: source, witness: witness)
-            return self
+        public func prepared() -> Prepared<P> {
+            let result = cache.getOrCompile(source: source, witness: witness)
+            return Prepared(program: result.program, root: result.root)
         }
     }
 }
@@ -148,9 +145,3 @@ extension Parsing.Machine.Compiled: Parsing.Parser {
         return try result.program.run(root: result.root, input: &input, as: Output.self)
     }
 }
-
-// MARK: - Sendable Conformance (Conditional)
-
-// Uncomment when cross-task sharing is needed:
-// extension Parsing.Machine.Compiled: @unchecked Sendable
-// where P: Sendable { }

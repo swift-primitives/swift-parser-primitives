@@ -2,34 +2,45 @@
 //  Machine.Parser+Compiled.swift
 //  swift-parsing-primitives
 //
-//  Extension providing compiled() method on parsers.
+//  Extension providing compiled() and prepared() methods on parsers.
 //
+
+// MARK: - Lazy Compilation (compiled)
 
 extension Parsing.Parser
 where Input: Parsing.Input & Sendable,
       Output: Sendable,
       Failure: Sendable
 {
-    /// Creates a compiled version of this parser using the given witness.
+    /// Creates a lazily-compiled version of this parser.
     ///
-    /// The returned parser lazily compiles on first use and caches
-    /// the compiled program for subsequent parses.
+    /// The returned parser compiles on first use and caches the program
+    /// for subsequent parses. It is NOT `Sendable`.
     ///
-    /// ## Usage
+    /// For cross-task sharing, use `prepared(using:)` instead, or call
+    /// `compiled(using:).prepared()` to get a `Sendable` wrapper.
     ///
-    /// ```swift
-    /// var compiled = myParser.compiled(using: .leaf)
-    /// let result = try compiled.parse(&input)
-    /// ```
-    ///
-    /// - Parameter witness: The compilation witness that defines how to
-    ///   compile this parser into a Machine expression.
-    /// - Returns: A compiled parser wrapper.
+    /// - Parameter witness: The compilation witness.
+    /// - Returns: A lazy-compiling parser wrapper.
     @inlinable
     public func compiled(
         using witness: Parsing.Machine.Compile.Witness<Self>
     ) -> Parsing.Machine.Compiled<Self> {
         Parsing.Machine.Compiled(source: self, witness: witness)
+    }
+
+    /// Creates an eagerly-compiled, immutable parser.
+    ///
+    /// The returned parser is fully compiled and conditionally `Sendable`.
+    /// Use this when you need to share a compiled parser across tasks.
+    ///
+    /// - Parameter witness: The compilation witness.
+    /// - Returns: An immutable prepared parser.
+    @inlinable
+    public func prepared(
+        using witness: Parsing.Machine.Compile.Witness<Self>
+    ) -> Parsing.Machine.Prepared<Self> {
+        Parsing.Machine.Prepared(source: self, witness: witness)
     }
 }
 
@@ -41,21 +52,25 @@ where Self: Sendable,
       Output: Sendable,
       Failure: Sendable
 {
-    /// Creates a compiled version of this parser using leaf compilation.
+    /// Creates a lazily-compiled version using leaf compilation.
     ///
-    /// This is a convenience that uses `.leaf` as the witness, which wraps
-    /// the parser's `parse` method directly as an opaque Machine operation.
+    /// Convenience that uses `.leaf` as the witness. The returned parser
+    /// is NOT `Sendable`. For cross-task sharing, use `prepared()`.
     ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// var compiled = myParser.compiled()
-    /// let result = try compiled.parse(&input)
-    /// ```
-    ///
-    /// - Returns: A compiled parser wrapper.
+    /// - Returns: A lazy-compiling parser wrapper.
     @inlinable
     public func compiled() -> Parsing.Machine.Compiled<Self> {
         compiled(using: .leaf)
+    }
+
+    /// Creates an eagerly-compiled, immutable parser using leaf compilation.
+    ///
+    /// Convenience that uses `.leaf` as the witness. The returned parser
+    /// is `Sendable` and safe for cross-task sharing.
+    ///
+    /// - Returns: An immutable prepared parser.
+    @inlinable
+    public func prepared() -> Parsing.Machine.Prepared<Self> {
+        prepared(using: .leaf)
     }
 }
