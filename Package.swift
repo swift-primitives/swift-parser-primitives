@@ -26,6 +26,7 @@ let package = Package(
         .package(path: "../swift-container-primitives"),
         .package(path: "../swift-storage-primitives"),
         .package(path: "../swift-identity-primitives"),
+        .package(path: "../../swift-foundations/swift-ascii"),
     ],
     targets: [
         .target(
@@ -52,6 +53,7 @@ let package = Package(
             dependencies: [
                 "Parsing Machine",
                 .product(name: "Test Primitives", package: "swift-test-primitives"),
+                .product(name: "ASCII", package: "swift-ascii"),
             ]
         ),
     ],

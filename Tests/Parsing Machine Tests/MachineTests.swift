@@ -1,5 +1,6 @@
 import Testing
 @testable import Parsing_Machine
+import ASCII
 
 extension Parsing.CollectionInput where Base == [UInt8] {
     @inlinable
@@ -232,7 +233,7 @@ struct MachineRecursiveGrammarTests {
         enum Error: Swift.Error, Sendable { case expected }
 
         func parse(_ input: inout Parsing.CollectionInput<[UInt8]>) throws(Error) -> Void {
-            guard input.first == UInt8(ascii: "(") else { throw .expected }
+            guard input.first == .ascii.leftParenthesis else { throw .expected }
             _ = input.removeFirst()
         }
     }
@@ -241,7 +242,7 @@ struct MachineRecursiveGrammarTests {
         enum Error: Swift.Error, Sendable { case expected }
 
         func parse(_ input: inout Parsing.CollectionInput<[UInt8]>) throws(Error) -> Void {
-            guard input.first == UInt8(ascii: ")") else { throw .expected }
+            guard input.first == .ascii.rightParenthesis else { throw .expected }
             _ = input.removeFirst()
         }
     }
@@ -294,10 +295,10 @@ struct MachineRecursiveGrammarTests {
         // Create 100 nested parentheses
         var bytes: [UInt8] = []
         for _ in 0..<100 {
-            bytes.append(UInt8(ascii: "("))
+            bytes.append(.ascii.leftParenthesis)
         }
         for _ in 0..<100 {
-            bytes.append(UInt8(ascii: ")"))
+            bytes.append(.ascii.rightParenthesis)
         }
 
         var input = Input(bytes)
@@ -323,10 +324,10 @@ struct MachineRecursiveGrammarTests {
         // Create 2000 nested parentheses - this would overflow with recursive descent!
         var bytes: [UInt8] = []
         for _ in 0..<2000 {
-            bytes.append(UInt8(ascii: "("))
+            bytes.append(.ascii.leftParenthesis)
         }
         for _ in 0..<2000 {
-            bytes.append(UInt8(ascii: ")"))
+            bytes.append(.ascii.rightParenthesis)
         }
 
         var input = Input(bytes)
@@ -352,10 +353,10 @@ struct MachineRecursiveGrammarTests {
         // Create 5000 nested parentheses
         var bytes: [UInt8] = []
         for _ in 0..<5000 {
-            bytes.append(UInt8(ascii: "("))
+            bytes.append(.ascii.leftParenthesis)
         }
         for _ in 0..<5000 {
-            bytes.append(UInt8(ascii: ")"))
+            bytes.append(.ascii.rightParenthesis)
         }
 
         var input = Input(bytes)
@@ -383,7 +384,7 @@ struct MachineRecursiveGrammarTests {
         struct OpenBracket: Parsing.Parser, Sendable {
             enum Error: Swift.Error, Sendable { case expected }
             func parse(_ input: inout Parsing.CollectionInput<[UInt8]>) throws(Error) -> Void {
-                guard input.first == UInt8(ascii: "<") else { throw .expected }
+                guard input.first == .ascii.lessThanSign else { throw .expected }
                 _ = input.removeFirst()
             }
         }
@@ -391,7 +392,7 @@ struct MachineRecursiveGrammarTests {
         struct CloseBracket: Parsing.Parser, Sendable {
             enum Error: Swift.Error, Sendable { case expected }
             func parse(_ input: inout Parsing.CollectionInput<[UInt8]>) throws(Error) -> Void {
-                guard input.first == UInt8(ascii: ">") else { throw .expected }
+                guard input.first == .ascii.greaterThanSign else { throw .expected }
                 _ = input.removeFirst()
             }
         }
@@ -399,9 +400,9 @@ struct MachineRecursiveGrammarTests {
         struct SlashClose: Parsing.Parser, Sendable {
             enum Error: Swift.Error, Sendable { case expected }
             func parse(_ input: inout Parsing.CollectionInput<[UInt8]>) throws(Error) -> Void {
-                guard input.first == UInt8(ascii: "/") else { throw .expected }
+                guard input.first == .ascii.slant else { throw .expected }
                 _ = input.removeFirst()
-                guard input.first == UInt8(ascii: ">") else { throw .expected }
+                guard input.first == .ascii.greaterThanSign else { throw .expected }
                 _ = input.removeFirst()
             }
         }
@@ -437,12 +438,12 @@ struct MachineRecursiveGrammarTests {
         // For 1000 levels: < < < ... </> > > >
         var bytes: [UInt8] = []
         for _ in 0..<1000 {
-            bytes.append(UInt8(ascii: "<"))
+            bytes.append(.ascii.lessThanSign)
         }
-        bytes.append(UInt8(ascii: "/"))
-        bytes.append(UInt8(ascii: ">"))
+        bytes.append(.ascii.slant)
+        bytes.append(.ascii.greaterThanSign)
         for _ in 0..<999 {  // One less because innermost is empty
-            bytes.append(UInt8(ascii: ">"))
+            bytes.append(.ascii.greaterThanSign)
         }
 
         var input = Input(bytes)
@@ -466,12 +467,12 @@ struct MachineRecursiveGrammarTests {
         struct ParseOpen: Parsing.Parser, Sendable {
             enum Error: Swift.Error, Sendable { case expected }
             func parse(_ input: inout Parsing.CollectionInput<[UInt8]>) throws(Error) -> StartTagOutput {
-                guard input.first == UInt8(ascii: "<") else { throw .expected }
+                guard input.first == .ascii.lessThanSign else { throw .expected }
                 _ = input.removeFirst()
                 // Check for />
-                if input.first == UInt8(ascii: "/") {
+                if input.first == .ascii.slant {
                     _ = input.removeFirst()
-                    guard input.first == UInt8(ascii: ">") else { throw .expected }
+                    guard input.first == .ascii.greaterThanSign else { throw .expected }
                     _ = input.removeFirst()
                     return StartTagOutput(isEmpty: true)
                 } else {
@@ -483,7 +484,7 @@ struct MachineRecursiveGrammarTests {
         struct ParseClose: Parsing.Parser, Sendable {
             enum Error: Swift.Error, Sendable { case expected }
             func parse(_ input: inout Parsing.CollectionInput<[UInt8]>) throws(Error) -> Void {
-                guard input.first == UInt8(ascii: ">") else { throw .expected }
+                guard input.first == .ascii.greaterThanSign else { throw .expected }
                 _ = input.removeFirst()
             }
         }
@@ -525,12 +526,12 @@ struct MachineRecursiveGrammarTests {
         // 50 nested elements
         var bytes: [UInt8] = []
         for _ in 0..<50 {
-            bytes.append(UInt8(ascii: "<"))
+            bytes.append(.ascii.lessThanSign)
         }
-        bytes.append(UInt8(ascii: "/"))
-        bytes.append(UInt8(ascii: ">"))
+        bytes.append(.ascii.slant)
+        bytes.append(.ascii.greaterThanSign)
         for _ in 0..<49 {
-            bytes.append(UInt8(ascii: ">"))
+            bytes.append(.ascii.greaterThanSign)
         }
 
         var input = Input(bytes)
@@ -697,7 +698,7 @@ struct MachineMemoizationTests {
         struct OpenParen: Parsing.Parser, Sendable {
             enum Error: Swift.Error, Sendable { case expected }
             func parse(_ input: inout Input) throws(Error) -> Void {
-                guard input.first == UInt8(ascii: "(") else { throw .expected }
+                guard input.first == .ascii.leftParenthesis else { throw .expected }
                 _ = input.removeFirst()
             }
         }
@@ -705,7 +706,7 @@ struct MachineMemoizationTests {
         struct CloseParen: Parsing.Parser, Sendable {
             enum Error: Swift.Error, Sendable { case expected }
             func parse(_ input: inout Input) throws(Error) -> Void {
-                guard input.first == UInt8(ascii: ")") else { throw .expected }
+                guard input.first == .ascii.rightParenthesis else { throw .expected }
                 _ = input.removeFirst()
             }
         }
