@@ -1,23 +1,35 @@
+//
+//  Machine.Run.Memoization.swift
+//  swift-parsing-primitives
+//
+//  Memoized program execution.
+//
+
 import Parsing_Primitives
 import Container_Primitives
 import Storage_Primitives
-import Identity_Primitives
 
-extension Parsing.Machine.Program {
+extension Parsing.Machine.Program where Input.Checkpoint: Hashable {
+    /// Executes the program with memoization.
+    ///
+    /// Caches parse results at each (position, node) pair,
+    /// enabling linear-time parsing and incremental re-parsing.
     @usableFromInline
     func run<Output>(
         root: Parsing.Machine.Node<Input, Failure>.ID,
         input: inout Input,
+        memoization: inout Parsing.Machine.Memoization.Table<Input.Checkpoint>,
         as outputType: Output.Type
     ) throws(Failure) -> Output {
         typealias Value = Parsing.Machine.Value
         typealias Frame = Parsing.Machine.Frame<Input, Failure>
         typealias Node = Parsing.Machine.Node<Input, Failure>
         typealias Recovery = Parsing.Machine.Failure.Recovery
+        typealias MemoKey = Parsing.Machine.Memoization.Key<Input.Checkpoint>
+        typealias MemoEntry = Parsing.Machine.Memoization.Entry<Input.Checkpoint>
 
         var current = root
-        // Pre-allocate stack capacity based on maxDepth or reasonable default
-        let stackCapacity = (maxDepth ?? 10000) * 4  // 4 frames per depth level worst case
+        let stackCapacity = (maxDepth ?? 10000) * 4
         var frames: Stack<Frame>
         do {
             frames = try Stack<Frame>(capacity: stackCapacity)
@@ -25,8 +37,7 @@ extension Parsing.Machine.Program {
             fatalError("Failed to allocate frame stack with capacity \(stackCapacity): \(error)")
         }
 
-        // Pre-allocate arena for intermediate values
-        let arenaCapacity = stackCapacity * 2  // Generous capacity for values
+        let arenaCapacity = stackCapacity * 2
         var arena: Value.Arena
         do {
             arena = try Value.Arena(capacity: arenaCapacity)
@@ -37,18 +48,7 @@ extension Parsing.Machine.Program {
         var depth = 0
         var pendingHandle: Value.Handle? = nil
 
-        // DEBUG INVARIANTS
-        func checkInvariants(_ label: String) {
-            precondition(depth >= 0, "[\(label)] depth went negative: \(depth)")
-            precondition(current.rawValue >= 0 && current.rawValue < nodes.count, "[\(label)] current node out of bounds: \(current)")
-            if let limit = maxDepth {
-                precondition(depth <= limit + 1, "[\(label)] depth exceeded limit: \(depth) > \(limit)")
-            }
-        }
-
         while true {
-            checkInvariants("loop-start")
-
             if let handle = pendingHandle {
                 pendingHandle = nil
                 let value = arena.release(handle)
@@ -74,19 +74,18 @@ extension Parsing.Machine.Program {
                         let transformed = try transform.apply(value)
                         pendingHandle = arena.allocate(transformed)
                     } catch {
-                        switch try handleFailure(
+                        switch try handleMemoizedFailure(
                             error: error,
                             frames: &frames,
                             arena: &arena,
                             input: &input,
-                            depth: &depth
+                            depth: &depth,
+                            memoization: &memoization
                         ) {
                         case .continueWith(let recovered):
                             current = Node.ID(recovered.rawValue)
-                            checkInvariants("after-tryMap-handleFailure-continueWith")
                         case .handleReady(let recoveredHandle):
                             pendingHandle = recoveredHandle
-                            checkInvariants("after-tryMap-handleFailure-handleReady")
                         case .propagate:
                             throw error
                         }
@@ -117,22 +116,58 @@ extension Parsing.Machine.Program {
                     current = child
 
                 case .optional(_, let wrapSome, let noneHandle):
-                    // Release the pre-allocated none value since we have a result
                     _ = arena.release(noneHandle)
                     let wrapped = wrapSome.apply(value)
                     pendingHandle = arena.allocate(wrapped)
 
                 case .recursiveExit:
                     depth -= 1
-                    checkInvariants("after-recursiveExit-return")
                     pendingHandle = arena.allocate(value)
 
-                case .memoization:
-                    fatalError("Memoization frame in non-memoized execution")
+                case .memoization(let node, let startPosition):
+                    // Cache the successful result
+                    let key = MemoKey(position: startPosition, node: node)
+                    let entry = MemoEntry.success(output: value, end: input.checkpoint)
+                    memoization.store(entry, for: key)
+                    pendingHandle = arena.allocate(value)
                 }
 
                 continue
             }
+
+            // Check memoization before executing node
+            let memoKey = MemoKey(position: input.checkpoint, node: current.rawValue)
+            if let cached = memoization.lookup(memoKey) {
+                switch cached {
+                case .success(let output, let endPosition):
+                    // Cache hit: use cached result
+                    input.restore(to: endPosition)
+                    pendingHandle = arena.allocate(output)
+                    continue
+                case .failure:
+                    // Cached failure: propagate through failure handling
+                    switch try handleMemoizedFailure(
+                        error: Parsing.Machine.Runtime.Error.cachedFailure,
+                        frames: &frames,
+                        arena: &arena,
+                        input: &input,
+                        depth: &depth,
+                        memoization: &memoization
+                    ) {
+                    case .continueWith(let recovered):
+                        current = Node.ID(recovered.rawValue)
+                        continue
+                    case .handleReady(let handle):
+                        pendingHandle = handle
+                        continue
+                    case .propagate:
+                        fatalError("Cached failure with no recovery")
+                    }
+                }
+            }
+
+            // Cache miss: push memoization frame and execute
+            try! frames.push(.memoization(node: current.rawValue, startPosition: input.checkpoint))
 
             let node = self[current]
 
@@ -142,19 +177,18 @@ extension Parsing.Machine.Program {
                     let value = try leaf.run(&input)
                     pendingHandle = arena.allocate(value)
                 } catch {
-                    switch try handleFailure(
+                    switch try handleMemoizedFailure(
                         error: error,
                         frames: &frames,
                         arena: &arena,
                         input: &input,
-                        depth: &depth
+                        depth: &depth,
+                        memoization: &memoization
                     ) {
                     case .continueWith(let recovered):
                         current = Node.ID(recovered.rawValue)
-                        checkInvariants("after-leaf-handleFailure-continueWith")
                     case .handleReady(let handle):
                         pendingHandle = handle
-                        checkInvariants("after-leaf-handleFailure-handleReady")
                     case .propagate:
                         throw error
                     }
@@ -200,7 +234,6 @@ extension Parsing.Machine.Program {
 
             case .optional(let child, let wrapSome, let noneValue):
                 let checkpoint = input.checkpoint
-                // Pre-allocate the none value in the arena
                 let noneHandle = arena.allocate(noneValue)
                 try! frames.push(.optional(savedCheckpoint: checkpoint, wrapSome: wrapSome, noneHandle: noneHandle))
                 current = child
@@ -208,12 +241,13 @@ extension Parsing.Machine.Program {
             case .ref(let target):
                 if let limit = maxDepth, depth >= limit {
                     let error = Parsing.Machine.Runtime.Error.depthExceeded(limit: limit)
-                    switch try handleFailure(
+                    switch try handleMemoizedFailure(
                         error: error,
                         frames: &frames,
                         arena: &arena,
                         input: &input,
-                        depth: &depth
+                        depth: &depth,
+                        memoization: &memoization
                     ) {
                     case .continueWith(let recovered):
                         current = Node.ID(recovered.rawValue)
@@ -226,7 +260,6 @@ extension Parsing.Machine.Program {
                     depth += 1
                     try! frames.push(.recursiveExit)
                     current = target
-                    checkInvariants("after-ref-enter")
                 }
 
             case .hole:
@@ -236,14 +269,16 @@ extension Parsing.Machine.Program {
     }
 
     @usableFromInline
-    func handleFailure<E: Error>(
+    func handleMemoizedFailure<E: Error>(
         error: E,
         frames: inout Stack<Parsing.Machine.Frame<Input, Failure>>,
         arena: inout Parsing.Machine.Value.Arena,
         input: inout Input,
-        depth: inout Int
+        depth: inout Int,
+        memoization: inout Parsing.Machine.Memoization.Table<Input.Checkpoint>
     ) throws(Failure) -> Parsing.Machine.Failure.Recovery {
         typealias Recovery = Parsing.Machine.Failure.Recovery
+        typealias MemoKey = Parsing.Machine.Memoization.Key<Input.Checkpoint>
 
         while let frame = frames.pop() {
             switch frame {
@@ -260,7 +295,6 @@ extension Parsing.Machine.Program {
 
             case .many(_, let savedCheckpoint, let resultHandles, let finalize):
                 input.restore(to: savedCheckpoint)
-                // Collect values from handles
                 var results: [Parsing.Machine.Value] = []
                 results.reserveCapacity(resultHandles.count)
                 for handle in resultHandles {
@@ -272,14 +306,15 @@ extension Parsing.Machine.Program {
 
             case .optional(let savedCheckpoint, _, let noneHandle):
                 input.restore(to: savedCheckpoint)
-                // noneHandle already contains the none value
                 return .handleReady(noneHandle)
 
             case .recursiveExit:
                 depth -= 1
 
-            case .memoization:
-                fatalError("Memoization frame in non-memoized execution")
+            case .memoization(let node, let startPosition):
+                // Cache the failure
+                let key = MemoKey(position: startPosition, node: node)
+                memoization.store(.failure, for: key)
 
             case .map, .tryMap, .flatMap, .sequence:
                 continue

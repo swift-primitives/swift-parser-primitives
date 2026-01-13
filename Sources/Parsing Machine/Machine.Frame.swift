@@ -22,5 +22,7 @@ extension Parsing.Machine {
         /// Optional frame - stores handle to none value for backtracking
         case optional(savedCheckpoint: Input.Checkpoint, wrapSome: Transform.Erased, noneHandle: Value.Handle)
         case recursiveExit
+        /// Memoization frame - caches result when node completes
+        case memoization(node: Int, startPosition: Input.Checkpoint)
     }
 }

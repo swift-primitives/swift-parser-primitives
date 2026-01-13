@@ -11,5 +11,6 @@ extension Parsing.Machine.Runtime {
         case depthExceeded(limit: Int)
         case typeMismatch
         case internalError(String)
+        case cachedFailure
     }
 }
