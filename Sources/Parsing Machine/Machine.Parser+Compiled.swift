@@ -2,31 +2,30 @@
 //  Machine.Parser+Compiled.swift
 //  swift-parsing-primitives
 //
-//  Extension providing compiled() and prepared() methods on parsers.
+//  Parse accessor extensions for Machine compilation.
 //
 
-// MARK: - Lazy Compilation (compiled)
+// MARK: - Compilation Variants
 
-extension Parsing.Parser
-where Input: Parsing.Input & Sendable,
-      Output: Sendable,
-      Failure: Sendable
+extension Parsing.Parse
+where P.Input: Parsing.Input & Sendable,
+      P.Output: Sendable,
+      P.Failure: Sendable
 {
     /// Creates a lazily-compiled version of this parser.
     ///
     /// The returned parser compiles on first use and caches the program
     /// for subsequent parses. It is NOT `Sendable`.
     ///
-    /// For cross-task sharing, use `prepared(using:)` instead, or call
-    /// `compiled(using:).prepared()` to get a `Sendable` wrapper.
+    /// For cross-task sharing, use `prepared(using:)` instead.
     ///
     /// - Parameter witness: The compilation witness.
     /// - Returns: A lazy-compiling parser wrapper.
     @inlinable
     public func compiled(
-        using witness: Parsing.Machine.Compile.Witness<Self>
-    ) -> Parsing.Machine.Compiled<Self> {
-        Parsing.Machine.Compiled(source: self, witness: witness)
+        using witness: Parsing.Machine.Compile.Witness<P>
+    ) -> Parsing.Machine.Compiled<P> {
+        Parsing.Machine.Compiled(source: parser, witness: witness)
     }
 
     /// Creates an eagerly-compiled, immutable parser.
@@ -38,19 +37,19 @@ where Input: Parsing.Input & Sendable,
     /// - Returns: An immutable prepared parser.
     @inlinable
     public func prepared(
-        using witness: Parsing.Machine.Compile.Witness<Self>
-    ) -> Parsing.Machine.Prepared<Self> {
-        Parsing.Machine.Prepared(source: self, witness: witness)
+        using witness: Parsing.Machine.Compile.Witness<P>
+    ) -> Parsing.Machine.Prepared<P> {
+        Parsing.Machine.Prepared(source: parser, witness: witness)
     }
 }
 
 // MARK: - Convenience for Sendable Parsers
 
-extension Parsing.Parser
-where Self: Sendable,
-      Input: Parsing.Input & Sendable,
-      Output: Sendable,
-      Failure: Sendable
+extension Parsing.Parse
+where P: Sendable,
+      P.Input: Parsing.Input & Sendable,
+      P.Output: Sendable,
+      P.Failure: Sendable
 {
     /// Creates a lazily-compiled version using leaf compilation.
     ///
@@ -59,7 +58,7 @@ where Self: Sendable,
     ///
     /// - Returns: A lazy-compiling parser wrapper.
     @inlinable
-    public func compiled() -> Parsing.Machine.Compiled<Self> {
+    public func compiled() -> Parsing.Machine.Compiled<P> {
         compiled(using: .leaf)
     }
 
@@ -70,7 +69,7 @@ where Self: Sendable,
     ///
     /// - Returns: An immutable prepared parser.
     @inlinable
-    public func prepared() -> Parsing.Machine.Prepared<Self> {
+    public func prepared() -> Parsing.Machine.Prepared<P> {
         prepared(using: .leaf)
     }
 }
