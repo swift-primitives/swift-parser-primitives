@@ -16,8 +16,11 @@ extension Parsing.Machine.Program {
         typealias Recovery = Parsing.Machine.Failure.Recovery
 
         var current = root
-        // Pre-allocate stack capacity based on maxDepth or reasonable default
-        let stackCapacity = (maxDepth ?? 10000) * 4  // 4 frames per depth level worst case
+        // Pre-allocate stack capacity based on maxDepth or reasonable default.
+        // The 4x multiplier accounts for worst-case frame usage per recursion level:
+        // - 1 recursiveExit frame per level
+        // - Up to 3 additional frames for combinator chains (sequence, map, oneOf, etc.)
+        let stackCapacity = (maxDepth ?? 10000) * 4
         var frames: Stack<Frame>
         do {
             frames = try Stack<Frame>(capacity: stackCapacity)

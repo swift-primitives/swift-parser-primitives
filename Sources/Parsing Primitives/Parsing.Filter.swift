@@ -15,10 +15,10 @@ extension Parsing {
     public struct Filter<Upstream: Parsing.Parser>: Sendable
     where Upstream: Sendable {
         @usableFromInline
-        package let upstream: Upstream
+        internal let upstream: Upstream
 
         @usableFromInline
-        package let predicate: @Sendable (Upstream.Output) -> Bool
+        internal let predicate: @Sendable (Upstream.Output) -> Bool
 
         @inlinable
         public init(

@@ -33,7 +33,7 @@ extension Parsing {
     public struct Not<Upstream: Parser>: Sendable
     where Upstream: Sendable {
         @usableFromInline
-        package let upstream: Upstream
+        internal let upstream: Upstream
 
         /// Creates a negative lookahead parser.
         ///

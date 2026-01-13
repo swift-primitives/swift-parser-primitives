@@ -104,13 +104,14 @@ where Element: Parsing.Printer {
             throw .countTooHigh(expected: max, got: output.count)
         }
 
-        // Print in reverse order
-        // Element print failures are caught - Many only throws count errors
+        // Print in reverse order.
+        // Note: Element printing failures cause early termination but are not
+        // propagated - this printer only throws count constraint errors.
         for item in output.reversed() {
             do {
                 try element.print(item, into: &input)
             } catch {
-                // Element failure - silent, consistent with parse behavior
+                break
             }
         }
     }

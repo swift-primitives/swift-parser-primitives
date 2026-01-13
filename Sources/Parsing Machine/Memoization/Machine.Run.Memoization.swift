@@ -29,6 +29,10 @@ extension Parsing.Machine.Program where Input.Checkpoint: Hashable {
         typealias MemoEntry = Parsing.Machine.Memoization.Entry<Input.Checkpoint>
 
         var current = root
+        // Pre-allocate stack capacity based on maxDepth or reasonable default.
+        // The 4x multiplier accounts for worst-case frame usage per recursion level:
+        // - 1 recursiveExit frame per level
+        // - Up to 3 additional frames for combinator chains (sequence, map, oneOf, etc.)
         let stackCapacity = (maxDepth ?? 10000) * 4
         var frames: Stack<Frame>
         do {

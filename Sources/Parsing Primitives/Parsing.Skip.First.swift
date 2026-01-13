@@ -12,10 +12,10 @@ extension Parsing.Skip {
     public struct First<P0: Parsing.Parser, P1: Parsing.Parser>: Sendable
     where P0: Sendable, P1: Sendable, P0.Input == P1.Input, P0.Output == Void {
         @usableFromInline
-        package let p0: P0
+        internal let p0: P0
 
         @usableFromInline
-        package let p1: P1
+        internal let p1: P1
 
         @inlinable
         public init(_ p0: P0, _ p1: P1) {

@@ -18,7 +18,7 @@ extension Parsing {
     public struct Optionally<Wrapped: Parsing.Parser>: Sendable
     where Wrapped: Sendable {
         @usableFromInline
-        package let wrapped: Wrapped
+        internal let wrapped: Wrapped
 
         @inlinable
         public init(@Parsing.Take.Builder<Wrapped.Input> _ wrapped: () -> Wrapped) {

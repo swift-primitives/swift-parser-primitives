@@ -31,7 +31,7 @@ extension Parsing.Byte: Parsing.Parser {
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) {
         guard let actual = input.first else {
-            throw .left(.unexpected(expected: "byte \(expected)"))
+            throw .left(.unexpected(expected: "byte 0x\(String(expected, radix: 16, uppercase: true))"))
         }
         guard actual == expected else {
             throw .right(.byteMismatch(expected: [expected], found: [actual]))
