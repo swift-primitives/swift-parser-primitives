@@ -9,7 +9,10 @@ extension Parsing {
     /// A parser that matches a single byte.
     ///
     /// More efficient than `Literal` for single bytes.
-    public struct Byte<Input: Parsing.Input>: Sendable
+    ///
+    /// This parser only requires `Streaming` capability (no backtracking),
+    /// making it suitable for forward-only input sources.
+    public struct Byte<Input: Parsing.Streaming>: Sendable
     where Input: Sendable, Input.Element == UInt8 {
         @usableFromInline
         let expected: UInt8
@@ -23,7 +26,7 @@ extension Parsing {
 
 extension Parsing.Byte: Parsing.Parser {
     public typealias Output = Void
-    public typealias Failure = Parsing.Either<Parsing.EndOfInput.Error, Parsing.Match.Error>
+    public typealias Failure = Parsing.Error.Either<Parsing.EndOfInput.Error, Parsing.Match.Error>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) {

@@ -100,7 +100,7 @@ extension Parsing.Parser {
     /// - Returns: The parsed value.
     /// - Throws: `Either<Failure, Match.Error>` if parsing fails or input remains.
     @inlinable
-    public func parse(_ input: Input) throws(Parsing.Either<Failure, Parsing.Match.Error>) -> Output
+    public func parse(_ input: Input) throws(Parsing.Error.Either<Failure, Parsing.Match.Error>) -> Output
     where Input: Collection {
         var input = input
         let output: Output

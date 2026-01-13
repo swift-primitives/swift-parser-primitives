@@ -9,7 +9,10 @@ extension Parsing.First {
     /// A parser that consumes and returns the first element.
     ///
     /// Fails if the input is empty.
-    public struct Element<Input: Parsing.Input>: Sendable
+    ///
+    /// This parser only requires `Streaming` capability (no backtracking),
+    /// making it suitable for forward-only input sources.
+    public struct Element<Input: Parsing.Streaming>: Sendable
     where Input: Sendable {
         @inlinable
         public init() {}

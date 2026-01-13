@@ -12,10 +12,10 @@ extension Parsing.Skip {
     public struct First<P0: Parsing.Parser, P1: Parsing.Parser>: Sendable
     where P0: Sendable, P1: Sendable, P0.Input == P1.Input, P0.Output == Void {
         @usableFromInline
-        let p0: P0
+        package let p0: P0
 
         @usableFromInline
-        let p1: P1
+        package let p1: P1
 
         @inlinable
         public init(_ p0: P0, _ p1: P1) {
@@ -28,7 +28,7 @@ extension Parsing.Skip {
 extension Parsing.Skip.First: Parsing.Parser {
     public typealias Input = P0.Input
     public typealias Output = P1.Output
-    public typealias Failure = Parsing.Either<P0.Failure, P1.Failure>
+    public typealias Failure = Parsing.Error.Either<P0.Failure, P1.Failure>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {

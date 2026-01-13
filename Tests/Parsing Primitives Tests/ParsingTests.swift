@@ -518,29 +518,29 @@ struct ParsingTests {
     struct LocatedTests {
         @Test("wraps error with offset")
         func wrapsErrorWithOffset() {
-            let error = Parsing.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 42)
+            let error = Parsing.Error.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 42)
             #expect(error.offset == 42)
             #expect(error.error == .unexpected(expected: "byte"))
         }
 
         @Test("equatable when underlying is equatable")
         func equatableWhenUnderlyingIs() {
-            let a = Parsing.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 10)
-            let b = Parsing.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 10)
-            let c = Parsing.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 20)
+            let a = Parsing.Error.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 10)
+            let b = Parsing.Error.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 10)
+            let c = Parsing.Error.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 20)
             #expect(a == b)
             #expect(a != c)
         }
 
         @Test("description includes offset")
         func descriptionIncludesOffset() {
-            let error = Parsing.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 42)
+            let error = Parsing.Error.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 42)
             #expect(error.description.contains("42"))
         }
 
         @Test("map transforms underlying error")
         func mapTransformsError() {
-            let error = Parsing.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 42)
+            let error = Parsing.Error.Located(Parsing.EndOfInput.Error.unexpected(expected: "byte"), at: 42)
             let mapped = error.map { _ in Parsing.Match.Error.predicateFailed(description: "test") }
             #expect(mapped.offset == 42)
             #expect(mapped.error == Parsing.Match.Error.predicateFailed(description: "test"))

@@ -15,10 +15,10 @@ extension Parsing.Map {
     public struct Transform<Upstream: Parsing.Parser, Output>: Sendable
     where Upstream: Sendable {
         @usableFromInline
-        let upstream: Upstream
+        package let upstream: Upstream
 
         @usableFromInline
-        let transform: @Sendable (Upstream.Output) -> Output
+        package let transform: @Sendable (Upstream.Output) -> Output
 
         @inlinable
         public init(

@@ -7,7 +7,10 @@
 
 extension Parsing.First {
     /// A parser that consumes the first element if it matches a predicate.
-    public struct Where<Input: Parsing.Input>: Sendable
+    ///
+    /// This parser only requires `Streaming` capability (no backtracking),
+    /// making it suitable for forward-only input sources.
+    public struct Where<Input: Parsing.Streaming>: Sendable
     where Input: Sendable {
         @usableFromInline
         let predicate: @Sendable (Input.Element) -> Bool
@@ -28,7 +31,7 @@ extension Parsing.First {
 
 extension Parsing.First.Where: Parsing.Parser {
     public typealias Output = Input.Element
-    public typealias Failure = Parsing.Either<Parsing.EndOfInput.Error, Parsing.Match.Error>
+    public typealias Failure = Parsing.Error.Either<Parsing.EndOfInput.Error, Parsing.Match.Error>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {

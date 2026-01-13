@@ -28,7 +28,7 @@ extension Parsing {
     public struct Peek<Upstream: Parser>: Sendable
     where Upstream: Sendable {
         @usableFromInline
-        let upstream: Upstream
+        package let upstream: Upstream
 
         /// Creates a peek parser.
         ///

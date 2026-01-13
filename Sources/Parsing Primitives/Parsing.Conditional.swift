@@ -20,7 +20,7 @@ extension Parsing {
 extension Parsing.Conditional: Parsing.Parser {
     public typealias Input = First.Input
     public typealias Output = First.Output
-    public typealias Failure = Parsing.Either<First.Failure, Second.Failure>
+    public typealias Failure = Parsing.Error.Either<First.Failure, Second.Failure>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {

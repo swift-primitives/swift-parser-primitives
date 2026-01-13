@@ -10,7 +10,11 @@ extension Parsing {
     ///
     /// `Literal` consumes exact bytes from the input. It succeeds with `Void`
     /// output, making it ideal for delimiters and keywords.
-    public struct Literal<Input: Parsing.Input>: Sendable
+    ///
+    /// This parser only requires `Streaming` capability (no backtracking),
+    /// making it suitable for forward-only input sources. Note that on
+    /// partial match failure, input is left partially consumed.
+    public struct Literal<Input: Parsing.Streaming>: Sendable
     where Input: Sendable, Input.Element == UInt8 {
         @usableFromInline
         let bytes: [UInt8]
@@ -31,7 +35,7 @@ extension Parsing {
 
 extension Parsing.Literal: Parsing.Parser {
     public typealias Output = Void
-    public typealias Failure = Parsing.Either<Parsing.EndOfInput.Error, Parsing.Match.Error>
+    public typealias Failure = Parsing.Error.Either<Parsing.EndOfInput.Error, Parsing.Match.Error>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) {

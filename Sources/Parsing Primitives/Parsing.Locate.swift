@@ -33,7 +33,7 @@ extension Parsing {
 extension Parsing.Locate: Parsing.Parser {
     public typealias Input = Parsing.Tracked<Base>
     public typealias Output = Upstream.Output
-    public typealias Failure = Parsing.Located<Upstream.Failure>
+    public typealias Failure = Parsing.Error.Located<Upstream.Failure>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
@@ -43,7 +43,7 @@ extension Parsing.Locate: Parsing.Parser {
         do {
             value = try upstream.parse(&input.base)
         } catch {
-            throw Parsing.Located(error, at: errorOffset)
+            throw Parsing.Error.Located(error, at: errorOffset)
         }
         // Update offset based on consumed bytes
         input.offset += (countBefore - input.base.count)
@@ -82,7 +82,7 @@ extension Parsing {
 extension Parsing.Span: Parsing.Parser {
     public typealias Input = Parsing.Tracked<Base>
     public typealias Output = Parsing.Spanned<Upstream.Output>
-    public typealias Failure = Parsing.Located<Upstream.Failure>
+    public typealias Failure = Parsing.Error.Located<Upstream.Failure>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
@@ -92,7 +92,7 @@ extension Parsing.Span: Parsing.Parser {
         do {
             value = try upstream.parse(&input.base)
         } catch {
-            throw Parsing.Located(error, at: start)
+            throw Parsing.Error.Located(error, at: start)
         }
         // Update offset based on consumed bytes
         input.offset += (countBefore - input.base.count)

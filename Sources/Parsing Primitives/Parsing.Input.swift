@@ -6,31 +6,32 @@
 //
 
 extension Parsing {
-    /// A type that can be used as input to a parser.
+    /// A type that can be used as input to a parser with backtracking support.
     ///
-    /// `Input` abstracts over different input representations:
+    /// `Input` refines `Streaming` by adding checkpoint-based backtracking,
+    /// enabling parser combinators like `OneOf`, `Peek`, and `Not` to try
+    /// alternatives and restore position on failure.
+    ///
+    /// ## Protocol Hierarchy
+    ///
+    /// ```
+    /// Streaming   ← minimal, forward-only (isEmpty, first, removeFirst)
+    ///     ↑
+    ///   Input     ← adds checkpoint/restore for backtracking
+    /// ```
+    ///
+    /// ## Abstracts Over
+    ///
     /// - `Span<UInt8>` for zero-copy byte parsing
     /// - `[UInt8]` for byte array parsing
     /// - `Substring.UTF8View` for string parsing
     /// - Custom types for specialized parsing
     ///
-    /// ## Design Rationale
-    ///
-    /// The protocol is minimal by design:
-    /// - `Element`: What we're iterating over (e.g., `UInt8` for bytes)
-    /// - `isEmpty`: Check for end of input
-    /// - `first`: Peek at next element without consuming
-    /// - `removeFirst()`: Consume and return next element
-    /// - `prefix(_:)`: Extract a prefix (for multi-element consumption)
-    /// - `dropFirst(_:)`: Skip elements (returns Self for chaining)
-    ///
-    /// This mirrors `Collection` but allows non-Collection types (like `Span`)
-    /// to participate in parsing.
-    ///
     /// ## Zero-Copy Guarantee
     ///
     /// All operations should be O(1) and non-allocating for conforming types.
-    /// The protocol does not require random access - only forward iteration.
+    /// The protocol does not require random access - only forward iteration
+    /// with the ability to save and restore positions.
     ///
     /// ## Position-Based Checkpointing
     ///
@@ -47,26 +48,15 @@ extension Parsing {
     /// // [UInt8] - via ArraySlice for O(1) slicing
     /// extension ArraySlice: Parsing.Input where Element == UInt8 {}
     /// ```
-    public protocol Input<Element>: ~Copyable {
-        /// The element type of the input.
-        associatedtype Element
-
+    public protocol Input<Element>: Streaming {
         /// The checkpoint type for position-based backtracking.
         ///
         /// Typically a lightweight value like `Int` or an index type.
         /// Must be `Sendable` for use in concurrent parsing contexts.
         associatedtype Checkpoint: Sendable
 
-        /// Whether the input is empty.
-        var isEmpty: Bool { get }
-
         /// The number of elements remaining.
         var count: Int { get }
-
-        /// The first element, if any.
-        ///
-        /// Returns `nil` if the input is empty. Does not consume the element.
-        var first: Element? { get }
 
         /// Creates a checkpoint at the current position.
         ///
@@ -79,12 +69,6 @@ extension Parsing {
         /// - Parameter checkpoint: A checkpoint obtained from `checkpoint`.
         /// - Precondition: The checkpoint was created from this input instance.
         mutating func restore(to checkpoint: Checkpoint)
-
-        /// Removes and returns the first element.
-        ///
-        /// - Precondition: `!isEmpty`
-        /// - Returns: The first element.
-        mutating func removeFirst() -> Element
 
         /// Removes and discards the first `n` elements.
         ///

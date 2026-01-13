@@ -51,7 +51,7 @@ extension Parsing {
     public struct Lazy<P: Parser>: Sendable
     where P: Sendable {
         @usableFromInline
-        let build: @Sendable () -> P
+        package let build: @Sendable () -> P
 
         /// Creates a lazy parser from an autoclosure.
         ///

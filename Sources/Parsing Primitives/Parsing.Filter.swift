@@ -15,10 +15,10 @@ extension Parsing {
     public struct Filter<Upstream: Parsing.Parser>: Sendable
     where Upstream: Sendable {
         @usableFromInline
-        let upstream: Upstream
+        package let upstream: Upstream
 
         @usableFromInline
-        let predicate: @Sendable (Upstream.Output) -> Bool
+        package let predicate: @Sendable (Upstream.Output) -> Bool
 
         @inlinable
         public init(
@@ -34,7 +34,7 @@ extension Parsing {
 extension Parsing.Filter: Parsing.Parser {
     public typealias Input = Upstream.Input
     public typealias Output = Upstream.Output
-    public typealias Failure = Parsing.Either<Upstream.Failure, Parsing.Constraint.Error>
+    public typealias Failure = Parsing.Error.Either<Upstream.Failure, Parsing.Constraint.Error>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {

@@ -33,7 +33,7 @@ extension Parsing.Map {
 
 extension Parsing.Map.Throwing: Parsing.Parser {
     public typealias Input = Upstream.Input
-    public typealias Failure = Parsing.Either<Upstream.Failure, E>
+    public typealias Failure = Parsing.Error.Either<Upstream.Failure, E>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {

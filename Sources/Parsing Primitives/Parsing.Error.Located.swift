@@ -1,11 +1,11 @@
 //
-//  Parsing.Located.swift
-//  swift-standards
+//  Parsing.Error.Located.swift
+//  swift-parsing-primitives
 //
 //  Error wrapper with source location.
 //
 
-extension Parsing {
+extension Parsing.Error {
     /// An error with source location information.
     ///
     /// `Located` wraps any error with its byte offset in the input,
@@ -16,7 +16,7 @@ extension Parsing {
     ///
     /// ```swift
     /// // Wrap an error with location
-    /// throw Located(error: .unexpected, offset: 42)
+    /// throw Parsing.Error.Located(error, at: 42)
     ///
     /// // In error messages
     /// print("Error at byte \(error.offset): \(error.error)")
@@ -50,11 +50,11 @@ extension Parsing {
 
 // MARK: - Equatable
 
-extension Parsing.Located: Equatable where E: Equatable {}
+extension Parsing.Error.Located: Equatable where E: Equatable {}
 
 // MARK: - CustomStringConvertible
 
-extension Parsing.Located: CustomStringConvertible {
+extension Parsing.Error.Located: CustomStringConvertible {
     public var description: String {
         "at offset \(offset): \(error)"
     }
@@ -62,12 +62,34 @@ extension Parsing.Located: CustomStringConvertible {
 
 // MARK: - Mapping
 
-extension Parsing.Located {
+extension Parsing.Error.Located {
     /// Maps the underlying error to a different type.
     @inlinable
     public func map<NewE: Swift.Error & Sendable>(
         _ transform: (E) -> NewE
-    ) -> Parsing.Located<NewE> {
-        Parsing.Located<NewE>(transform(error), at: offset)
+    ) -> Parsing.Error.Located<NewE> {
+        Parsing.Error.Located<NewE>(transform(error), at: offset)
     }
+}
+
+// MARK: - LocatedError Protocol
+
+extension Parsing.Error {
+    /// Protocol for errors that carry location information.
+    ///
+    /// Used to enable location-aware utilities on `Either` compositions.
+    public protocol LocatedError: Swift.Error {
+        /// The byte offset where this error occurred.
+        var offset: Int { get }
+    }
+}
+
+extension Parsing.Error.Located: Parsing.Error.LocatedError {}
+
+// MARK: - Backward Compatibility
+
+extension Parsing {
+    /// Backward compatibility alias.
+    @available(*, deprecated, renamed: "Error.Located")
+    public typealias Located<E: Swift.Error & Sendable> = Parsing.Error.Located<E>
 }
