@@ -46,9 +46,7 @@ extension Parsing.Locate: Parsing.Parser {
             throw Parsing.Located(error, at: errorOffset)
         }
         // Update offset based on consumed bytes
-        if let before = countBefore, let after = input.base.count {
-            input.offset += (before - after)
-        }
+        input.offset += (countBefore - input.base.count)
         return value
     }
 }
@@ -97,9 +95,7 @@ extension Parsing.Span: Parsing.Parser {
             throw Parsing.Located(error, at: start)
         }
         // Update offset based on consumed bytes
-        if let before = countBefore, let after = input.base.count {
-            input.offset += (before - after)
-        }
+        input.offset += (countBefore - input.base.count)
         let end = input.currentOffset
         return Parsing.Spanned(value, start: start, end: end)
     }

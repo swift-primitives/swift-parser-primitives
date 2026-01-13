@@ -82,19 +82,45 @@ extension Parsing {
 extension Parsing.Tracked: Parsing.Input {
     public typealias Element = Base.Element
 
+    /// Checkpoint stores both the base input checkpoint and tracked offset.
+    public struct Checkpoint: Sendable {
+        @usableFromInline
+        let baseCheckpoint: Base.Checkpoint
+
+        @usableFromInline
+        let trackedOffset: Int
+
+        @inlinable
+        init(baseCheckpoint: Base.Checkpoint, trackedOffset: Int) {
+            self.baseCheckpoint = baseCheckpoint
+            self.trackedOffset = trackedOffset
+        }
+    }
+
     @inlinable
     public var isEmpty: Bool {
         base.isEmpty
     }
 
     @inlinable
-    public var count: Int? {
+    public var count: Int {
         base.count
     }
 
     @inlinable
     public var first: Element? {
         base.first
+    }
+
+    @inlinable
+    public var checkpoint: Checkpoint {
+        Checkpoint(baseCheckpoint: base.checkpoint, trackedOffset: offset)
+    }
+
+    @inlinable
+    public mutating func restore(to checkpoint: Checkpoint) {
+        base.restore(to: checkpoint.baseCheckpoint)
+        offset = checkpoint.trackedOffset
     }
 
     @inlinable

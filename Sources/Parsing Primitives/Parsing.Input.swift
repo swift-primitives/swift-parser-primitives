@@ -32,6 +32,12 @@ extension Parsing {
     /// All operations should be O(1) and non-allocating for conforming types.
     /// The protocol does not require random access - only forward iteration.
     ///
+    /// ## Position-Based Checkpointing
+    ///
+    /// The `Checkpoint` associated type and related methods enable efficient
+    /// backtracking without copying the entire input state. This is critical
+    /// for parser combinators that need to restore input position on failure.
+    ///
     /// ## Example Conformances
     ///
     /// ```swift
@@ -45,19 +51,34 @@ extension Parsing {
         /// The element type of the input.
         associatedtype Element
 
+        /// The checkpoint type for position-based backtracking.
+        ///
+        /// Typically a lightweight value like `Int` or an index type.
+        /// Must be `Sendable` for use in concurrent parsing contexts.
+        associatedtype Checkpoint: Sendable
+
         /// Whether the input is empty.
         var isEmpty: Bool { get }
 
-        /// The number of elements remaining, if known.
-        ///
-        /// Some input types may not know their count without traversal.
-        /// Default implementation returns `nil`.
-        var count: Int? { get }
+        /// The number of elements remaining.
+        var count: Int { get }
 
         /// The first element, if any.
         ///
         /// Returns `nil` if the input is empty. Does not consume the element.
         var first: Element? { get }
+
+        /// Creates a checkpoint at the current position.
+        ///
+        /// The checkpoint can be used with `restore(to:)` to backtrack.
+        /// This must be O(1) and should not allocate.
+        var checkpoint: Checkpoint { get }
+
+        /// Restores the input to a previously saved checkpoint.
+        ///
+        /// - Parameter checkpoint: A checkpoint obtained from `checkpoint`.
+        /// - Precondition: The checkpoint was created from this input instance.
+        mutating func restore(to checkpoint: Checkpoint)
 
         /// Removes and returns the first element.
         ///
@@ -82,10 +103,6 @@ extension Parsing {
 // MARK: - Default Implementations
 
 extension Parsing.Input {
-    /// Default count implementation returns nil (unknown).
-    @inlinable
-    public var count: Int? { nil }
-
     /// Default remaining implementation returns self.
     @inlinable
     public var remaining: Self {
@@ -116,6 +133,7 @@ extension Parsing {
     public struct CollectionInput<Base: Collection>: Parsing.Input, Sendable
     where Base: Sendable, Base.Index: Sendable {
         public typealias Element = Base.Element
+        public typealias Checkpoint = Base.Index
 
         @usableFromInline
         let base: Base
@@ -124,7 +142,7 @@ extension Parsing {
         var startIndex: Base.Index
 
         @usableFromInline
-        var endIndex: Base.Index
+        let endIndex: Base.Index
 
         /// Creates input from a collection.
         @inlinable
@@ -147,13 +165,23 @@ extension Parsing {
         }
 
         @inlinable
-        public var count: Int? {
+        public var count: Int {
             base.distance(from: startIndex, to: endIndex)
         }
 
         @inlinable
         public var first: Element? {
             isEmpty ? nil : base[startIndex]
+        }
+
+        @inlinable
+        public var checkpoint: Checkpoint {
+            startIndex
+        }
+
+        @inlinable
+        public mutating func restore(to checkpoint: Checkpoint) {
+            startIndex = checkpoint
         }
 
         @inlinable
@@ -173,9 +201,23 @@ extension Parsing {
 // MARK: - ArraySlice Conformance
 
 extension ArraySlice: Parsing.Input {
+    public typealias Checkpoint = Int
+
     @inlinable
-    public var count: Int? {
+    public var count: Int {
         endIndex - startIndex
+    }
+
+    @inlinable
+    public var checkpoint: Checkpoint {
+        startIndex
+    }
+
+    @inlinable
+    public mutating func restore(to checkpoint: Checkpoint) {
+        // Create a new slice starting at checkpoint through the current end
+        // This works because ArraySlice subscripting preserves the base array reference
+        self = self[checkpoint...]
     }
 
     @inlinable
@@ -187,9 +229,22 @@ extension ArraySlice: Parsing.Input {
 // MARK: - Substring Conformance
 
 extension Substring: Parsing.Input {
+    public typealias Checkpoint = String.Index
+
     @inlinable
-    public var count: Int? {
+    public var count: Int {
         utf8.distance(from: utf8.startIndex, to: utf8.endIndex)
+    }
+
+    @inlinable
+    public var checkpoint: Checkpoint {
+        startIndex
+    }
+
+    @inlinable
+    public mutating func restore(to checkpoint: Checkpoint) {
+        // Create a suffix from checkpoint to current end
+        self = self[checkpoint...]
     }
 
     @inlinable
@@ -199,9 +254,22 @@ extension Substring: Parsing.Input {
 }
 
 extension Substring.UTF8View: Parsing.Input {
+    public typealias Checkpoint = String.Index
+
     @inlinable
-    public var count: Int? {
+    public var count: Int {
         distance(from: startIndex, to: endIndex)
+    }
+
+    @inlinable
+    public var checkpoint: Checkpoint {
+        startIndex
+    }
+
+    @inlinable
+    public mutating func restore(to checkpoint: Checkpoint) {
+        // Create a suffix from checkpoint
+        self = self[checkpoint...]
     }
 
     @inlinable

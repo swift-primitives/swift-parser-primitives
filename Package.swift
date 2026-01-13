@@ -16,18 +16,41 @@ let package = Package(
             name: "Parsing Primitives",
             targets: ["Parsing Primitives"]
         ),
+        .library(
+            name: "Parsing Machine",
+            targets: ["Parsing Machine"]
+        ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-primitives/swift-test-primitives.git", from: "0.0.1"),
+        .package(path: "../swift-test-primitives"),
+        .package(path: "../swift-container-primitives"),
+        .package(path: "../swift-storage-primitives"),
+        .package(path: "../swift-identity-primitives"),
     ],
     targets: [
         .target(
             name: "Parsing Primitives"
         ),
+        .target(
+            name: "Parsing Machine",
+            dependencies: [
+                "Parsing Primitives",
+                .product(name: "Container Primitives", package: "swift-container-primitives"),
+                .product(name: "Storage Primitives", package: "swift-storage-primitives"),
+                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
+            ]
+        ),
         .testTarget(
             name: "Parsing Primitives Tests",
             dependencies: [
                 "Parsing Primitives",
+                .product(name: "Test Primitives", package: "swift-test-primitives"),
+            ]
+        ),
+        .testTarget(
+            name: "Parsing Machine Tests",
+            dependencies: [
+                "Parsing Machine",
                 .product(name: "Test Primitives", package: "swift-test-primitives"),
             ]
         ),
