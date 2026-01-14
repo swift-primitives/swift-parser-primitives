@@ -202,6 +202,107 @@ struct ParsingTests {
         }
     }
 
+    @Suite("Serializer protocol")
+    struct SerializerTests {
+        /// A simple serializer that appends bytes to an array.
+        struct BytesSerializer: Parsing.Serializer {
+            typealias Failure = Never
+            let bytes: [UInt8]
+
+            func serialize(_ output: Void, into buffer: inout [UInt8]) {
+                buffer.append(contentsOf: bytes)
+            }
+        }
+
+        @Test("serializes into existing buffer by appending")
+        func serializesIntoBuffer() {
+            var buffer: [UInt8] = [0x01, 0x02]
+            let serializer = BytesSerializer(bytes: [0x03, 0x04, 0x05])
+            serializer.serialize((), into: &buffer)
+            // Should append, not prepend
+            #expect(buffer == [0x01, 0x02, 0x03, 0x04, 0x05])
+        }
+
+        @Test("convenience method returns new buffer")
+        func convenienceReturnsBuffer() {
+            let serializer = BytesSerializer(bytes: [0x41, 0x42, 0x43])
+            let result = serializer.serialize(())
+            #expect(result == [0x41, 0x42, 0x43])
+        }
+
+        /// A serializer that serializes an integer as ASCII digits.
+        struct IntSerializer: Parsing.Serializer {
+            typealias Failure = Never
+
+            func serialize(_ output: Int, into buffer: inout [UInt8]) {
+                buffer.append(contentsOf: Array(String(output).utf8))
+            }
+        }
+
+        @Test("serializes integer value")
+        func serializesInteger() {
+            let serializer = IntSerializer()
+            let result = serializer.serialize(42)
+            #expect(result == Array("42".utf8))
+        }
+
+        @Test("appends vs prepends - demonstrating difference from Printer")
+        func appendsVsPrepends() {
+            // Printer prepends
+            var printerBuffer: [UInt8] = [0x03]
+            PrinterTests.BytesPrinter(bytes: [0x01, 0x02]).print((), into: &printerBuffer)
+            #expect(printerBuffer == [0x01, 0x02, 0x03]) // Prepended
+
+            // Serializer appends
+            var serializerBuffer: [UInt8] = [0x03]
+            BytesSerializer(bytes: [0x01, 0x02]).serialize((), into: &serializerBuffer)
+            #expect(serializerBuffer == [0x03, 0x01, 0x02]) // Appended
+        }
+
+        /// A serializer that can fail.
+        struct ValidatingSerializer: Parsing.Serializer {
+            enum Error: Swift.Error, Sendable, Equatable {
+                case negativeValue
+            }
+
+            func serialize(_ output: Int, into buffer: inout [UInt8]) throws(Error) {
+                guard output >= 0 else {
+                    throw .negativeValue
+                }
+                buffer.append(contentsOf: Array(String(output).utf8))
+            }
+        }
+
+        @Test("throwing serializer succeeds on valid input")
+        func throwingSucceeds() throws {
+            let serializer = ValidatingSerializer()
+            let result = try serializer.serialize(42)
+            #expect(result == Array("42".utf8))
+        }
+
+        @Test("throwing serializer fails on invalid input")
+        func throwingFails() {
+            var buffer: [UInt8] = []
+            let serializer = ValidatingSerializer()
+            #expect(throws: ValidatingSerializer.Error.negativeValue) {
+                try serializer.serialize(-1, into: &buffer)
+            }
+        }
+
+        @Test("multiple appends accumulate correctly")
+        func multipleAppendsAccumulate() {
+            var buffer: [UInt8] = []
+            let serializer = IntSerializer()
+
+            serializer.serialize(1, into: &buffer)
+            serializer.serialize(2, into: &buffer)
+            serializer.serialize(3, into: &buffer)
+
+            // Result is "123" - each append adds to the end
+            #expect(buffer == Array("123".utf8))
+        }
+    }
+
     @Suite("ParserPrinter round-trip")
     struct ParserPrinterTests {
         /// A simple parser-printer for a single byte.

@@ -36,6 +36,16 @@
 //  - `Substring` / `Substring.UTF8View` - String parsing
 //  - Custom types implementing the protocol
 //
+//  ## Output Protocols
+//
+//  Two protocols handle output construction with different semantics:
+//
+//  - `Parsing.Printer`: Prepends to buffer for parser-printer round-trip symmetry.
+//    Use when you need `parse(print(value)) == value`.
+//
+//  - `Parsing.Serializer`: Appends to buffer for O(1) amortized performance.
+//    Use for one-way serialization (JSON encoding, binary formats, logging).
+//
 //  ## Relationship to Binary Module
 //
 //  Parsing complements serialization:
