@@ -2,6 +2,10 @@
 
 import PackageDescription
 
+let settings: [SwiftSetting] = [
+    .strictMemorySafety(),
+]
+
 let package = Package(
     name: "swift-parsing-primitives",
     platforms: [
@@ -59,3 +63,7 @@ let package = Package(
     ],
     swiftLanguageModes: [.v6]
 )
+
+for target in package.targets {
+    target.swiftSettings = (target.swiftSettings ?? []) + settings
+}

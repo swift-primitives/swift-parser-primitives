@@ -1,6 +1,7 @@
 import Parsing_Primitives
 
 extension Parsing.Machine {
+    @safe
     @usableFromInline
     struct Value: @unchecked Sendable {
         @usableFromInline

@@ -26,8 +26,8 @@ extension Parsing {
 
         @inlinable
         public init(_ string: StaticString) {
-            self.bytes = Array(string.utf8Start.withMemoryRebound(to: UInt8.self, capacity: string.utf8CodeUnitCount) {
-                UnsafeBufferPointer(start: $0, count: string.utf8CodeUnitCount)
+            self.bytes = unsafe Array(string.utf8Start.withMemoryRebound(to: UInt8.self, capacity: string.utf8CodeUnitCount) {
+                unsafe UnsafeBufferPointer(start: $0, count: string.utf8CodeUnitCount)
             })
         }
     }

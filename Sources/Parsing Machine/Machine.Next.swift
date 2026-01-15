@@ -7,6 +7,7 @@ extension Parsing.Machine {
 }
 
 extension Parsing.Machine.Next {
+    @safe
     @usableFromInline
     struct Erased: @unchecked Sendable {
         @usableFromInline

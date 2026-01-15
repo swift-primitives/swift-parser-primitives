@@ -1,9 +1,11 @@
 import Parsing_Primitives
 
 extension Parsing.Machine {
+    @safe
     @usableFromInline
     enum Frame<Input: Parsing.Input, Failure: Error & Sendable>: @unchecked Sendable
     where Input: Sendable {
+        @safe
         @usableFromInline
         enum Sequence: @unchecked Sendable {
             case second(b: Node<Input, Failure>.ID, combine: Combine.Erased)

@@ -2,6 +2,7 @@ import Parsing_Primitives
 import Identity_Primitives
 
 extension Parsing.Machine {
+    @safe
     @usableFromInline
     enum Node<Input: Parsing.Input, Failure: Error & Sendable>: @unchecked Sendable
     where Input: Sendable {
@@ -24,6 +25,7 @@ extension Parsing.Machine {
         case hole
     }
 
+    @safe
     @usableFromInline
     struct Leaf<Input: Parsing.Input, Failure: Error & Sendable>: @unchecked Sendable
     where Input: Sendable {

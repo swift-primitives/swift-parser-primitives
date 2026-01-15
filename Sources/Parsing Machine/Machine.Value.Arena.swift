@@ -79,8 +79,8 @@ extension Parsing.Machine.Value {
         /// - Returns: A copy of the stored value.
         @inlinable
         func read(_ handle: Handle) -> Parsing.Machine.Value {
-            slab.withUnsafePointer(at: Int(handle.slot)) { ptr in
-                ptr.pointee
+            unsafe slab.withUnsafePointer(at: Int(handle.slot)) { ptr in
+                unsafe ptr.pointee
             }
         }
 

@@ -7,6 +7,7 @@ extension Parsing.Machine {
 }
 
 extension Parsing.Machine.Transform {
+    @safe
     @usableFromInline
     struct Erased: @unchecked Sendable {
         @usableFromInline
@@ -21,6 +22,7 @@ extension Parsing.Machine.Transform {
         }
     }
 
+    @safe
     @usableFromInline
     struct Throwing<Failure: Error & Sendable>: @unchecked Sendable {
         @usableFromInline

@@ -7,6 +7,7 @@ extension Parsing.Machine {
 }
 
 extension Parsing.Machine.Finalize {
+    @safe
     @usableFromInline
     struct Array: @unchecked Sendable {
         @usableFromInline
