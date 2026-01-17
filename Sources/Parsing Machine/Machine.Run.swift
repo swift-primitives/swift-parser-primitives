@@ -1,6 +1,6 @@
 import Parsing_Primitives
-import Container_Primitives
-import Storage_Primitives
+public import Container_Primitives
+public import Storage_Primitives
 public import Identity_Primitives
 
 extension Parsing.Machine.Program {

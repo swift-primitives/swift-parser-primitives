@@ -1,5 +1,5 @@
 import Parsing_Primitives
-import Storage_Primitives
+public import Storage_Primitives
 
 extension Parsing.Machine.Value {
     /// A handle to a value stored in the arena.

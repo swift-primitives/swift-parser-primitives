@@ -27,11 +27,15 @@ let package = Package(
         .package(path: "../swift-storage-primitives"),
         .package(path: "../swift-identity-primitives"),
         .package(path: "../swift-reference-primitives"),
+        .package(path: "../swift-effect-primitives"),
         .package(path: "../../swift-foundations/swift-ascii"),
     ],
     targets: [
         .target(
-            name: "Parsing Primitives"
+            name: "Parsing Primitives",
+            dependencies: [
+                .product(name: "Effect Primitives", package: "swift-effect-primitives"),
+            ]
         ),
         .target(
             name: "Parsing Machine",
