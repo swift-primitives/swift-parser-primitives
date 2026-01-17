@@ -1,4 +1,5 @@
 import Parsing_Primitives
+public import Reference_Primitives
 
 extension Parsing.Machine {
     @safe
@@ -7,7 +8,7 @@ extension Parsing.Machine {
         @usableFromInline
         let type: ObjectIdentifier
 
-        /// Stores a retained Box<T> as AnyObject to avoid raw memory.
+        /// Stores a retained Reference_Primitives.Reference.Indirect<T> as AnyObject to avoid raw memory.
         @usableFromInline
         let box: AnyObject
 
@@ -19,7 +20,7 @@ extension Parsing.Machine {
 
         @inlinable
         static func make<T: Sendable>(_ value: T) -> Value {
-            let box = Box(value)
+            let box = Reference_Primitives.Reference.Indirect(value)
             return Value(
                 type: ObjectIdentifier(T.self),
                 box: box
@@ -32,7 +33,7 @@ extension Parsing.Machine {
                 return nil
             }
             // Safe conditional downcast
-            guard let typedBox = box as? Box<T> else {
+            guard let typedBox = box as? Reference_Primitives.Reference.Indirect<T> else {
                 return nil
             }
             return typedBox.value
@@ -46,8 +47,8 @@ extension Parsing.Machine {
                 "Machine.Value type mismatch: expected \(T.self), got type with id \(type)"
             )
             // Use conditional downcast instead of unsafeBitCast for safety
-            guard let typedBox = box as? Box<T> else {
-                fatalError("Machine.Value box downcast failed: expected Box<\(T.self)>")
+            guard let typedBox = box as? Reference_Primitives.Reference.Indirect<T> else {
+                fatalError("Machine.Value box downcast failed: expected Reference_Primitives.Reference.Indirect<\(T.self)>")
             }
             return typedBox.value
         }

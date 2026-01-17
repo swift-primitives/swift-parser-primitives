@@ -1,7 +1,7 @@
 import Parsing_Primitives
 import Container_Primitives
 import Storage_Primitives
-import Identity_Primitives
+public import Identity_Primitives
 
 extension Parsing.Machine.Program {
     @usableFromInline

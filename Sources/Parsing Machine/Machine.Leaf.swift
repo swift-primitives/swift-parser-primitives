@@ -1,5 +1,5 @@
 import Parsing_Primitives
-import Identity_Primitives
+public import Identity_Primitives
 
 extension Parsing.Machine {
     /// Creates a leaf expression that wraps an existing parser.

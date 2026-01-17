@@ -1,5 +1,5 @@
 @_exported import Parsing_Primitives
-import Identity_Primitives
+public import Identity_Primitives
 
 extension Parsing {
     public enum Machine {}
