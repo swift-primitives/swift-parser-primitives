@@ -3,7 +3,6 @@ import Testing
 import ASCII
 
 extension Parsing.CollectionInput where Base == [UInt8] {
-    @inlinable
     func remainingBytes() -> [UInt8] {
         var copy = self
         var out: [UInt8] = []

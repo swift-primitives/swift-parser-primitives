@@ -9,7 +9,7 @@ let package = Package(
         .iOS(.v26),
         .tvOS(.v26),
         .watchOS(.v26),
-        .visionOS(.v26),
+        .visionOS(.v26)
     ],
     products: [
         .library(
@@ -19,22 +19,21 @@ let package = Package(
         .library(
             name: "Parsing Machine",
             targets: ["Parsing Machine"]
-        ),
+        )
     ],
     dependencies: [
-        .package(path: "../swift-test-primitives"),
         .package(path: "../swift-container-primitives"),
         .package(path: "../swift-storage-primitives"),
         .package(path: "../swift-identity-primitives"),
         .package(path: "../swift-reference-primitives"),
         .package(path: "../swift-effect-primitives"),
-        .package(path: "../../swift-foundations/swift-ascii"),
+        .package(path: "../../swift-foundations/swift-ascii")
     ],
     targets: [
         .target(
             name: "Parsing Primitives",
             dependencies: [
-                .product(name: "Effect Primitives", package: "swift-effect-primitives"),
+                .product(name: "Effect Primitives", package: "swift-effect-primitives")
             ]
         ),
         .target(
@@ -44,22 +43,7 @@ let package = Package(
                 .product(name: "Container Primitives", package: "swift-container-primitives"),
                 .product(name: "Storage Primitives", package: "swift-storage-primitives"),
                 .product(name: "Identity Primitives", package: "swift-identity-primitives"),
-                .product(name: "Reference Primitives", package: "swift-reference-primitives"),
-            ]
-        ),
-        .testTarget(
-            name: "Parsing Primitives Tests",
-            dependencies: [
-                "Parsing Primitives",
-                .product(name: "Test Primitives", package: "swift-test-primitives"),
-            ]
-        ),
-        .testTarget(
-            name: "Parsing Machine Tests",
-            dependencies: [
-                "Parsing Machine",
-                .product(name: "Test Primitives", package: "swift-test-primitives"),
-                .product(name: "ASCII", package: "swift-ascii"),
+                .product(name: "Reference Primitives", package: "swift-reference-primitives")
             ]
         ),
     ],
@@ -72,7 +56,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
         .enableExperimentalFeature("Lifetimes"),
-        .strictMemorySafety(),
+        .strictMemorySafety()
     ]
     target.swiftSettings = (target.swiftSettings ?? []) + settings
 }
