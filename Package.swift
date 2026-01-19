@@ -22,6 +22,7 @@ let package = Package(
         )
     ],
     dependencies: [
+        .package(path: "../swift-input-primitives"),
         .package(path: "../swift-container-primitives"),
         .package(path: "../swift-storage-primitives"),
         .package(path: "../swift-identity-primitives"),
@@ -34,6 +35,7 @@ let package = Package(
         .target(
             name: "Parsing Primitives",
             dependencies: [
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Effect Primitives", package: "swift-effect-primitives")
             ]
         ),
@@ -41,6 +43,7 @@ let package = Package(
             name: "Parsing Machine",
             dependencies: [
                 "Parsing Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Container Primitives", package: "swift-container-primitives"),
                 .product(name: "Storage Primitives", package: "swift-storage-primitives"),
                 .product(name: "Identity Primitives", package: "swift-identity-primitives"),
