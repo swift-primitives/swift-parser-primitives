@@ -1,13 +1,36 @@
 @_exported import Parsing_Primitives
 public import Identity_Primitives
+public import Machine_Primitives
 
 extension Parsing {
     public enum Machine {}
 }
 
+// MARK: - Core Type Aliases
+
+extension Parsing.Machine {
+    /// Type-erased value container from Machine Primitives.
+    public typealias Value = Machine_Primitives.Machine.Value
+
+    /// Transform operations from Machine Primitives.
+    public typealias Transform = Machine_Primitives.Machine.Transform
+
+    /// Combine operations from Machine Primitives.
+    public typealias Combine = Machine_Primitives.Machine.Combine
+
+    /// Finalize operations from Machine Primitives.
+    public typealias Finalize = Machine_Primitives.Machine.Finalize
+
+    /// Next-node selection for flatMap from Machine Primitives.
+    public typealias Next = Machine_Primitives.Machine.Next
+}
+
 extension Parsing.Machine {
     /// A parser built from a defunctionalized program that runs without recursive call-stack growth.
-    public struct Parser<Input: Parsing.Input, Output, Failure: Error & Sendable>: Parsing.Parser, Sendable
+    ///
+    /// Note: Parser does not conform to Sendable because the underlying Program contains
+    /// closures. For cross-task sharing, use explicit Sendable wrappers with documented invariants.
+    public struct Parser<Input: Parsing.Input, Output, Failure: Error & Sendable>: Parsing.Parser
     where Input: Sendable, Output: Sendable {
         @usableFromInline
         let program: Program<Input, Failure>
@@ -23,7 +46,7 @@ extension Parsing.Machine {
 
         @inlinable
         public func parse(_ input: inout Input) throws(Failure) -> Output {
-            try program.run(root: root, input: &input, as: Output.self)
+            try Parsing.Machine.run(program: program, root: root, input: &input, as: Output.self)
         }
     }
 
@@ -40,7 +63,10 @@ extension Parsing.Machine {
     }
 
     /// A builder context for constructing machine programs.
-    public struct Builder<Input: Parsing.Input, Failure: Error & Sendable>: Sendable
+    ///
+    /// Note: Builder does not conform to Sendable. Program construction should
+    /// complete on a single task before the resulting Parser is used.
+    public struct Builder<Input: Parsing.Input, Failure: Error & Sendable>
     where Input: Sendable {
         @usableFromInline
         var program: Program<Input, Failure>

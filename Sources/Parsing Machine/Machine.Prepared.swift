@@ -5,6 +5,8 @@
 //  Immutable compiled parser wrapper for cross-task sharing.
 //
 
+public import Machine_Primitives
+
 extension Parsing.Machine {
     /// An immutable, pre-compiled parser wrapper.
     ///
@@ -84,10 +86,12 @@ extension Parsing.Machine.Prepared: Parsing.Parser {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
-        try program.run(root: root, input: &input, as: Output.self)
+        try Parsing.Machine.run(program: program, root: root, input: &input, as: Output.self)
     }
 }
 
 // MARK: - Sendable Conformance
-
-extension Parsing.Machine.Prepared: Sendable where P: Sendable {}
+//
+// Note: Prepared does NOT conform to Sendable because the underlying Machine.Program
+// contains closures that may not be Sendable. For cross-task sharing, wrap in an
+// explicit Sendable container with documented invariants, or use actors.

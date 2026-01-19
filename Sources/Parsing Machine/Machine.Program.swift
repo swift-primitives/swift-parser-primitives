@@ -1,33 +1,10 @@
 import Parsing_Primitives
+public import Machine_Primitives
 public import Identity_Primitives
 
 extension Parsing.Machine {
-    @usableFromInline
-    struct Program<Input: Parsing.Input, Failure: Error & Sendable>: Sendable
-    where Input: Sendable {
-        @usableFromInline
-        var nodes: [Node<Input, Failure>]
-
-        @usableFromInline
-        let maxDepth: Int?
-
-        @usableFromInline
-        init(maxDepth: Int? = nil) {
-            self.nodes = []
-            self.maxDepth = maxDepth
-        }
-
-        @usableFromInline
-        mutating func allocate(_ node: Node<Input, Failure>) -> Node<Input, Failure>.ID {
-            let id = Node<Input, Failure>.ID(nodes.count)
-            nodes.append(node)
-            return id
-        }
-
-        @usableFromInline
-        subscript(id: Node<Input, Failure>.ID) -> Node<Input, Failure> {
-            get { nodes[id.rawValue] }
-            set { nodes[id.rawValue] = newValue }
-        }
-    }
+    /// Program is a typealias to the core Machine.Program with Parsing's Leaf type.
+    public typealias Program<Input: Parsing.Input, Failure: Error & Sendable> =
+        Machine_Primitives.Machine.Program<Leaf<Input, Failure>, Failure>
+        where Input: Sendable
 }

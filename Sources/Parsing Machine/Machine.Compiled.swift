@@ -5,6 +5,8 @@
 //  Lazy-compiling parser wrapper with cached program.
 //
 
+public import Machine_Primitives
+
 extension Parsing.Machine {
     /// A parser wrapper that lazily compiles to a Machine program.
     ///
@@ -142,6 +144,6 @@ extension Parsing.Machine.Compiled: Parsing.Parser {
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
         let result = cache.getOrCompile(source: source, witness: witness)
-        return try result.program.run(root: result.root, input: &input, as: Output.self)
+        return try Parsing.Machine.run(program: result.program, root: result.root, input: &input, as: Output.self)
     }
 }

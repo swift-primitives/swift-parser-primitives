@@ -5,6 +5,8 @@
 //  Incremental parsing context with memoization.
 //
 
+public import Machine_Primitives
+
 extension Parsing.Machine.Parser.Parse where Input.Checkpoint: Hashable {
     /// Returns an incremental parsing context.
     ///
@@ -78,7 +80,8 @@ extension Parsing.Machine.Parser.Parse.Incremental {
     /// - Throws: The failure error if parsing fails.
     @inlinable
     public mutating func callAsFunction(_ input: inout Input) throws(Failure) -> Output {
-        try parser.program.run(
+        try Parsing.Machine.run(
+            program: parser.program,
             root: parser.root,
             input: &input,
             memoization: &memoization,

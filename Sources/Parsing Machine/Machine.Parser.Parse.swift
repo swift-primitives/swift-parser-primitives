@@ -5,6 +5,8 @@
 //  Parse accessor providing execution variants.
 //
 
+public import Machine_Primitives
+
 extension Parsing.Machine.Parser {
     /// Accessor for parse execution variants.
     ///
@@ -53,6 +55,6 @@ extension Parsing.Machine.Parser.Parse {
     /// - Throws: The failure error if parsing fails.
     @inlinable
     public func callAsFunction(_ input: inout Input) throws(Failure) -> Output {
-        try parser.program.run(root: parser.root, input: &input, as: Output.self)
+        try Parsing.Machine.run(program: parser.program, root: parser.root, input: &input, as: Output.self)
     }
 }

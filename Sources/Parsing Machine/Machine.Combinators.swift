@@ -1,4 +1,5 @@
 import Parsing_Primitives
+public import Machine_Primitives
 public import Identity_Primitives
 
 // MARK: - Pure
@@ -80,10 +81,11 @@ extension Parsing.Machine.Expression {
         _ next: @Sendable @escaping (Output) -> Parsing.Machine.Expression<Input, Failure, T>,
         in builder: inout Parsing.Machine.Builder<Input, Failure>
     ) -> Parsing.Machine.Expression<Input, Failure, T> {
+        typealias NodeID = Parsing.Machine.Node<Input, Failure>.ID
         let node = Parsing.Machine.Node<Input, Failure>.flatMap(
             child: self.node,
-            next: Parsing.Machine.Next.Erased { (output: Output) in
-                Parsing.Machine.Next.Erased.ID(next(output).node.rawValue)
+            next: Parsing.Machine.Next.Erased { (output: Output) -> NodeID in
+                NodeID(next(output).node.rawValue)
             }
         )
         let nodeID = builder.allocate(node)

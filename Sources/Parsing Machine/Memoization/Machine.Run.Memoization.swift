@@ -9,19 +9,25 @@ import Parsing_Primitives
 public import Container_Primitives
 public import Storage_Primitives
 public import Identity_Primitives
+public import Machine_Primitives
 
-extension Parsing.Machine.Program where Input.Checkpoint: Hashable {
+extension Parsing.Machine {
     /// Executes the program with memoization.
     ///
     /// Caches parse results at each (position, node) pair,
     /// enabling linear-time parsing and incremental re-parsing.
     @usableFromInline
-    func run<Output>(
-        root: Parsing.Machine.Node<Input, Failure>.ID,
+    static func run<Input, Output, Failure>(
+        program: Program<Input, Failure>,
+        root: Node<Input, Failure>.ID,
         input: inout Input,
-        memoization: inout Parsing.Machine.Memoization.Table<Input.Checkpoint>,
+        memoization: inout Memoization.Table<Input.Checkpoint>,
         as outputType: Output.Type
-    ) throws(Failure) -> Output {
+    ) throws(Failure) -> Output
+    where Input: Parsing.Input & Sendable,
+          Input.Checkpoint: Hashable,
+          Failure: Error & Sendable
+    {
         typealias Value = Parsing.Machine.Value
         typealias Frame = Parsing.Machine.Frame<Input, Failure>
         typealias Node = Parsing.Machine.Node<Input, Failure>
@@ -34,7 +40,7 @@ extension Parsing.Machine.Program where Input.Checkpoint: Hashable {
         // The 4x multiplier accounts for worst-case frame usage per recursion level:
         // - 1 recursiveExit frame per level
         // - Up to 3 additional frames for combinator chains (sequence, map, oneOf, etc.)
-        let stackCapacity = (maxDepth ?? 10000) * 4
+        let stackCapacity = (program.maxDepth ?? 10000) * 4
         var frames: Stack<Frame>
         do {
             frames = try Stack<Frame>(capacity: stackCapacity)
@@ -52,6 +58,56 @@ extension Parsing.Machine.Program where Input.Checkpoint: Hashable {
 
         var depth = 0
         var pendingHandle: Value.Handle? = nil
+
+        func handleMemoizedFailure<E: Error>(
+            error: E,
+            frames: inout Stack<Frame>,
+            arena: inout Value.Arena,
+            input: inout Input,
+            depth: inout Int,
+            memoization: inout Memoization.Table<Input.Checkpoint>
+        ) throws(Failure) -> Recovery {
+            while let frame = frames.pop() {
+                switch frame {
+                case .oneOf(let alternatives, let index, let savedCheckpoint):
+                    if index < alternatives.count {
+                        input.restore(to: savedCheckpoint)
+                        try! frames.push(.oneOf(
+                            alternatives: alternatives,
+                            index: index + 1,
+                            savedCheckpoint: savedCheckpoint
+                        ))
+                        return .continueWith(Recovery.ID(rawValue: alternatives[index].rawValue))
+                    }
+
+                case .many(_, let savedCheckpoint, let resultHandles, let finalize):
+                    input.restore(to: savedCheckpoint)
+                    var results: [Value] = []
+                    results.reserveCapacity(resultHandles.count)
+                    for handle in resultHandles {
+                        results.append(arena.release(handle))
+                    }
+                    let finalValue = finalize.finalize(results)
+                    let handle = arena.allocate(finalValue)
+                    return .handleReady(handle)
+
+                case .optional(let savedCheckpoint, _, let noneHandle):
+                    input.restore(to: savedCheckpoint)
+                    return .handleReady(noneHandle)
+
+                case .recursiveExit:
+                    depth -= 1
+
+                case .extra(.memoization(let node, let startPosition)):
+                    let key = MemoKey(position: startPosition, node: node)
+                    memoization.store(.failure, for: key)
+
+                case .map, .tryMap, .flatMap, .sequence:
+                    continue
+                }
+            }
+            return .propagate
+        }
 
         while true {
             if let handle = pendingHandle {
@@ -129,7 +185,7 @@ extension Parsing.Machine.Program where Input.Checkpoint: Hashable {
                     depth -= 1
                     pendingHandle = arena.allocate(value)
 
-                case .memoization(let node, let startPosition):
+                case .extra(.memoization(let node, let startPosition)):
                     // Cache the successful result
                     let key = MemoKey(position: startPosition, node: node)
                     let entry = MemoEntry.success(output: value, end: input.checkpoint)
@@ -172,9 +228,9 @@ extension Parsing.Machine.Program where Input.Checkpoint: Hashable {
             }
 
             // Cache miss: push memoization frame and execute
-            try! frames.push(.memoization(node: current.rawValue, startPosition: input.checkpoint))
+            try! frames.push(.extra(.memoization(node: current.rawValue, startPosition: input.checkpoint)))
 
-            let node = self[current]
+            let node = program[current]
 
             switch node {
             case .leaf(let leaf):
@@ -244,7 +300,7 @@ extension Parsing.Machine.Program where Input.Checkpoint: Hashable {
                 current = child
 
             case .ref(let target):
-                if let limit = maxDepth, depth >= limit {
+                if let limit = program.maxDepth, depth >= limit {
                     let error = Parsing.Machine.Runtime.Error.depthExceeded(limit: limit)
                     switch try handleMemoizedFailure(
                         error: error,
@@ -271,60 +327,5 @@ extension Parsing.Machine.Program where Input.Checkpoint: Hashable {
                 fatalError("Unpatched hole in program")
             }
         }
-    }
-
-    @usableFromInline
-    func handleMemoizedFailure<E: Error>(
-        error: E,
-        frames: inout Stack<Parsing.Machine.Frame<Input, Failure>>,
-        arena: inout Parsing.Machine.Value.Arena,
-        input: inout Input,
-        depth: inout Int,
-        memoization: inout Parsing.Machine.Memoization.Table<Input.Checkpoint>
-    ) throws(Failure) -> Parsing.Machine.Failure.Recovery {
-        typealias Recovery = Parsing.Machine.Failure.Recovery
-        typealias MemoKey = Parsing.Machine.Memoization.Key<Input.Checkpoint>
-
-        while let frame = frames.pop() {
-            switch frame {
-            case .oneOf(let alternatives, let index, let savedCheckpoint):
-                if index < alternatives.count {
-                    input.restore(to: savedCheckpoint)
-                    try! frames.push(.oneOf(
-                        alternatives: alternatives,
-                        index: index + 1,
-                        savedCheckpoint: savedCheckpoint
-                    ))
-                    return .continueWith(Recovery.ID(alternatives[index].rawValue))
-                }
-
-            case .many(_, let savedCheckpoint, let resultHandles, let finalize):
-                input.restore(to: savedCheckpoint)
-                var results: [Parsing.Machine.Value] = []
-                results.reserveCapacity(resultHandles.count)
-                for handle in resultHandles {
-                    results.append(arena.release(handle))
-                }
-                let finalValue = finalize.finalize(results)
-                let handle = arena.allocate(finalValue)
-                return .handleReady(handle)
-
-            case .optional(let savedCheckpoint, _, let noneHandle):
-                input.restore(to: savedCheckpoint)
-                return .handleReady(noneHandle)
-
-            case .recursiveExit:
-                depth -= 1
-
-            case .memoization(let node, let startPosition):
-                // Cache the failure
-                let key = MemoKey(position: startPosition, node: node)
-                memoization.store(.failure, for: key)
-
-            case .map, .tryMap, .flatMap, .sequence:
-                continue
-            }
-        }
-        return .propagate
     }
 }

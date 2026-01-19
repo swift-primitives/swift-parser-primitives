@@ -1,5 +1,6 @@
 import Parsing_Primitives
 public import Identity_Primitives
+public import Machine_Primitives
 
 extension Parsing.Machine {
     @usableFromInline

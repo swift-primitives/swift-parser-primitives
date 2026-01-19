@@ -2,14 +2,19 @@ import Parsing_Primitives
 public import Container_Primitives
 public import Storage_Primitives
 public import Identity_Primitives
+public import Machine_Primitives
 
-extension Parsing.Machine.Program {
+extension Parsing.Machine {
     @usableFromInline
-    func run<Output>(
-        root: Parsing.Machine.Node<Input, Failure>.ID,
+    static func run<Input, Output, Failure>(
+        program: Program<Input, Failure>,
+        root: Node<Input, Failure>.ID,
         input: inout Input,
         as outputType: Output.Type
-    ) throws(Failure) -> Output {
+    ) throws(Failure) -> Output
+    where Input: Parsing.Input & Sendable,
+          Failure: Error & Sendable
+    {
         typealias Value = Parsing.Machine.Value
         typealias Frame = Parsing.Machine.Frame<Input, Failure>
         typealias Node = Parsing.Machine.Node<Input, Failure>
@@ -20,7 +25,7 @@ extension Parsing.Machine.Program {
         // The 4x multiplier accounts for worst-case frame usage per recursion level:
         // - 1 recursiveExit frame per level
         // - Up to 3 additional frames for combinator chains (sequence, map, oneOf, etc.)
-        let stackCapacity = (maxDepth ?? 10000) * 4
+        let stackCapacity = (program.maxDepth ?? 10000) * 4
         var frames: Stack<Frame>
         do {
             frames = try Stack<Frame>(capacity: stackCapacity)
@@ -43,10 +48,58 @@ extension Parsing.Machine.Program {
         // DEBUG INVARIANTS
         func checkInvariants(_ label: String) {
             precondition(depth >= 0, "[\(label)] depth went negative: \(depth)")
-            precondition(current.rawValue >= 0 && current.rawValue < nodes.count, "[\(label)] current node out of bounds: \(current)")
-            if let limit = maxDepth {
+            precondition(current.rawValue >= 0 && current.rawValue < program.nodes.count, "[\(label)] current node out of bounds: \(current)")
+            if let limit = program.maxDepth {
                 precondition(depth <= limit + 1, "[\(label)] depth exceeded limit: \(depth) > \(limit)")
             }
+        }
+
+        func handleFailure<E: Error>(
+            error: E,
+            frames: inout Stack<Frame>,
+            arena: inout Value.Arena,
+            input: inout Input,
+            depth: inout Int
+        ) throws(Failure) -> Recovery {
+            while let frame = frames.pop() {
+                switch frame {
+                case .oneOf(let alternatives, let index, let savedCheckpoint):
+                    if index < alternatives.count {
+                        input.restore(to: savedCheckpoint)
+                        try! frames.push(.oneOf(
+                            alternatives: alternatives,
+                            index: index + 1,
+                            savedCheckpoint: savedCheckpoint
+                        ))
+                        return .continueWith(Recovery.ID(rawValue: alternatives[index].rawValue))
+                    }
+
+                case .many(_, let savedCheckpoint, let resultHandles, let finalize):
+                    input.restore(to: savedCheckpoint)
+                    var results: [Value] = []
+                    results.reserveCapacity(resultHandles.count)
+                    for handle in resultHandles {
+                        results.append(arena.release(handle))
+                    }
+                    let finalValue = finalize.finalize(results)
+                    let handle = arena.allocate(finalValue)
+                    return .handleReady(handle)
+
+                case .optional(let savedCheckpoint, _, let noneHandle):
+                    input.restore(to: savedCheckpoint)
+                    return .handleReady(noneHandle)
+
+                case .recursiveExit:
+                    depth -= 1
+
+                case .extra(.memoization):
+                    fatalError("Memoization frame in non-memoized execution")
+
+                case .map, .tryMap, .flatMap, .sequence:
+                    continue
+                }
+            }
+            return .propagate
         }
 
         while true {
@@ -130,14 +183,14 @@ extension Parsing.Machine.Program {
                     checkInvariants("after-recursiveExit-return")
                     pendingHandle = arena.allocate(value)
 
-                case .memoization:
+                case .extra(.memoization):
                     fatalError("Memoization frame in non-memoized execution")
                 }
 
                 continue
             }
 
-            let node = self[current]
+            let node = program[current]
 
             switch node {
             case .leaf(let leaf):
@@ -209,7 +262,7 @@ extension Parsing.Machine.Program {
                 current = child
 
             case .ref(let target):
-                if let limit = maxDepth, depth >= limit {
+                if let limit = program.maxDepth, depth >= limit {
                     let error = Parsing.Machine.Runtime.Error.depthExceeded(limit: limit)
                     switch try handleFailure(
                         error: error,
@@ -236,58 +289,5 @@ extension Parsing.Machine.Program {
                 fatalError("Unpatched hole in program")
             }
         }
-    }
-
-    @usableFromInline
-    func handleFailure<E: Error>(
-        error: E,
-        frames: inout Stack<Parsing.Machine.Frame<Input, Failure>>,
-        arena: inout Parsing.Machine.Value.Arena,
-        input: inout Input,
-        depth: inout Int
-    ) throws(Failure) -> Parsing.Machine.Failure.Recovery {
-        typealias Recovery = Parsing.Machine.Failure.Recovery
-
-        while let frame = frames.pop() {
-            switch frame {
-            case .oneOf(let alternatives, let index, let savedCheckpoint):
-                if index < alternatives.count {
-                    input.restore(to: savedCheckpoint)
-                    try! frames.push(.oneOf(
-                        alternatives: alternatives,
-                        index: index + 1,
-                        savedCheckpoint: savedCheckpoint
-                    ))
-                    return .continueWith(Recovery.ID(alternatives[index].rawValue))
-                }
-
-            case .many(_, let savedCheckpoint, let resultHandles, let finalize):
-                input.restore(to: savedCheckpoint)
-                // Collect values from handles
-                var results: [Parsing.Machine.Value] = []
-                results.reserveCapacity(resultHandles.count)
-                for handle in resultHandles {
-                    results.append(arena.release(handle))
-                }
-                let finalValue = finalize.finalize(results)
-                let handle = arena.allocate(finalValue)
-                return .handleReady(handle)
-
-            case .optional(let savedCheckpoint, _, let noneHandle):
-                input.restore(to: savedCheckpoint)
-                // noneHandle already contains the none value
-                return .handleReady(noneHandle)
-
-            case .recursiveExit:
-                depth -= 1
-
-            case .memoization:
-                fatalError("Memoization frame in non-memoized execution")
-
-            case .map, .tryMap, .flatMap, .sequence:
-                continue
-            }
-        }
-        return .propagate
     }
 }
