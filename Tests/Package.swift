@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-parsing-primitives-tests",
+    name: "swift-parser-primitives-tests",
     platforms: [
         .macOS(.v26),
         .iOS(.v26),
@@ -18,28 +18,28 @@ let package = Package(
         .package(path: "../../../swift-foundations/swift-testing"),
         // Test primitives (for test utilities)
         .package(path: "../../swift-test-primitives"),
-        // ASCII (for Parsing Machine Tests)
+        // ASCII (for Parser Machine Tests)
         .package(path: "../../../swift-foundations/swift-ascii"),
     ],
     targets: [
         .testTarget(
-            name: "Parsing Primitives Tests",
+            name: "Parser Primitives Tests",
             dependencies: [
-                .product(name: "Parsing Primitives", package: "swift-parsing-primitives"),
+                .product(name: "Parser Primitives", package: "swift-parser-primitives"),
                 .product(name: "Testing", package: "swift-testing"),
                 .product(name: "Test Primitives", package: "swift-test-primitives"),
             ],
-            path: "Sources/Parsing Primitives Tests"
+            path: "Sources/Parser Primitives Tests"
         ),
         .testTarget(
-            name: "Parsing Machine Tests",
+            name: "Parser Machine Tests",
             dependencies: [
-                .product(name: "Parsing Machine", package: "swift-parsing-primitives"),
+                .product(name: "Parser Machine", package: "swift-parser-primitives"),
                 .product(name: "Testing", package: "swift-testing"),
                 .product(name: "Test Primitives", package: "swift-test-primitives"),
                 .product(name: "ASCII", package: "swift-ascii"),
             ],
-            path: "Sources/Parsing Machine Tests"
+            path: "Sources/Parser Machine Tests"
         ),
     ],
     swiftLanguageModes: [.v6]

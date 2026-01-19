@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-parsing-primitives",
+    name: "swift-parser-primitives",
     platforms: [
         .macOS(.v26),
         .iOS(.v26),
@@ -13,18 +13,18 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "Parsing Primitives",
-            targets: ["Parsing Primitives"]
+            name: "Parser Primitives",
+            targets: ["Parser Primitives"]
         ),
         .library(
-            name: "Parsing Machine",
-            targets: ["Parsing Machine"]
+            name: "Parser Machine",
+            targets: ["Parser Machine"]
         )
     ],
     dependencies: [
         .package(path: "../swift-input-primitives"),
-        .package(path: "../swift-container-primitives"),
-        .package(path: "../swift-storage-primitives"),
+        .package(path: "../swift-stack-primitives"),
+        .package(path: "../swift-slab-primitives"),
         .package(path: "../swift-identity-primitives"),
         .package(path: "../swift-reference-primitives"),
         .package(path: "../swift-effect-primitives"),
@@ -33,19 +33,19 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Parsing Primitives",
+            name: "Parser Primitives",
             dependencies: [
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Effect Primitives", package: "swift-effect-primitives")
             ]
         ),
         .target(
-            name: "Parsing Machine",
+            name: "Parser Machine",
             dependencies: [
-                "Parsing Primitives",
+                "Parser Primitives",
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
-                .product(name: "Container Primitives", package: "swift-container-primitives"),
-                .product(name: "Storage Primitives", package: "swift-storage-primitives"),
+                .product(name: "Stack Primitives", package: "swift-stack-primitives"),
+                .product(name: "Slab Primitives", package: "swift-slab-primitives"),
                 .product(name: "Identity Primitives", package: "swift-identity-primitives"),
                 .product(name: "Reference Primitives", package: "swift-reference-primitives"),
                 .product(name: "Machine Primitives", package: "swift-machine-primitives")
