@@ -29,7 +29,7 @@ let package = Package(
         .package(path: "../swift-reference-primitives"),
         .package(path: "../swift-effect-primitives"),
         .package(path: "../swift-machine-primitives"),
-        .package(path: "../../swift-foundations/swift-ascii")
+        .package(path: "../swift-ascii-primitives")
     ],
     targets: [
         .target(

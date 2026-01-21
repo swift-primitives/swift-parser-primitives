@@ -1,6 +1,6 @@
 import Testing
 @testable import Parser_Machine
-import ASCII
+import ASCII_Primitives
 
 extension Parsing.CollectionInput where Base == [UInt8] {
     func remainingBytes() -> [UInt8] {
