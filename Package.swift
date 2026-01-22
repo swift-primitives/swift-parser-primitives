@@ -35,6 +35,8 @@ let package = Package(
         .package(path: "../swift-machine-primitives"),
         .package(path: "../swift-ascii-primitives"),
         .package(path: "../swift-binary-primitives"),
+        // SDG(wraps): parsers wrap parse errors
+        // .package(path: "../swift-error-primitives"),
     ],
     targets: [
         .target(
