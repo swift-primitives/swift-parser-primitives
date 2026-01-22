@@ -34,8 +34,8 @@ extension Parser.Machine {
     /// let prepared = myParser.compiled(using: .leaf).prepared()
     /// // `prepared` can be shared across tasks
     /// ```
-    public struct Compiled<P: Parser.Parser>
-    where P.Input: Parser.Input & Sendable,
+    public struct Compiled<P: Parser_Primitives.Parser.`Protocol`>
+    where P.Input: Parser_Primitives.Parser.Input & Sendable,
           P.Output: Sendable,
           P.Failure: Sendable
     {
@@ -125,7 +125,7 @@ extension Parser.Machine.Compiled {
             var builder = Parser.Machine.Builder<P.Input, P.Failure>()
             let expression = witness.compile(source, into: &builder)
             let result = Result(
-                program: builder.program,
+                program: builder.build(),
                 root: expression.node
             )
             compiled = result
@@ -136,7 +136,7 @@ extension Parser.Machine.Compiled {
 
 // MARK: - Parser Conformance
 
-extension Parser.Machine.Compiled: Parser.Parser {
+extension Parser.Machine.Compiled: Parser_Primitives.Parser.`Protocol` {
     public typealias Input = P.Input
     public typealias Output = P.Output
     public typealias Failure = P.Failure

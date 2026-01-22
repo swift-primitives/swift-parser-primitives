@@ -9,11 +9,11 @@ extension Parser.Machine {
         _ parser: P,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
-    where P: Parser.Parser & Sendable,
+    where P: Parser_Primitives.Parser.`Protocol` & Sendable,
           P.Input == Input,
           P.Output == Output,
           P.Failure == Failure,
-          Input: Parser.Input & Sendable,
+          Input: Parser_Primitives.Parser.Input & Sendable,
           Output: Sendable,
           Failure: Error & Sendable
     {
@@ -31,10 +31,10 @@ extension Parser.Machine {
         mapError: @Sendable @escaping (P.Failure) -> Failure,
         in builder: inout Builder<Input, Failure>
     ) -> Expression<Input, Failure, Output>
-    where P: Parser.Parser & Sendable,
+    where P: Parser_Primitives.Parser.`Protocol` & Sendable,
           P.Input == Input,
           P.Output == Output,
-          Input: Parser.Input & Sendable,
+          Input: Parser_Primitives.Parser.Input & Sendable,
           Output: Sendable,
           Failure: Error & Sendable
     {

@@ -27,8 +27,8 @@ extension Parser.Machine.Compile {
     /// // Use it to compile
     /// let compiled = myParser.compiled(using: witness)
     /// ```
-    public struct Witness<P: Parser.Parser>
-    where P.Input: Parser.Input & Sendable,
+    public struct Witness<P: Parser_Primitives.Parser.`Protocol`>
+    where P.Input: Parser_Primitives.Parser.Input & Sendable,
           P.Output: Sendable,
           P.Failure: Sendable
     {

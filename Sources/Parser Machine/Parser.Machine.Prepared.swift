@@ -37,8 +37,8 @@ extension Parser.Machine {
     ///
     /// `Prepared` is conditionally `Sendable` when `P` is `Sendable`.
     /// It contains no mutable state and is safe for concurrent use.
-    public struct Prepared<P: Parser.Parser>
-    where P.Input: Parser.Input & Sendable,
+    public struct Prepared<P: Parser_Primitives.Parser.`Protocol`>
+    where P.Input: Parser_Primitives.Parser.Input & Sendable,
           P.Output: Sendable,
           P.Failure: Sendable
     {
@@ -71,15 +71,15 @@ extension Parser.Machine {
         public init(source: P, witness: Compile.Witness<P>) {
             var builder = Builder<P.Input, P.Failure>()
             let expression = witness.compile(source, into: &builder)
-            self.program = builder.program
             self.root = expression.node
+            self.program = builder.build()
         }
     }
 }
 
 // MARK: - Parser Conformance
 
-extension Parser.Machine.Prepared: Parser.Parser {
+extension Parser.Machine.Prepared: Parser_Primitives.Parser.`Protocol` {
     public typealias Input = P.Input
     public typealias Output = P.Output
     public typealias Failure = P.Failure

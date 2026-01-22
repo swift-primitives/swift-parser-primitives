@@ -24,16 +24,16 @@ extension Parser.Machine {
         memoization: inout Memoization.Table<Input.Checkpoint>,
         as outputType: Output.Type
     ) throws(Failure) -> Output
-    where Input: Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable,
           Input.Checkpoint: Hashable,
           Failure: Error & Sendable
     {
-        typealias Value = Parser.Machine.Value
-        typealias Frame = Parser.Machine.Frame<Input, Failure>
-        typealias Node = Parser.Machine.Node<Input, Failure>
-        typealias Recovery = Parser.Machine.Failure.Recovery
-        typealias MemoKey = Parser.Machine.Memoization.Key<Input.Checkpoint>
-        typealias MemoEntry = Parser.Machine.Memoization.Entry<Input.Checkpoint>
+        typealias Value = Parser_Primitives.Parser.Machine.Value
+        typealias Frame = Parser_Primitives.Parser.Machine.Frame<Input, Failure>
+        typealias Node = Parser_Primitives.Parser.Machine.Node<Input, Failure>
+        typealias Recovery = Parser_Primitives.Parser.Machine.Failure.Recovery
+        typealias MemoKey = Parser_Primitives.Parser.Machine.Memoization.Key<Input.Checkpoint>
+        typealias MemoEntry = Parser_Primitives.Parser.Machine.Memoization.Entry<Input.Checkpoint>
 
         var current = root
         // Pre-allocate stack capacity based on maxDepth or reasonable default.
@@ -43,7 +43,7 @@ extension Parser.Machine {
         let stackCapacity = (program.maxDepth ?? 10000) * 4
         var frames: Stack<Frame>
         do {
-            frames = try Stack<Frame>(capacity: stackCapacity)
+            frames = try Stack<Frame>(reservingCapacity: stackCapacity)
         } catch {
             fatalError("Failed to allocate frame stack with capacity \(stackCapacity): \(error)")
         }
@@ -71,29 +71,33 @@ extension Parser.Machine {
                 switch frame {
                 case .oneOf(let alternatives, let index, let savedCheckpoint):
                     if index < alternatives.count {
-                        input.restore(to: savedCheckpoint)
+                        input.setPosition(to: savedCheckpoint)
                         try! frames.push(.oneOf(
                             alternatives: alternatives,
                             index: index + 1,
                             savedCheckpoint: savedCheckpoint
                         ))
-                        return .continueWith(Recovery.ID(rawValue: alternatives[index].rawValue))
+                        return .continueWith(Recovery.ID(alternatives[index].rawValue))
                     }
 
                 case .many(_, let savedCheckpoint, let resultHandles, let finalize):
-                    input.restore(to: savedCheckpoint)
+                    input.setPosition(to: savedCheckpoint)
                     var results: [Value] = []
                     results.reserveCapacity(resultHandles.count)
                     for handle in resultHandles {
                         results.append(arena.release(handle))
                     }
-                    let finalValue = finalize.finalize(results)
+                    let finalValue = finalize.finalize(using: program.captures, results)
                     let handle = arena.allocate(finalValue)
                     return .handleReady(handle)
 
                 case .optional(let savedCheckpoint, _, let noneHandle):
-                    input.restore(to: savedCheckpoint)
+                    input.setPosition(to: savedCheckpoint)
                     return .handleReady(noneHandle)
+
+                case .fold(_, let savedCheckpoint, let accHandle, _):
+                    input.setPosition(to: savedCheckpoint)
+                    return .handleReady(accHandle)
 
                 case .recursiveExit:
                     depth -= 1
@@ -127,12 +131,12 @@ extension Parser.Machine {
 
                 switch frame {
                 case .map(let transform):
-                    let transformed = transform.apply(value)
+                    let transformed = transform.apply(using: program.captures, value)
                     pendingHandle = arena.allocate(transformed)
 
                 case .tryMap(let transform):
                     do {
-                        let transformed = try transform.apply(value)
+                        let transformed = try transform.apply(using: program.captures, value)
                         pendingHandle = arena.allocate(transformed)
                     } catch {
                         switch try handleMemoizedFailure(
@@ -153,7 +157,7 @@ extension Parser.Machine {
                     }
 
                 case .flatMap(let next):
-                    let erasedID = next.next(value)
+                    let erasedID = next.next(using: program.captures, value)
                     current = Node.ID(erasedID.rawValue)
 
                 case .sequence(.second(let b, let combine)):
@@ -163,7 +167,7 @@ extension Parser.Machine {
 
                 case .sequence(.combine(let firstHandle, let combine)):
                     let first = arena.release(firstHandle)
-                    let combined = combine.combine(first, value)
+                    let combined = combine.combine(using: program.captures, first, value)
                     pendingHandle = arena.allocate(combined)
 
                 case .oneOf:
@@ -176,9 +180,16 @@ extension Parser.Machine {
                     try! frames.push(.many(child: child, savedCheckpoint: checkpoint, resultHandles: resultHandles, finalize: finalize))
                     current = child
 
+                case .fold(let child, _, let accHandle, let combine):
+                    let acc = arena.release(accHandle)
+                    let newAcc = combine.combine(using: program.captures, acc, value)
+                    let checkpoint = input.checkpoint
+                    try! frames.push(.fold(child: child, savedCheckpoint: checkpoint, accumulatorHandle: arena.allocate(newAcc), combine: combine))
+                    current = child
+
                 case .optional(_, let wrapSome, let noneHandle):
                     _ = arena.release(noneHandle)
-                    let wrapped = wrapSome.apply(value)
+                    let wrapped = wrapSome.apply(using: program.captures, value)
                     pendingHandle = arena.allocate(wrapped)
 
                 case .recursiveExit:
@@ -202,13 +213,13 @@ extension Parser.Machine {
                 switch cached {
                 case .success(let output, let endPosition):
                     // Cache hit: use cached result
-                    input.restore(to: endPosition)
+                    input.setPosition(to: endPosition)
                     pendingHandle = arena.allocate(output)
                     continue
                 case .failure:
                     // Cached failure: propagate through failure handling
                     switch try handleMemoizedFailure(
-                        error: Parser.Machine.Runtime.Error.cachedFailure,
+                        error: Parser_Primitives.Parser.Machine.Runtime.Error.cachedFailure,
                         frames: &frames,
                         arena: &arena,
                         input: &input,
@@ -293,6 +304,11 @@ extension Parser.Machine {
                 try! frames.push(.many(child: child, savedCheckpoint: checkpoint, resultHandles: [], finalize: finalize))
                 current = child
 
+            case .fold(let child, let initial, let combine):
+                let checkpoint = input.checkpoint
+                try! frames.push(.fold(child: child, savedCheckpoint: checkpoint, accumulatorHandle: arena.allocate(initial), combine: combine))
+                current = child
+
             case .optional(let child, let wrapSome, let noneValue):
                 let checkpoint = input.checkpoint
                 let noneHandle = arena.allocate(noneValue)
@@ -301,7 +317,7 @@ extension Parser.Machine {
 
             case .ref(let target):
                 if let limit = program.maxDepth, depth >= limit {
-                    let error = Parser.Machine.Runtime.Error.depthExceeded(limit: limit)
+                    let error = Parser_Primitives.Parser.Machine.Runtime.Error.depthExceeded(limit: limit)
                     switch try handleMemoizedFailure(
                         error: error,
                         frames: &frames,

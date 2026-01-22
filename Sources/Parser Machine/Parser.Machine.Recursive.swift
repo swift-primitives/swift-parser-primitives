@@ -20,7 +20,7 @@ extension Parser.Machine {
         maxDepth: Int? = nil,
         _ build: (inout Builder<Input, Failure>, Reference<Input, Failure, Output>) -> Expression<Input, Failure, Output>
     ) -> Parser<Input, Output, Failure>
-    where Input: Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable,
           Output: Sendable,
           Failure: Error & Sendable
     {
@@ -34,9 +34,9 @@ extension Parser.Machine {
         let root = build(&builder, ref)
 
         // Patch the hole to point to the actual root
-        builder.program[holeID] = .ref(root.node)
+        builder.inner.nodes[holeID.rawValue] = .ref(root.node)
 
-        return Parser(program: builder.program, root: root.node)
+        return Parser(program: builder.build(), root: root.node)
     }
 
     /// Creates a non-recursive parser from a builder closure.
@@ -44,12 +44,12 @@ extension Parser.Machine {
     public static func build<Input, Output, Failure>(
         _ build: (inout Builder<Input, Failure>) -> Expression<Input, Failure, Output>
     ) -> Parser<Input, Output, Failure>
-    where Input: Parser.Input & Sendable,
+    where Input: Parser_Primitives.Parser.Input & Sendable,
           Output: Sendable,
           Failure: Error & Sendable
     {
         var builder = Builder<Input, Failure>()
         let root = build(&builder)
-        return Parser(program: builder.program, root: root.node)
+        return Parser(program: builder.build(), root: root.node)
     }
 }
