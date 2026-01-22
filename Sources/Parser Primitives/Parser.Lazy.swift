@@ -48,7 +48,7 @@ extension Parser {
     /// The closure is called on every `parse` invocation, creating a
     /// new parser instance each time. For hot paths, consider caching
     /// the parser externally if profiling shows this as a bottleneck.
-    public struct Lazy<P: Parser>: Sendable
+    public struct Lazy<P: Parser.`Protocol`>: Sendable
     where P: Sendable {
         @usableFromInline
         internal let build: @Sendable () -> P
@@ -73,7 +73,7 @@ extension Parser {
 
 // MARK: - Parser Conformance
 
-extension Parser.Lazy: Parser.Parser {
+extension Parser.Lazy: Parser.`Protocol` {
     public typealias Input = P.Input
     public typealias Output = P.Output
     public typealias Failure = P.Failure

@@ -24,7 +24,7 @@ extension Parser {
     }
 }
 
-extension Parser.Byte: Parser.Parser {
+extension Parser.Byte: Parser.`Protocol` {
     public typealias Output = Void
     public typealias Failure = Parser.Error.Either<Parser.EndOfInput.Error, Parser.Match.Error>
 
@@ -36,7 +36,7 @@ extension Parser.Byte: Parser.Parser {
         guard actual == expected else {
             throw .right(.byteMismatch(expected: [expected], found: [actual]))
         }
-        _ = input.removeFirst()
+        _ = input.advance()
     }
 }
 

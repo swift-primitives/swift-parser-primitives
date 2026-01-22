@@ -7,7 +7,7 @@
 
 extension Parser.OneOf {
     /// A parser that tries three alternatives.
-    public struct Three<P0: Parser.Parser, P1: Parser.Parser, P2: Parser.Parser>: Sendable
+    public struct Three<P0: Parser.`Protocol`, P1: Parser.`Protocol`, P2: Parser.`Protocol`>: Sendable
     where P0: Sendable, P1: Sendable, P2: Sendable,
           P0.Input == P1.Input, P1.Input == P2.Input,
           P0.Output == P1.Output, P1.Output == P2.Output {
@@ -29,7 +29,7 @@ extension Parser.OneOf {
     }
 }
 
-extension Parser.OneOf.Three: Parser.Parser {
+extension Parser.OneOf.Three: Parser.`Protocol` {
     public typealias Input = P0.Input
     public typealias Output = P0.Output
     public typealias Failure = Parser.OneOf.Errors<P0.Failure, P1.Failure, P2.Failure>

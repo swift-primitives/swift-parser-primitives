@@ -29,7 +29,7 @@ extension Parser.First {
     }
 }
 
-extension Parser.First.Where: Parser.Parser {
+extension Parser.First.Where: Parser.`Protocol` {
     public typealias Output = Input.Element
     public typealias Failure = Parser.Error.Either<Parser.EndOfInput.Error, Parser.Match.Error>
 
@@ -41,6 +41,6 @@ extension Parser.First.Where: Parser.Parser {
         guard predicate(element) else {
             throw .right(.predicateFailed(description: expected))
         }
-        return input.removeFirst()
+        return input.advance()
     }
 }

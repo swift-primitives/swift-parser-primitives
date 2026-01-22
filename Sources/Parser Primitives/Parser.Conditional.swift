@@ -9,7 +9,7 @@ extension Parser {
     /// A parser that represents a conditional branch.
     ///
     /// Used by `Take.Builder` for `if-else` statements.
-    public enum Conditional<First: Parser.Parser, Second: Parser.Parser>: Sendable
+    public enum Conditional<First: Parser.`Protocol`, Second: Parser.`Protocol`>: Sendable
     where First: Sendable, Second: Sendable,
           First.Input == Second.Input, First.Output == Second.Output {
         case first(First)
@@ -17,7 +17,7 @@ extension Parser {
     }
 }
 
-extension Parser.Conditional: Parser.Parser {
+extension Parser.Conditional: Parser.`Protocol` {
     public typealias Input = First.Input
     public typealias Output = First.Output
     public typealias Failure = Parser.Error.Either<First.Failure, Second.Failure>

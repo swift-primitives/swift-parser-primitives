@@ -21,7 +21,7 @@ extension Parser.Prefix {
     }
 }
 
-extension Parser.Prefix.Through: Parser.Parser {
+extension Parser.Prefix.Through: Parser.`Protocol` {
     public typealias Output = Input
     public typealias Failure = Parser.Match.Error
 

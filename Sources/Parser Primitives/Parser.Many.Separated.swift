@@ -28,7 +28,7 @@ extension Parser.Many {
     ///     ","
     /// }
     /// ```
-    public struct Separated<Input: Parser.Input, Element: Parser.Parser, Separator: Parser.Parser>: Sendable
+    public struct Separated<Input: Parser.Input, Element: Parser.`Protocol`, Separator: Parser.`Protocol`>: Sendable
     where Element: Sendable, Separator: Sendable,
           Element.Input == Input, Separator.Input == Input {
         @usableFromInline
@@ -80,7 +80,7 @@ extension Parser.Many {
     }
 }
 
-extension Parser.Many.Separated: Parser.Parser {
+extension Parser.Many.Separated: Parser.`Protocol` {
     public typealias Output = [Element.Output]
     public typealias Failure = Parser.Many.Error
 

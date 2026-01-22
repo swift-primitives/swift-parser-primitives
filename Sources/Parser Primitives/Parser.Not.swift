@@ -30,7 +30,7 @@ extension Parser {
     /// - Upstream succeeds → `Not` fails with `.unexpectedMatch`
     /// - Upstream fails → `Not` succeeds with `Void`
     /// - Input is **never** consumed
-    public struct Not<Upstream: Parser>: Sendable
+    public struct Not<Upstream: Parser.`Protocol`>: Sendable
     where Upstream: Sendable {
         @usableFromInline
         internal let upstream: Upstream
@@ -57,7 +57,7 @@ extension Parser.Not {
 
 // MARK: - Parser Conformance
 
-extension Parser.Not: Parser.Parser {
+extension Parser.Not: Parser.`Protocol` {
     public typealias Input = Upstream.Input
     public typealias Output = Void
     public typealias Failure = Parser.Not<Upstream>.Error
@@ -78,7 +78,7 @@ extension Parser.Not: Parser.Parser {
 
 // MARK: - Parser Extension
 
-extension Parser.Parser where Self: Sendable {
+extension Parser.`Protocol` where Self: Sendable {
     /// Creates a parser that succeeds when this parser fails.
     ///
     /// Useful for negative lookahead - ensuring input does NOT

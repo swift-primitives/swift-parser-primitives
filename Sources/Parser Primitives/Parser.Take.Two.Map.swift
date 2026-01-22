@@ -28,7 +28,7 @@ extension Parser.Take.Two {
     }
 }
 
-extension Parser.Take.Two.Map: Parser.Parser {
+extension Parser.Take.Two.Map: Parser.`Protocol` {
     public typealias Input = P0.Input
     public typealias Output = NewOutput
     public typealias Failure = Parser.Take.Two<P0, P1>.Failure

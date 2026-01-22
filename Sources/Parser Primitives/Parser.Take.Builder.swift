@@ -43,7 +43,7 @@ extension Parser.Take.Builder {
 
     /// Builds a single parser unchanged.
     @inlinable
-    public static func buildBlock<P: Parser.Parser>(
+    public static func buildBlock<P: Parser.`Protocol`>(
         _ parser: P
     ) -> P where P.Input == Input {
         parser
@@ -55,7 +55,7 @@ extension Parser.Take.Builder {
 extension Parser.Take.Builder {
     /// Combines two parsers sequentially.
     @inlinable
-    public static func buildBlock<P0: Parser.Parser, P1: Parser.Parser>(
+    public static func buildBlock<P0: Parser.`Protocol`, P1: Parser.`Protocol`>(
         _ p0: P0,
         _ p1: P1
     ) -> Parser.Take.Two<P0, P1>
@@ -65,7 +65,7 @@ extension Parser.Take.Builder {
 
     /// Combines parsers, skipping Void output from first.
     @inlinable
-    public static func buildBlock<P0: Parser.Parser, P1: Parser.Parser>(
+    public static func buildBlock<P0: Parser.`Protocol`, P1: Parser.`Protocol`>(
         _ p0: P0,
         _ p1: P1
     ) -> Parser.Skip.First<P0, P1>
@@ -75,7 +75,7 @@ extension Parser.Take.Builder {
 
     /// Combines parsers, skipping Void output from second.
     @inlinable
-    public static func buildBlock<P0: Parser.Parser, P1: Parser.Parser>(
+    public static func buildBlock<P0: Parser.`Protocol`, P1: Parser.`Protocol`>(
         _ p0: P0,
         _ p1: P1
     ) -> Parser.Skip.Second<P0, P1>
@@ -89,7 +89,7 @@ extension Parser.Take.Builder {
 extension Parser.Take.Builder {
     /// Starts building a partial block.
     @inlinable
-    public static func buildPartialBlock<P: Parser.Parser>(
+    public static func buildPartialBlock<P: Parser.`Protocol`>(
         first: P
     ) -> P where P.Input == Input {
         first
@@ -97,7 +97,7 @@ extension Parser.Take.Builder {
 
     /// Accumulates into partial block (general case - two elements).
     @inlinable
-    public static func buildPartialBlock<Accumulated: Parser.Parser, Next: Parser.Parser>(
+    public static func buildPartialBlock<Accumulated: Parser.`Protocol`, Next: Parser.`Protocol`>(
         accumulated: Accumulated,
         next: Next
     ) -> Parser.Take.Two<Accumulated, Next>
@@ -111,8 +111,8 @@ extension Parser.Take.Builder {
     /// `((A, B), C)` becomes `(A, B, C)`.
     @inlinable
     public static func buildPartialBlock<
-        Accumulated: Parser.Parser,
-        Next: Parser.Parser,
+        Accumulated: Parser.`Protocol`,
+        Next: Parser.`Protocol`,
         each O1,
         O2
     >(
@@ -133,7 +133,7 @@ extension Parser.Take.Builder {
 
     /// Accumulates with Void skipping (accumulated is Void).
     @inlinable
-    public static func buildPartialBlock<Accumulated: Parser.Parser, Next: Parser.Parser>(
+    public static func buildPartialBlock<Accumulated: Parser.`Protocol`, Next: Parser.`Protocol`>(
         accumulated: Accumulated,
         next: Next
     ) -> Parser.Skip.First<Accumulated, Next>
@@ -143,7 +143,7 @@ extension Parser.Take.Builder {
 
     /// Accumulates with Void skipping (next is Void).
     @inlinable
-    public static func buildPartialBlock<Accumulated: Parser.Parser, Next: Parser.Parser>(
+    public static func buildPartialBlock<Accumulated: Parser.`Protocol`, Next: Parser.`Protocol`>(
         accumulated: Accumulated,
         next: Next
     ) -> Parser.Skip.Second<Accumulated, Next>
@@ -157,7 +157,7 @@ extension Parser.Take.Builder {
 extension Parser.Take.Builder {
     /// Builds an optional parser from an `if` statement.
     @inlinable
-    public static func buildIf<P: Parser.Parser>(
+    public static func buildIf<P: Parser.`Protocol`>(
         _ parser: P?
     ) -> Parser.Optional<P> where P.Input == Input {
         .init(parser)
@@ -165,7 +165,7 @@ extension Parser.Take.Builder {
 
     /// Builds the first branch of if-else.
     @inlinable
-    public static func buildEither<First: Parser.Parser, Second: Parser.Parser>(
+    public static func buildEither<First: Parser.`Protocol`, Second: Parser.`Protocol`>(
         first: First
     ) -> Parser.Conditional<First, Second>
     where First.Input == Input, Second.Input == Input, First.Output == Second.Output {
@@ -174,7 +174,7 @@ extension Parser.Take.Builder {
 
     /// Builds the second branch of if-else.
     @inlinable
-    public static func buildEither<First: Parser.Parser, Second: Parser.Parser>(
+    public static func buildEither<First: Parser.`Protocol`, Second: Parser.`Protocol`>(
         second: Second
     ) -> Parser.Conditional<First, Second>
     where First.Input == Input, Second.Input == Input, First.Output == Second.Output {
@@ -187,7 +187,7 @@ extension Parser.Take.Builder {
 extension Parser.Take.Builder {
     /// Wraps an expression in the builder context.
     @inlinable
-    public static func buildExpression<P: Parser.Parser>(
+    public static func buildExpression<P: Parser.`Protocol`>(
         _ parser: P
     ) -> P where P.Input == Input {
         parser

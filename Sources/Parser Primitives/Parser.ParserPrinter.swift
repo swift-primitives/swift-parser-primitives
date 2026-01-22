@@ -23,7 +23,7 @@ extension Parser {
     /// ## Usage
     ///
     /// ```swift
-    /// struct IntParserPrinter: Parser.ParserPrinter {
+    /// struct IntParserPrinter: Parser.`Protocol`Printer {
     ///     typealias Input = Substring
     ///     typealias Output = Int
     ///     typealias Failure = Parser.Match.Error
@@ -37,5 +37,5 @@ extension Parser {
     ///     }
     /// }
     /// ```
-    public protocol ParserPrinter<Input, Output, Failure>: Parser, Printer {}
+    public protocol ParserPrinter<Input, Output, Failure>: Parser.`Protocol`, Printer {}
 }

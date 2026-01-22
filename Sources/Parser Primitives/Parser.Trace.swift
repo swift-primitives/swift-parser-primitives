@@ -28,7 +28,7 @@ extension Parser {
     /// var logs: [String] = []
     /// let parser = myParser.trace("test") { logs.append($0) }
     /// ```
-    public struct Trace<Upstream: Parser>: Sendable
+    public struct Trace<Upstream: Parser.`Protocol`>: Sendable
     where Upstream: Sendable {
         @usableFromInline
         let upstream: Upstream
@@ -60,7 +60,7 @@ extension Parser {
 
 // MARK: - Parser Conformance
 
-extension Parser.Trace: Parser.Parser {
+extension Parser.Trace: Parser.`Protocol` {
     public typealias Input = Upstream.Input
     public typealias Output = Upstream.Output
     public typealias Failure = Upstream.Failure
@@ -81,7 +81,7 @@ extension Parser.Trace: Parser.Parser {
 
 // MARK: - Parser Extension
 
-extension Parser.Parser where Self: Sendable {
+extension Parser.`Protocol` where Self: Sendable {
     /// Wraps this parser with debug tracing.
     ///
     /// Logs entry, success, and failure events to help debug

@@ -16,7 +16,7 @@ extension Parser {
     }
 }
 
-extension Parser.Rest: Parser.Parser {
+extension Parser.Rest: Parser.`Protocol` {
     public typealias Output = Input
     public typealias Failure = Never
 

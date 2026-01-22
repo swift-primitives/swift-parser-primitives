@@ -5,7 +5,7 @@
 //  String conformance to Parser and Printer for literal usage.
 //
 
-extension String: Parser.Parser {
+extension String: Parser.`Protocol` {
     public typealias Input = Substring
     public typealias Output = Void
     public typealias Failure = Parser.Match.Error

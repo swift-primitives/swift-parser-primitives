@@ -22,7 +22,7 @@ extension Parser.Prefix {
     }
 }
 
-extension Parser.Prefix.UpTo: Parser.Parser {
+extension Parser.Prefix.UpTo: Parser.`Protocol` {
     public typealias Output = Input
     public typealias Failure = Never
 

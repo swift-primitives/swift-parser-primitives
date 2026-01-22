@@ -19,7 +19,7 @@ extension Parser {
     }
 }
 
-extension Parser.Always: Parser.Parser {
+extension Parser.Always: Parser.`Protocol` {
     public typealias Failure = Never
 
     @inlinable

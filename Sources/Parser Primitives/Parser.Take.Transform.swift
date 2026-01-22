@@ -17,7 +17,7 @@ extension Parser.Take {
     ///     IntParser()
     /// }
     /// ```
-    public struct Transform<Input, BodyOutput, Output, Body: Parser.Parser>: Sendable
+    public struct Transform<Input, BodyOutput, Output, Body: Parser.`Protocol`>: Sendable
     where Body: Sendable, Body.Input == Input, Body.Output == BodyOutput {
         @usableFromInline
         let body: Body
@@ -36,7 +36,7 @@ extension Parser.Take {
     }
 }
 
-extension Parser.Take.Transform: Parser.Parser {
+extension Parser.Take.Transform: Parser.`Protocol` {
     public typealias Failure = Body.Failure
 
     @inlinable

@@ -10,7 +10,7 @@ extension Parser.Take {
     ///
     /// The outputs are combined into a tuple `(P0.Output, P1.Output)`.
     /// Created by `Take.Builder` when combining two non-Void parsers.
-    public struct Two<P0: Parser.Parser, P1: Parser.Parser>: Sendable
+    public struct Two<P0: Parser.`Protocol`, P1: Parser.`Protocol`>: Sendable
     where P0: Sendable, P1: Sendable, P0.Input == P1.Input {
         @usableFromInline
         internal let p0: P0
@@ -26,7 +26,7 @@ extension Parser.Take {
     }
 }
 
-extension Parser.Take.Two: Parser.Parser {
+extension Parser.Take.Two: Parser.`Protocol` {
     public typealias Input = P0.Input
     public typealias Output = (P0.Output, P1.Output)
     public typealias Failure = Parser.Error.Either<P0.Failure, P1.Failure>

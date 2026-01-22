@@ -5,7 +5,7 @@
 //  Array conformance to Parser and Printer for literal usage.
 //
 
-extension Array: Parser.Parser where Element: Equatable {
+extension Swift.Array: Parser.`Protocol` where Element: Equatable {
     public typealias Input = ArraySlice<Element>
     public typealias Output = Void
     public typealias Failure = Parser.Match.Error
@@ -24,7 +24,7 @@ extension Array: Parser.Parser where Element: Equatable {
     }
 }
 
-extension Array: Parser.Printer where Element: Equatable {
+extension Swift.Array: Parser.Printer where Element: Equatable {
     @inlinable
     public func print(_ output: Void, into input: inout ArraySlice<Element>) {
         input.insert(contentsOf: self, at: input.startIndex)

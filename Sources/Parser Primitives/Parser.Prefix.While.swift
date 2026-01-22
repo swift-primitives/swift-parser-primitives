@@ -44,7 +44,7 @@ extension Parser.Prefix {
     }
 }
 
-extension Parser.Prefix.While: Parser.Parser {
+extension Parser.Prefix.While: Parser.`Protocol` {
     public typealias Output = Input
     public typealias Failure = Parser.Constraint.Error
 

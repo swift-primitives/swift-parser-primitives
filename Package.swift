@@ -19,7 +19,11 @@ let package = Package(
         .library(
             name: "Parser Machine",
             targets: ["Parser Machine"]
-        )
+        ),
+        .library(
+            name: "Binary Parser Primitives",
+            targets: ["Binary Parser Primitives"]
+        ),
     ],
     dependencies: [
         .package(path: "../swift-input-primitives"),
@@ -29,7 +33,8 @@ let package = Package(
         .package(path: "../swift-reference-primitives"),
         .package(path: "../swift-effect-primitives"),
         .package(path: "../swift-machine-primitives"),
-        .package(path: "../swift-ascii-primitives")
+        .package(path: "../swift-ascii-primitives"),
+        .package(path: "../swift-binary-primitives"),
     ],
     targets: [
         .target(
@@ -49,6 +54,15 @@ let package = Package(
                 .product(name: "Identity Primitives", package: "swift-identity-primitives"),
                 .product(name: "Reference Primitives", package: "swift-reference-primitives"),
                 .product(name: "Machine Primitives", package: "swift-machine-primitives")
+            ]
+        ),
+        .target(
+            name: "Binary Parser Primitives",
+            dependencies: [
+                "Parser Primitives",
+                .product(name: "Binary Primitives", package: "swift-binary-primitives"),
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
+                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
             ]
         ),
     ],

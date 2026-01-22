@@ -15,7 +15,7 @@ extension Parser {
     /// ```swift
     /// let optionalSign = Parser.Optionally { Sign() }
     /// ```
-    public struct Optionally<Wrapped: Parser.Parser>: Sendable
+    public struct Optionally<Wrapped: Parser.`Protocol`>: Sendable
     where Wrapped: Sendable {
         @usableFromInline
         internal let wrapped: Wrapped
@@ -27,7 +27,7 @@ extension Parser {
     }
 }
 
-extension Parser.Optionally: Parser.Parser {
+extension Parser.Optionally: Parser.`Protocol` {
     public typealias Input = Wrapped.Input
     public typealias Output = Wrapped.Output?
     public typealias Failure = Never

@@ -19,7 +19,7 @@ extension Parser.Consume {
     }
 }
 
-extension Parser.Consume.Exactly: Parser.Parser {
+extension Parser.Consume.Exactly: Parser.`Protocol` {
     public typealias Output = Input
     public typealias Failure = Parser.Constraint.Error
 

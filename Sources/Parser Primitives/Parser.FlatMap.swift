@@ -11,7 +11,7 @@ extension Parser {
     /// This is the monad `flatMap` (or `bind`) operation for parsers.
     ///
     /// Created via `parser.flatMap(_:)`.
-    public struct FlatMap<Upstream: Parser.Parser, Downstream: Parser.Parser>: Sendable
+    public struct FlatMap<Upstream: Parser.`Protocol`, Downstream: Parser.`Protocol`>: Sendable
     where Upstream: Sendable, Downstream: Sendable, Upstream.Input == Downstream.Input {
         @usableFromInline
         let upstream: Upstream
@@ -30,7 +30,7 @@ extension Parser {
     }
 }
 
-extension Parser.FlatMap: Parser.Parser {
+extension Parser.FlatMap: Parser.`Protocol` {
     public typealias Input = Upstream.Input
     public typealias Output = Downstream.Output
     public typealias Failure = Parser.Error.Either<Upstream.Failure, Downstream.Failure>

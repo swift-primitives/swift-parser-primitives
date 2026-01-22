@@ -16,7 +16,7 @@ extension Parser {
     }
 }
 
-extension Parser.End: Parser.Parser {
+extension Parser.End: Parser.`Protocol` {
     public typealias Output = Void
     public typealias Failure = Parser.Match.Error
 

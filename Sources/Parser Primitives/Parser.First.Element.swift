@@ -19,7 +19,7 @@ extension Parser.First {
     }
 }
 
-extension Parser.First.Element: Parser.Parser {
+extension Parser.First.Element: Parser.`Protocol` {
     public typealias Output = Input.Element
     public typealias Failure = Parser.EndOfInput.Error
 
@@ -28,7 +28,7 @@ extension Parser.First.Element: Parser.Parser {
         guard !input.isEmpty else {
             throw .unexpected(expected: "any element")
         }
-        return input.removeFirst()
+        return input.advance()
     }
 }
 

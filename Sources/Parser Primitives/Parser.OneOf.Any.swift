@@ -57,7 +57,7 @@ extension Parser.OneOf.`Any` {
 
 // MARK: - Parser Conformance
 
-extension Parser.OneOf.`Any`: Parser.Parser {
+extension Parser.OneOf.`Any`: Parser.`Protocol` {
     public typealias Failure = Error
 
     @inlinable

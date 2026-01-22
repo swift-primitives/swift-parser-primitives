@@ -26,7 +26,7 @@ extension Parser.OneOf {
 extension Parser.OneOf.Builder {
     /// Builds a single alternative.
     @inlinable
-    public static func buildBlock<P: Parser.Parser>(
+    public static func buildBlock<P: Parser.`Protocol`>(
         _ parser: P
     ) -> P where P.Input == Input, P.Output == Output {
         parser
@@ -34,7 +34,7 @@ extension Parser.OneOf.Builder {
 
     /// Combines two alternatives.
     @inlinable
-    public static func buildBlock<P0: Parser.Parser, P1: Parser.Parser>(
+    public static func buildBlock<P0: Parser.`Protocol`, P1: Parser.`Protocol`>(
         _ p0: P0,
         _ p1: P1
     ) -> Parser.OneOf.Two<P0, P1>
@@ -45,7 +45,7 @@ extension Parser.OneOf.Builder {
 
     /// Combines three alternatives.
     @inlinable
-    public static func buildBlock<P0: Parser.Parser, P1: Parser.Parser, P2: Parser.Parser>(
+    public static func buildBlock<P0: Parser.`Protocol`, P1: Parser.`Protocol`, P2: Parser.`Protocol`>(
         _ p0: P0,
         _ p1: P1,
         _ p2: P2
@@ -57,7 +57,7 @@ extension Parser.OneOf.Builder {
 
     /// Starts partial block.
     @inlinable
-    public static func buildPartialBlock<P: Parser.Parser>(
+    public static func buildPartialBlock<P: Parser.`Protocol`>(
         first: P
     ) -> P where P.Input == Input, P.Output == Output {
         first
@@ -65,7 +65,7 @@ extension Parser.OneOf.Builder {
 
     /// Accumulates alternatives.
     @inlinable
-    public static func buildPartialBlock<Accumulated: Parser.Parser, Next: Parser.Parser>(
+    public static func buildPartialBlock<Accumulated: Parser.`Protocol`, Next: Parser.`Protocol`>(
         accumulated: Accumulated,
         next: Next
     ) -> Parser.OneOf.Two<Accumulated, Next>

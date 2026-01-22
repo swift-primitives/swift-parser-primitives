@@ -12,7 +12,7 @@ extension Parser {
     /// parsing fails.
     ///
     /// Created via `parser.filter(_:)`.
-    public struct Filter<Upstream: Parser.Parser>: Sendable
+    public struct Filter<Upstream: Parser.`Protocol`>: Sendable
     where Upstream: Sendable {
         @usableFromInline
         internal let upstream: Upstream
@@ -31,7 +31,7 @@ extension Parser {
     }
 }
 
-extension Parser.Filter: Parser.Parser {
+extension Parser.Filter: Parser.`Protocol` {
     public typealias Input = Upstream.Input
     public typealias Output = Upstream.Output
     public typealias Failure = Parser.Error.Either<Upstream.Failure, Parser.Constraint.Error>

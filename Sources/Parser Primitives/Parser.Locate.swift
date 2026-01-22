@@ -18,7 +18,7 @@ extension Parser {
     /// let parser = Parser.Locate(myParser)
     /// // Errors now include offset information
     /// ```
-    public struct Locate<Base: Input, Upstream: Parser>: Sendable
+    public struct Locate<Base: Input, Upstream: Parser.`Protocol`>: Sendable
     where Upstream: Sendable, Base: Sendable, Upstream.Input == Base {
         @usableFromInline
         let upstream: Upstream
@@ -30,7 +30,7 @@ extension Parser {
     }
 }
 
-extension Parser.Locate: Parser.Parser {
+extension Parser.Locate: Parser.`Protocol` {
     public typealias Input = Parser.Tracked<Base>
     public typealias Output = Upstream.Output
     public typealias Failure = Parser.Error.Located<Upstream.Failure>
@@ -53,7 +53,7 @@ extension Parser.Locate: Parser.Parser {
 
 // MARK: - Parser Extension
 
-extension Parser.Parser where Self: Sendable, Input: Parser.Input & Sendable {
+extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input & Sendable {
     /// Wraps this parser to produce located errors.
     ///
     /// The returned parser requires `Tracked<Input>` and produces

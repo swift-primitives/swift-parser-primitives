@@ -22,7 +22,7 @@ extension Parser {
     /// ```swift
     /// try parser.parse(&input)
     /// ```
-    public struct Parse<P: Parser> {
+    public struct Parse<P: Parser.`Protocol`> {
         @usableFromInline
         package let parser: P
 
@@ -35,7 +35,7 @@ extension Parser {
 
 // MARK: - Parser Extension
 
-extension Parser.Parser {
+extension Parser.`Protocol` {
     /// Accessor for parse operation variants.
     ///
     /// Use this to discover and access different execution strategies:

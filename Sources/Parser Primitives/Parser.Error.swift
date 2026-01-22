@@ -21,7 +21,7 @@ extension Parser.Error {
     ///     MyCustomError(from: error)
     /// }
     /// ```
-    public struct Transform<Upstream: Parser.Parser>: Sendable
+    public struct Transform<Upstream: Parser.`Protocol`>: Sendable
     where Upstream: Sendable {
         @usableFromInline
         let upstream: Upstream
@@ -35,7 +35,7 @@ extension Parser.Error {
 
 // MARK: - Parser.error Property
 
-extension Parser.Parser where Self: Sendable {
+extension Parser.`Protocol` where Self: Sendable {
     /// Access error transformation methods.
     ///
     /// ## Transform Error Type
@@ -60,7 +60,7 @@ extension Parser.Parser where Self: Sendable {
 
 extension Parser.Error {
     /// A parser that transforms the failure type of an upstream parser.
-    public struct Map<Upstream: Parser.Parser, NewFailure: Swift.Error & Sendable>: Sendable
+    public struct Map<Upstream: Parser.`Protocol`, NewFailure: Swift.Error & Sendable>: Sendable
     where Upstream: Sendable {
         @usableFromInline
         let upstream: Upstream
@@ -79,7 +79,7 @@ extension Parser.Error {
     }
 }
 
-extension Parser.Error.Map: Parser.Parser {
+extension Parser.Error.Map: Parser.`Protocol` {
     public typealias Input = Upstream.Input
     public typealias Output = Upstream.Output
     public typealias Failure = NewFailure
@@ -120,7 +120,7 @@ extension Parser.Error {
     /// A parser that replaces failures with a default output value.
     ///
     /// This makes the parser infallible (`Failure == Never`).
-    public struct Replace<Upstream: Parser.Parser>: Sendable
+    public struct Replace<Upstream: Parser.`Protocol`>: Sendable
     where Upstream: Sendable, Upstream.Output: Sendable {
         @usableFromInline
         let upstream: Upstream
@@ -136,7 +136,7 @@ extension Parser.Error {
     }
 }
 
-extension Parser.Error.Replace: Parser.Parser {
+extension Parser.Error.Replace: Parser.`Protocol` {
     public typealias Input = Upstream.Input
     public typealias Output = Upstream.Output
     public typealias Failure = Never

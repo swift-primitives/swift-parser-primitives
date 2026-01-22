@@ -83,7 +83,7 @@ extension Parser.Tracked: Parser.Input {
     public typealias Element = Base.Element
 
     /// Checkpoint stores both the base input checkpoint and tracked offset.
-    public struct Checkpoint: Sendable {
+    public struct Checkpoint: Sendable, Comparable {
         @usableFromInline
         let baseCheckpoint: Base.Checkpoint
 
@@ -94,6 +94,11 @@ extension Parser.Tracked: Parser.Input {
         init(baseCheckpoint: Base.Checkpoint, trackedOffset: Int) {
             self.baseCheckpoint = baseCheckpoint
             self.trackedOffset = trackedOffset
+        }
+
+        @inlinable
+        public static func < (lhs: Self, rhs: Self) -> Bool {
+            lhs.baseCheckpoint < rhs.baseCheckpoint
         }
     }
 
@@ -118,26 +123,29 @@ extension Parser.Tracked: Parser.Input {
     }
 
     @inlinable
-    public mutating func restore(to checkpoint: Checkpoint) {
-        base.restore(to: checkpoint.baseCheckpoint)
+    public var checkpointRange: ClosedRange<Checkpoint> {
+        let baseRange = base.checkpointRange
+        return Checkpoint(baseCheckpoint: baseRange.lowerBound, trackedOffset: 0)
+            ... Checkpoint(baseCheckpoint: baseRange.upperBound, trackedOffset: .max)
+    }
+
+    @inlinable
+    public mutating func setPosition(to checkpoint: Checkpoint) {
+        base.setPosition(to: checkpoint.baseCheckpoint)
         offset = checkpoint.trackedOffset
     }
 
     @inlinable
-    public mutating func removeFirst() -> Element {
+    @discardableResult
+    public mutating func advance() -> Element {
         offset += 1
-        return base.removeFirst()
+        return base.advance()
     }
 
     @inlinable
-    public mutating func removeFirst(_ n: Int) {
-        offset += n
-        base.removeFirst(n)
-    }
-
-    @inlinable
-    public var remaining: Parser.Tracked<Base> {
-        self
+    public mutating func advance(by count: Int) {
+        offset += count
+        base.advance(by: count)
     }
 }
 

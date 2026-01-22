@@ -26,14 +26,14 @@ extension Parser {
 
         @inlinable
         public init(_ string: StaticString) {
-            self.bytes = unsafe Array(string.utf8Start.withMemoryRebound(to: UInt8.self, capacity: string.utf8CodeUnitCount) {
+            self.bytes = unsafe Swift.Array(string.utf8Start.withMemoryRebound(to: UInt8.self, capacity: string.utf8CodeUnitCount) {
                 unsafe UnsafeBufferPointer(start: $0, count: string.utf8CodeUnitCount)
             })
         }
     }
 }
 
-extension Parser.Literal: Parser.Parser {
+extension Parser.Literal: Parser.`Protocol` {
     public typealias Output = Void
     public typealias Failure = Parser.Error.Either<Parser.EndOfInput.Error, Parser.Match.Error>
 
@@ -46,7 +46,7 @@ extension Parser.Literal: Parser.Parser {
             guard actual == expected else {
                 throw .right(.byteMismatch(expected: [expected], found: [actual]))
             }
-            _ = input.removeFirst()
+            _ = input.advance()
         }
     }
 }
@@ -54,21 +54,21 @@ extension Parser.Literal: Parser.Parser {
 extension Parser.Literal: ExpressibleByStringLiteral {
     @inlinable
     public init(stringLiteral value: String) {
-        self.bytes = Array(value.utf8)
+        self.bytes = Swift.Array(value.utf8)
     }
 }
 
 extension Parser.Literal: ExpressibleByUnicodeScalarLiteral {
     @inlinable
     public init(unicodeScalarLiteral value: Unicode.Scalar) {
-        self.bytes = Array(String(value).utf8)
+        self.bytes = Swift.Array(String(value).utf8)
     }
 }
 
 extension Parser.Literal: ExpressibleByExtendedGraphemeClusterLiteral {
     @inlinable
     public init(extendedGraphemeClusterLiteral value: Character) {
-        self.bytes = Array(String(value).utf8)
+        self.bytes = Swift.Array(String(value).utf8)
     }
 }
 

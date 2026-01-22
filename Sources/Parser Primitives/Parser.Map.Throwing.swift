@@ -12,7 +12,7 @@ extension Parser.Map {
     /// The resulting failure type is `Either<Upstream.Failure, E>`.
     ///
     /// Created via `parser.tryMap(_:)`.
-    public struct Throwing<Upstream: Parser.Parser, Output, E: Swift.Error & Sendable>: Sendable
+    public struct Throwing<Upstream: Parser.`Protocol`, Output, E: Swift.Error & Sendable>: Sendable
     where Upstream: Sendable {
         @usableFromInline
         let upstream: Upstream
@@ -31,7 +31,7 @@ extension Parser.Map {
     }
 }
 
-extension Parser.Map.Throwing: Parser.Parser {
+extension Parser.Map.Throwing: Parser.`Protocol` {
     public typealias Input = Upstream.Input
     public typealias Failure = Parser.Error.Either<Upstream.Failure, E>
 

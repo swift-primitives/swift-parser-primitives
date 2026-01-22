@@ -21,7 +21,7 @@ extension Parser {
     }
 }
 
-extension Parser.Fail: Parser.Parser {
+extension Parser.Fail: Parser.`Protocol` {
     public typealias Failure = F
 
     @inlinable

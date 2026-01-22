@@ -12,7 +12,7 @@ extension Parser.Map {
     /// transformation to successful parsing results.
     ///
     /// Created via `parser.map(_:)`.
-    public struct Transform<Upstream: Parser.Parser, Output>: Sendable
+    public struct Transform<Upstream: Parser.`Protocol`, Output>: Sendable
     where Upstream: Sendable {
         @usableFromInline
         internal let upstream: Upstream
@@ -31,7 +31,7 @@ extension Parser.Map {
     }
 }
 
-extension Parser.Map.Transform: Parser.Parser {
+extension Parser.Map.Transform: Parser.`Protocol` {
     public typealias Input = Upstream.Input
     public typealias Failure = Upstream.Failure
 

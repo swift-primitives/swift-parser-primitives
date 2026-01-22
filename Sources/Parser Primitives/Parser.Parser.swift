@@ -36,7 +36,7 @@ extension Parser {
     /// ## Example
     ///
     /// ```swift
-    /// struct IntParser: Parser.Parser {
+    /// struct IntParser: Parser.`Protocol` {
     ///     typealias Input = Parser.Bytes.Input
     ///     typealias Output = Int
     ///     typealias Failure = Parser.Match.Error
@@ -58,7 +58,7 @@ extension Parser {
     ///     }
     /// }
     /// ```
-    public protocol Parser<Input, Output, Failure> {
+    public protocol `Protocol`<Input, Output, Failure> {
         /// The input type this parser consumes.
         ///
         /// For bytes parsing, use `Parser.Bytes.Input` (an escapable cursor type)
@@ -88,7 +88,7 @@ extension Parser {
 
 // MARK: - Convenience Extensions
 
-extension Parser.Parser {
+extension Parser.`Protocol` {
     /// Parses a complete input, requiring all bytes to be consumed.
     ///
     /// Use this for top-level parsing where trailing input is an error.
@@ -116,7 +116,7 @@ extension Parser.Parser {
     }
 }
 
-extension Parser.Parser where Failure == Parser.Match.Error {
+extension Parser.`Protocol` where Failure == Parser.Match.Error {
     /// Parses a complete input, requiring all bytes to be consumed.
     ///
     /// Specialized for parsers with `Match.Error` failure - returns unified error type.
@@ -138,7 +138,7 @@ extension Parser.Parser where Failure == Parser.Match.Error {
 
 // MARK: - Parser Composition via Methods
 
-extension Parser.Parser {
+extension Parser.`Protocol` {
     /// Transforms the parser's output using the given function.
     ///
     /// This is the functor `map` operation for parsers.
@@ -173,7 +173,7 @@ extension Parser.Parser {
     /// - Parameter transform: A function that produces a parser from this parser's output.
     /// - Returns: A parser that runs both parsers in sequence.
     @inlinable
-    public func flatMap<P: Parser.Parser>(
+    public func flatMap<P: Parser.`Protocol`>(
         _ transform: @escaping @Sendable (Output) -> P
     ) -> Parser.FlatMap<Self, P>
     where P.Input == Input {
