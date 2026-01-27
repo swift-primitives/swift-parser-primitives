@@ -30,7 +30,7 @@ let package = Package(
         .package(path: "../swift-stack-primitives"),
         .package(path: "../swift-slab-primitives"),
         .package(path: "../swift-identity-primitives"),
-        .package(path: "../swift-reference-primitives"),
+        .package(path: "../swift-ownership-primitives"),
         .package(path: "../swift-effect-primitives"),
         .package(path: "../swift-machine-primitives"),
         .package(path: "../swift-ascii-primitives"),
@@ -54,7 +54,7 @@ let package = Package(
                 .product(name: "Stack Primitives", package: "swift-stack-primitives"),
                 .product(name: "Slab Primitives", package: "swift-slab-primitives"),
                 .product(name: "Identity Primitives", package: "swift-identity-primitives"),
-                .product(name: "Reference Primitives", package: "swift-reference-primitives"),
+                .product(name: "Ownership Primitives", package: "swift-ownership-primitives"),
                 .product(name: "Machine Primitives", package: "swift-machine-primitives")
             ]
         ),
