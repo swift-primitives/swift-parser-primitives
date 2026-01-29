@@ -28,7 +28,8 @@ extension Parser.First.Element: Parser.`Protocol` {
         guard !input.isEmpty else {
             throw .unexpected(expected: "any element")
         }
-        return input.advance()
+        // SAFETY: isEmpty returned false, so advance() cannot throw .empty
+        return try! input.advance()
     }
 }
 

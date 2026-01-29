@@ -6,6 +6,7 @@
 //
 
 public import Input_Primitives
+public import Collection_Primitives
 
 extension Parser {
     /// A type that can be used as streaming input to a parser.
@@ -77,7 +78,7 @@ extension Parser {
     /// var input = Parser.CollectionInput(bytes[...])
     /// try parser.parse(&input)
     /// ```
-    public typealias CollectionInput<Base: Collection> = Input_Primitives.Input.Slice<Base>
+    public typealias CollectionInput<Base: Collection.`Protocol`> = Input_Primitives.Input.Slice<Base>
         where Base: Sendable, Base.Index: Sendable
 }
 

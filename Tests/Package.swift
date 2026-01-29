@@ -18,8 +18,6 @@ let package = Package(
         .package(path: "../../../swift-foundations/swift-testing"),
         // Test primitives (for test utilities)
         .package(path: "../../swift-test-primitives"),
-        // ASCII (for Parser Machine Tests)
-        .package(path: "../../swift-ascii-primitives"),
     ],
     targets: [
         .testTarget(
@@ -30,16 +28,6 @@ let package = Package(
                 .product(name: "Test Primitives", package: "swift-test-primitives"),
             ],
             path: "Sources/Parser Primitives Tests"
-        ),
-        .testTarget(
-            name: "Parser Machine Tests",
-            dependencies: [
-                .product(name: "Parser Machine", package: "swift-parser-primitives"),
-                .product(name: "Testing", package: "swift-testing"),
-                .product(name: "Test Primitives", package: "swift-test-primitives"),
-                .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
-            ],
-            path: "Sources/Parser Machine Tests"
         ),
     ],
     swiftLanguageModes: [.v6]

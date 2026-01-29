@@ -23,11 +23,10 @@ extension Parser {
     /// try parser.parse(&input)
     /// ```
     public struct Parse<P: Parser.`Protocol`> {
-        @usableFromInline
-        package let parser: P
+        public let parser: P
 
-        @usableFromInline
-        package init(parser: P) {
+        @inlinable
+        public init(parser: P) {
             self.parser = parser
         }
     }

@@ -46,7 +46,8 @@ extension Parser.Literal: Parser.`Protocol` {
             guard actual == expected else {
                 throw .right(.byteMismatch(expected: [expected], found: [actual]))
             }
-            _ = input.advance()
+            // SAFETY: first returned Some, so advance() cannot throw .empty
+            _ = try! input.advance()
         }
     }
 }

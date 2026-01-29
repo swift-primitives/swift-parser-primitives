@@ -41,17 +41,17 @@ extension Parser {
         @usableFromInline
         internal var base: Base
 
-        /// Current byte offset from the start of input.
+        /// Current element offset from the start of input.
         @usableFromInline
-        internal var offset: Int
+        internal var offset: Index<Element>
 
         /// The underlying input (read-only access).
         @inlinable
         public var input: Base { base }
 
-        /// Current byte offset from the start of input.
+        /// Current element offset from the start of input.
         @inlinable
-        public var currentOffset: Int { offset }
+        public var currentOffset: Index<Element> { offset }
 
         /// Creates a tracked input.
         ///
@@ -59,7 +59,7 @@ extension Parser {
         @inlinable
         public init(_ base: Base) {
             self.base = base
-            self.offset = 0
+            self.offset = .zero
         }
 
         /// Creates a tracked input with an initial offset.
@@ -70,7 +70,7 @@ extension Parser {
         ///   - base: The input to track.
         ///   - offset: Initial offset value.
         @inlinable
-        public init(_ base: Base, offset: Int) {
+        public init(_ base: Base, offset: Index<Element>) {
             self.base = base
             self.offset = offset
         }
@@ -88,10 +88,10 @@ extension Parser.Tracked: Parser.Input {
         let baseCheckpoint: Base.Checkpoint
 
         @usableFromInline
-        let trackedOffset: Int
+        let trackedOffset: Index<Element>
 
         @inlinable
-        init(baseCheckpoint: Base.Checkpoint, trackedOffset: Int) {
+        init(baseCheckpoint: Base.Checkpoint, trackedOffset: Index<Element>) {
             self.baseCheckpoint = baseCheckpoint
             self.trackedOffset = trackedOffset
         }
@@ -108,7 +108,7 @@ extension Parser.Tracked: Parser.Input {
     }
 
     @inlinable
-    public var count: Int {
+    public var count: Index<Element>.Count {
         base.count
     }
 
@@ -125,8 +125,8 @@ extension Parser.Tracked: Parser.Input {
     @inlinable
     public var checkpointRange: ClosedRange<Checkpoint> {
         let baseRange = base.checkpointRange
-        return Checkpoint(baseCheckpoint: baseRange.lowerBound, trackedOffset: 0)
-            ... Checkpoint(baseCheckpoint: baseRange.upperBound, trackedOffset: .max)
+        return Checkpoint(baseCheckpoint: baseRange.lowerBound, trackedOffset: .zero)
+            ... Checkpoint(baseCheckpoint: baseRange.upperBound, trackedOffset: Index<Element>(Ordinal(UInt.max)))
     }
 
     @inlinable
@@ -137,13 +137,13 @@ extension Parser.Tracked: Parser.Input {
 
     @inlinable
     @discardableResult
-    public mutating func advance() -> Element {
-        offset += 1
-        return base.advance()
+    public mutating func advance() throws(Input.Stream.Error) -> Element {
+        offset += Index<Element>.Count(Cardinal(1))
+        return try base.advance()
     }
 
     @inlinable
-    public mutating func advance(by count: Int) {
+    public mutating func advance(by count: Index<Element>.Count) {
         offset += count
         base.advance(by: count)
     }
@@ -156,13 +156,13 @@ extension Parser.Tracked {
     ///
     /// Use with `restore(to:)` for backtracking.
     @inlinable
-    public func savepoint() -> (base: Base, offset: Int) {
+    public func savepoint() -> (base: Base, offset: Index<Element>) {
         (base, offset)
     }
 
     /// Restores to a previously saved position.
     @inlinable
-    public mutating func restore(to savepoint: (base: Base, offset: Int)) {
+    public mutating func restore(to savepoint: (base: Base, offset: Index<Element>)) {
         self.base = savepoint.base
         self.offset = savepoint.offset
     }

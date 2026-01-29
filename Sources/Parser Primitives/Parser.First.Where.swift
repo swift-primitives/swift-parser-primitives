@@ -41,6 +41,7 @@ extension Parser.First.Where: Parser.`Protocol` {
         guard predicate(element) else {
             throw .right(.predicateFailed(description: expected))
         }
-        return input.advance()
+        // SAFETY: first returned Some, so advance() cannot throw .empty
+        return try! input.advance()
     }
 }

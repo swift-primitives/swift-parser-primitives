@@ -16,25 +16,10 @@ let package = Package(
             name: "Parser Primitives",
             targets: ["Parser Primitives"]
         ),
-        .library(
-            name: "Parser Machine",
-            targets: ["Parser Machine"]
-        ),
-        .library(
-            name: "Binary Parser Primitives",
-            targets: ["Binary Parser Primitives"]
-        ),
     ],
     dependencies: [
         .package(path: "../swift-input-primitives"),
-        .package(path: "../swift-stack-primitives"),
-        .package(path: "../swift-slab-primitives"),
-        .package(path: "../swift-identity-primitives"),
-        .package(path: "../swift-ownership-primitives"),
         .package(path: "../swift-effect-primitives"),
-        .package(path: "../swift-machine-primitives"),
-        .package(path: "../swift-ascii-primitives"),
-        .package(path: "../swift-binary-primitives"),
         // SDG(wraps): parsers wrap parse errors
         // .package(path: "../swift-error-primitives"),
 
@@ -47,27 +32,6 @@ let package = Package(
             dependencies: [
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Effect Primitives", package: "swift-effect-primitives")
-            ]
-        ),
-        .target(
-            name: "Parser Machine",
-            dependencies: [
-                "Parser Primitives",
-                .product(name: "Input Primitives", package: "swift-input-primitives"),
-                .product(name: "Stack Primitives", package: "swift-stack-primitives"),
-                .product(name: "Slab Primitives", package: "swift-slab-primitives"),
-                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
-                .product(name: "Ownership Primitives", package: "swift-ownership-primitives"),
-                .product(name: "Machine Primitives", package: "swift-machine-primitives")
-            ]
-        ),
-        .target(
-            name: "Binary Parser Primitives",
-            dependencies: [
-                "Parser Primitives",
-                .product(name: "Binary Primitives", package: "swift-binary-primitives"),
-                .product(name: "Input Primitives", package: "swift-input-primitives"),
-                .product(name: "Machine Primitives", package: "swift-machine-primitives"),
             ]
         ),
     ],

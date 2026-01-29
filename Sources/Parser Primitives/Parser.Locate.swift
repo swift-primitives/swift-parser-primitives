@@ -43,10 +43,11 @@ extension Parser.Locate: Parser.`Protocol` {
         do {
             value = try upstream.parse(&input.base)
         } catch {
-            throw Parser.Error.Located(error, at: errorOffset)
+            throw Parser.Error.Located(error, at: Int(bitPattern: errorOffset))
         }
-        // Update offset based on consumed bytes
-        input.offset += (countBefore - input.base.count)
+        // Update offset based on consumed elements
+        let consumed = countBefore.subtract.saturating(input.base.count)
+        input.offset += consumed
         return value
     }
 }

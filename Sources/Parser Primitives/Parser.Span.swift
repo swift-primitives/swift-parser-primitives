@@ -44,12 +44,13 @@ extension Parser.Span: Parser.`Protocol` {
         do {
             value = try upstream.parse(&input.base)
         } catch {
-            throw Parser.Error.Located(error, at: start)
+            throw Parser.Error.Located(error, at: Int(bitPattern: start))
         }
-        // Update offset based on consumed bytes
-        input.offset += (countBefore - input.base.count)
+        // Update offset based on consumed elements
+        let consumed = countBefore.subtract.saturating(input.base.count)
+        input.offset += consumed
         let end = input.currentOffset
-        return Parser.Spanned(value, start: start, end: end)
+        return Parser.Spanned(value, start: Int(bitPattern: start), end: Int(bitPattern: end))
     }
 }
 
