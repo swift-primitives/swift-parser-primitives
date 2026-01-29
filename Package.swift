@@ -37,6 +37,9 @@ let package = Package(
         .package(path: "../swift-binary-primitives"),
         // SDG(wraps): parsers wrap parse errors
         // .package(path: "../swift-error-primitives"),
+
+        // SDG(produces): parsers produce abstract syntax tree nodes
+        // .package(path: "../swift-abstract-syntax-tree-primitives"),
     ],
     targets: [
         .target(
