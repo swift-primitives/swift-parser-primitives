@@ -2,7 +2,7 @@
 //  Parser.Filter.swift
 //  swift-standards
 //
-//  Output validation combinator.
+//  ParseOutput validation combinator.
 //
 
 extension Parser {
@@ -18,12 +18,12 @@ extension Parser {
         internal let upstream: Upstream
 
         @usableFromInline
-        internal let predicate: @Sendable (Upstream.Output) -> Bool
+        internal let predicate: @Sendable (Upstream.ParseOutput) -> Bool
 
         @inlinable
         public init(
             upstream: Upstream,
-            predicate: @escaping @Sendable (Upstream.Output) -> Bool
+            predicate: @escaping @Sendable (Upstream.ParseOutput) -> Bool
         ) {
             self.upstream = upstream
             self.predicate = predicate
@@ -33,12 +33,12 @@ extension Parser {
 
 extension Parser.Filter: Parser.`Protocol` {
     public typealias Input = Upstream.Input
-    public typealias Output = Upstream.Output
+    public typealias ParseOutput = Upstream.ParseOutput
     public typealias Failure = Parser.Error.Either<Upstream.Failure, Parser.Constraint.Error>
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
-        let output: Upstream.Output
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+        let output: Upstream.ParseOutput
         do {
             output = try upstream.parse(&input)
         } catch {

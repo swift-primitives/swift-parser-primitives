@@ -32,14 +32,14 @@ extension Parser {
 
 extension Parser.Locate: Parser.`Protocol` {
     public typealias Input = Parser.Tracked<Base>
-    public typealias Output = Upstream.Output
+    public typealias ParseOutput = Upstream.ParseOutput
     public typealias Failure = Parser.Error.Located<Upstream.Failure>
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         let errorOffset = input.currentOffset
         let countBefore = input.base.count
-        let value: Output
+        let value: ParseOutput
         do {
             value = try upstream.parse(&input.base)
         } catch {

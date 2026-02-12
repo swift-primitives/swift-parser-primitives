@@ -14,13 +14,13 @@
 //
 //  ## Architecture
 //
-//  The core abstraction is `Parser<Input, Output>`:
+//  The core abstraction is `Parser<Input, ParseOutput>`:
 //  - Input: The type being consumed (e.g., Span<UInt8>, [UInt8], Substring)
-//  - Output: The parsed result
+//  - ParseOutput: The parsed result
 //
 //  Parsers consume from the front of a mutable input reference:
 //  ```swift
-//  func parse(_ input: inout Input) throws(Error) -> Output
+//  func parse(_ input: inout Input) throws(Error) -> ParseOutput
 //  ```
 //
 //  This mutation-based approach enables:
@@ -36,7 +36,7 @@
 //  - `Substring` / `Substring.UTF8View` - String parsing
 //  - Custom types implementing the protocol
 //
-//  ## Output Protocols
+//  ## ParseOutput Protocols
 //
 //  Two protocols handle output construction with different semantics:
 //

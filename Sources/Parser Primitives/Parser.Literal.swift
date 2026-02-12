@@ -34,7 +34,7 @@ extension Parser {
 }
 
 extension Parser.Literal: Parser.`Protocol` {
-    public typealias Output = Void
+    public typealias ParseOutput = Void
     public typealias Failure = Parser.Error.Either<Parser.EndOfInput.Error, Parser.Match.Error>
 
     @inlinable

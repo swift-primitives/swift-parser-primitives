@@ -20,7 +20,7 @@ extension Parser.OneOf {
     /// }
     /// ```
     @resultBuilder
-    public struct Builder<Input, Output> {}
+    public struct Builder<Input, ParseOutput> {}
 }
 
 extension Parser.OneOf.Builder {
@@ -28,7 +28,7 @@ extension Parser.OneOf.Builder {
     @inlinable
     public static func buildBlock<P: Parser.`Protocol`>(
         _ parser: P
-    ) -> P where P.Input == Input, P.Output == Output {
+    ) -> P where P.Input == Input, P.ParseOutput == ParseOutput {
         parser
     }
 
@@ -39,7 +39,7 @@ extension Parser.OneOf.Builder {
         _ p1: P1
     ) -> Parser.OneOf.Two<P0, P1>
     where P0.Input == Input, P1.Input == Input,
-          P0.Output == Output, P1.Output == Output {
+          P0.ParseOutput == ParseOutput, P1.ParseOutput == ParseOutput {
         Parser.OneOf.Two(p0, p1)
     }
 
@@ -51,7 +51,7 @@ extension Parser.OneOf.Builder {
         _ p2: P2
     ) -> Parser.OneOf.Three<P0, P1, P2>
     where P0.Input == Input, P1.Input == Input, P2.Input == Input,
-          P0.Output == Output, P1.Output == Output, P2.Output == Output {
+          P0.ParseOutput == ParseOutput, P1.ParseOutput == ParseOutput, P2.ParseOutput == ParseOutput {
         Parser.OneOf.Three(p0, p1, p2)
     }
 
@@ -59,7 +59,7 @@ extension Parser.OneOf.Builder {
     @inlinable
     public static func buildPartialBlock<P: Parser.`Protocol`>(
         first: P
-    ) -> P where P.Input == Input, P.Output == Output {
+    ) -> P where P.Input == Input, P.ParseOutput == ParseOutput {
         first
     }
 
@@ -70,7 +70,7 @@ extension Parser.OneOf.Builder {
         next: Next
     ) -> Parser.OneOf.Two<Accumulated, Next>
     where Accumulated.Input == Input, Next.Input == Input,
-          Accumulated.Output == Output, Next.Output == Output {
+          Accumulated.ParseOutput == ParseOutput, Next.ParseOutput == ParseOutput {
         Parser.OneOf.Two(accumulated, next)
     }
 }

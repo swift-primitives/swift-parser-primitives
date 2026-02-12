@@ -10,7 +10,7 @@ extension Parser.Skip {
     ///
     /// Used when the second parser has `Void` output (like a delimiter).
     public struct Second<P0: Parser.`Protocol`, P1: Parser.`Protocol`>: Sendable
-    where P0: Sendable, P1: Sendable, P0.Input == P1.Input, P1.Output == Void {
+    where P0: Sendable, P1: Sendable, P0.Input == P1.Input, P1.ParseOutput == Void {
         @usableFromInline
         internal let p0: P0
 
@@ -27,12 +27,12 @@ extension Parser.Skip {
 
 extension Parser.Skip.Second: Parser.`Protocol` {
     public typealias Input = P0.Input
-    public typealias Output = P0.Output
+    public typealias ParseOutput = P0.ParseOutput
     public typealias Failure = Parser.Error.Either<P0.Failure, P1.Failure>
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
-        let o0: P0.Output
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+        let o0: P0.ParseOutput
         do {
             o0 = try p0.parse(&input)
         } catch {
@@ -52,7 +52,7 @@ extension Parser.Skip.Second: Parser.`Protocol` {
 extension Parser.Skip.Second: Parser.Printer
 where P0: Parser.Printer, P1: Parser.Printer {
     @inlinable
-    public func print(_ output: P0.Output, into input: inout Input) throws(Failure) {
+    public func print(_ output: P0.ParseOutput, into input: inout Input) throws(Failure) {
         // Print in reverse order
         do {
             try p1.print((), into: &input)

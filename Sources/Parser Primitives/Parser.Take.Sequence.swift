@@ -20,10 +20,10 @@ extension Parser.Take {
     ///     "="                                                // delimiter (discarded)
     ///     Parser.Rest()                                     // value
     /// }
-    /// // Type: Parser with Output = (Substring, Substring) or similar
+    /// // Type: Parser with ParseOutput = (Substring, Substring) or similar
     /// ```
-    public struct Sequence<Input, Output, Body: Parser.`Protocol`>: Sendable
-    where Body: Sendable, Body.Input == Input, Body.Output == Output {
+    public struct Sequence<Input, ParseOutput, Body: Parser.`Protocol`>: Sendable
+    where Body: Sendable, Body.Input == Input, Body.ParseOutput == ParseOutput {
         @usableFromInline
         let body: Body
 
@@ -40,7 +40,7 @@ extension Parser.Take.Sequence: Parser.`Protocol` {
     public typealias Failure = Body.Failure
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         try body.parse(&input)
     }
 }

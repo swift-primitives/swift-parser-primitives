@@ -62,11 +62,11 @@ extension Parser {
 
 extension Parser.Trace: Parser.`Protocol` {
     public typealias Input = Upstream.Input
-    public typealias Output = Upstream.Output
+    public typealias ParseOutput = Upstream.ParseOutput
     public typealias Failure = Upstream.Failure
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         log("[\(label)] enter")
         do {
             let result = try upstream.parse(&input)

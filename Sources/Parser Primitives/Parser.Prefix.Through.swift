@@ -22,11 +22,11 @@ extension Parser.Prefix {
 }
 
 extension Parser.Prefix.Through: Parser.`Protocol` {
-    public typealias Output = Input
+    public typealias ParseOutput = Input
     public typealias Failure = Parser.Match.Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         var endIndex = input.startIndex
 
         outer: while endIndex < input.endIndex {

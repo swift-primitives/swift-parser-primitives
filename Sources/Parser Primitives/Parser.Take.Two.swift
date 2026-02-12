@@ -8,7 +8,7 @@
 extension Parser.Take {
     /// A parser that runs two parsers in sequence and collects both outputs.
     ///
-    /// The outputs are combined into a tuple `(P0.Output, P1.Output)`.
+    /// The outputs are combined into a tuple `(P0.ParseOutput, P1.ParseOutput)`.
     /// Created by `Take.Builder` when combining two non-Void parsers.
     public struct Two<P0: Parser.`Protocol`, P1: Parser.`Protocol`>: Sendable
     where P0: Sendable, P1: Sendable, P0.Input == P1.Input {
@@ -28,18 +28,18 @@ extension Parser.Take {
 
 extension Parser.Take.Two: Parser.`Protocol` {
     public typealias Input = P0.Input
-    public typealias Output = (P0.Output, P1.Output)
+    public typealias ParseOutput = (P0.ParseOutput, P1.ParseOutput)
     public typealias Failure = Parser.Error.Either<P0.Failure, P1.Failure>
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
-        let o0: P0.Output
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+        let o0: P0.ParseOutput
         do {
             o0 = try p0.parse(&input)
         } catch {
             throw .left(error)
         }
-        let o1: P1.Output
+        let o1: P1.ParseOutput
         do {
             o1 = try p1.parse(&input)
         } catch {
@@ -53,7 +53,7 @@ extension Parser.Take.Two {
     /// Maps the output of this parser using the given transform.
     @inlinable
     public func map<NewOutput>(
-        _ transform: @escaping @Sendable (P0.Output, P1.Output) -> NewOutput
+        _ transform: @escaping @Sendable (P0.ParseOutput, P1.ParseOutput) -> NewOutput
     ) -> Parser.Take.Two<P0, P1>.Map<NewOutput> {
         Map(upstream: self, transform: transform)
     }
@@ -65,7 +65,7 @@ extension Parser.Take.Two: Parser.Printer
 where P0: Parser.Printer, P1: Parser.Printer {
     @inlinable
     public func print(
-        _ output: (P0.Output, P1.Output),
+        _ output: (P0.ParseOutput, P1.ParseOutput),
         into input: inout Input
     ) throws(Failure) {
         // Print in reverse order to build input correctly

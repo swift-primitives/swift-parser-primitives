@@ -76,10 +76,10 @@ extension Parser {
     /// - **Search**: Explore multiple paths, backtrack on failure
     /// - **Testing**: Observe which alternatives were tried
     /// - **Profiling**: Measure backtracking frequency
-    public struct Backtrack<Input: Parser.Input, Output: Sendable, E: Swift.Error & Sendable>: Effect.`Protocol` {
-        public typealias Alternative = @Sendable (inout Input) throws(E) -> Output
+    public struct Backtrack<Input: Parser.Input, ParseOutput: Sendable, E: Swift.Error & Sendable>: Effect.`Protocol` {
+        public typealias Alternative = @Sendable (inout Input) throws(E) -> ParseOutput
         public typealias Arguments = [Alternative]
-        public typealias Value = Output
+        public typealias Value = ParseOutput
         public typealias Failure = E
 
         /// The alternatives to try, in order.

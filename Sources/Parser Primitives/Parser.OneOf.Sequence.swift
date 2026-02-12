@@ -18,14 +18,14 @@ extension Parser.OneOf {
     ///     "false".map { false }
     /// }
     /// ```
-    public struct Sequence<Input, Output, Body: Parser.`Protocol`>: Sendable
-    where Body: Sendable, Body.Input == Input, Body.Output == Output {
+    public struct Sequence<Input, ParseOutput, Body: Parser.`Protocol`>: Sendable
+    where Body: Sendable, Body.Input == Input, Body.ParseOutput == ParseOutput {
         @usableFromInline
         let body: Body
 
         @inlinable
         public init(
-            @Parser.OneOf.Builder<Input, Output> _ build: () -> Body
+            @Parser.OneOf.Builder<Input, ParseOutput> _ build: () -> Body
         ) {
             self.body = build()
         }
@@ -36,7 +36,7 @@ extension Parser.OneOf.Sequence: Parser.`Protocol` {
     public typealias Failure = Body.Failure
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         try body.parse(&input)
     }
 }

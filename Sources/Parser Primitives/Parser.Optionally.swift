@@ -29,11 +29,11 @@ extension Parser {
 
 extension Parser.Optionally: Parser.`Protocol` {
     public typealias Input = Wrapped.Input
-    public typealias Output = Wrapped.Output?
+    public typealias ParseOutput = Wrapped.ParseOutput?
     public typealias Failure = Never
 
     @inlinable
-    public func parse(_ input: inout Input) -> Output {
+    public func parse(_ input: inout Input) -> ParseOutput {
         let saved = input
         do {
             return try wrapped.parse(&input)
@@ -49,7 +49,7 @@ extension Parser.Optionally: Parser.`Protocol` {
 extension Parser.Optionally: Parser.Printer
 where Wrapped: Parser.Printer {
     @inlinable
-    public func print(_ output: Wrapped.Output?, into input: inout Input) throws(Failure) {
+    public func print(_ output: Wrapped.ParseOutput?, into input: inout Input) throws(Failure) {
         guard let output = output else { return }
         // Optionally is infallible for parsing but can fail when printing
         // We catch the error since we can't propagate Wrapped.Failure through Never

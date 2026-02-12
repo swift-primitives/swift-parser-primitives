@@ -83,6 +83,9 @@ extension Parser.Tracked: Parser.Input {
     public typealias Element = Base.Element
 
     /// Checkpoint stores both the base input checkpoint and tracked offset.
+    ///
+    /// Equality and ordering delegate to `baseCheckpoint` only, matching
+    /// the semantics of the underlying `Buffer.Ring.Checkpoint`.
     public struct Checkpoint: Sendable, Comparable {
         @usableFromInline
         let baseCheckpoint: Base.Checkpoint
@@ -94,6 +97,11 @@ extension Parser.Tracked: Parser.Input {
         init(baseCheckpoint: Base.Checkpoint, trackedOffset: Index<Element>) {
             self.baseCheckpoint = baseCheckpoint
             self.trackedOffset = trackedOffset
+        }
+
+        @inlinable
+        public static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.baseCheckpoint == rhs.baseCheckpoint
         }
 
         @inlinable

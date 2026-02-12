@@ -20,7 +20,7 @@ extension Parser.Discard {
 }
 
 extension Parser.Discard.Exactly: Parser.`Protocol` {
-    public typealias Output = Void
+    public typealias ParseOutput = Void
     public typealias Failure = Parser.Constraint.Error
 
     @inlinable

@@ -59,7 +59,7 @@ extension Parser.Not {
 
 extension Parser.Not: Parser.`Protocol` {
     public typealias Input = Upstream.Input
-    public typealias Output = Void
+    public typealias ParseOutput = Void
     public typealias Failure = Parser.Not<Upstream>.Error
 
     @inlinable

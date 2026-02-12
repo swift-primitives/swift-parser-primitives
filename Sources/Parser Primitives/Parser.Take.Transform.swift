@@ -17,17 +17,17 @@ extension Parser.Take {
     ///     IntParser()
     /// }
     /// ```
-    public struct Transform<Input, BodyOutput, Output, Body: Parser.`Protocol`>: Sendable
-    where Body: Sendable, Body.Input == Input, Body.Output == BodyOutput {
+    public struct Transform<Input, BodyOutput, ParseOutput, Body: Parser.`Protocol`>: Sendable
+    where Body: Sendable, Body.Input == Input, Body.ParseOutput == BodyOutput {
         @usableFromInline
         let body: Body
 
         @usableFromInline
-        let transform: @Sendable (BodyOutput) -> Output
+        let transform: @Sendable (BodyOutput) -> ParseOutput
 
         @inlinable
         public init(
-            _ transform: @escaping @Sendable (BodyOutput) -> Output,
+            _ transform: @escaping @Sendable (BodyOutput) -> ParseOutput,
             @Parser.Take.Builder<Input> _ build: () -> Body
         ) {
             self.body = build()
@@ -40,7 +40,7 @@ extension Parser.Take.Transform: Parser.`Protocol` {
     public typealias Failure = Body.Failure
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         transform(try body.parse(&input))
     }
 }

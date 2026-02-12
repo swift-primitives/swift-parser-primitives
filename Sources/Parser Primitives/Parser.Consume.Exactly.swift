@@ -20,11 +20,11 @@ extension Parser.Consume {
 }
 
 extension Parser.Consume.Exactly: Parser.`Protocol` {
-    public typealias Output = Input
+    public typealias ParseOutput = Input
     public typealias Failure = Parser.Constraint.Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         let endIndex = input.index(input.startIndex, offsetBy: count, limitedBy: input.endIndex)
             ?? input.endIndex
 

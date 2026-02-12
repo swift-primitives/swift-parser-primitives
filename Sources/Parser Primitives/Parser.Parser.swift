@@ -38,7 +38,7 @@ extension Parser {
     /// ```swift
     /// struct IntParser: Parser.`Protocol` {
     ///     typealias Input = Parser.Bytes.Input
-    ///     typealias Output = Int
+    ///     typealias ParseOutput = Int
     ///     typealias Failure = Parser.Match.Error
     ///
     ///     func parse(_ input: inout Input) throws(Failure) -> Int {
@@ -58,7 +58,7 @@ extension Parser {
     ///     }
     /// }
     /// ```
-    public protocol `Protocol`<Input, Output, Failure> {
+    public protocol `Protocol`<Input, ParseOutput, Failure> {
         /// The input type this parser consumes.
         ///
         /// For bytes parsing, use `Parser.Bytes.Input` (an escapable cursor type)
@@ -67,7 +67,7 @@ extension Parser {
         associatedtype Input
 
         /// The output type this parser produces.
-        associatedtype Output
+        associatedtype ParseOutput
 
         /// The error type this parser can throw.
         ///
@@ -82,7 +82,7 @@ extension Parser {
         /// - Parameter input: The input to parse from. Modified to reflect consumption.
         /// - Returns: The parsed value.
         /// - Throws: `Failure` if parsing fails.
-        func parse(_ input: inout Input) throws(Failure) -> Output
+        func parse(_ input: inout Input) throws(Failure) -> ParseOutput
     }
 }
 
@@ -100,10 +100,10 @@ extension Parser.`Protocol` {
     /// - Returns: The parsed value.
     /// - Throws: `Either<Failure, Match.Error>` if parsing fails or input remains.
     @inlinable
-    public func parse(_ input: Input) throws(Parser.Error.Either<Failure, Parser.Match.Error>) -> Output
+    public func parse(_ input: Input) throws(Parser.Error.Either<Failure, Parser.Match.Error>) -> ParseOutput
     where Input: Collection {
         var input = input
-        let output: Output
+        let output: ParseOutput
         do {
             output = try parse(&input)
         } catch {
@@ -125,7 +125,7 @@ extension Parser.`Protocol` where Failure == Parser.Match.Error {
     /// - Returns: The parsed value.
     /// - Throws: `Match.Error` if parsing fails or input remains.
     @inlinable
-    public func parse(_ input: Input) throws(Parser.Match.Error) -> Output
+    public func parse(_ input: Input) throws(Parser.Match.Error) -> ParseOutput
     where Input: Collection {
         var input = input
         let output = try parse(&input)
@@ -147,7 +147,7 @@ extension Parser.`Protocol` {
     /// - Returns: A parser that transforms its output.
     @inlinable
     public func map<NewOutput>(
-        _ transform: @escaping @Sendable (Output) -> NewOutput
+        _ transform: @escaping @Sendable (ParseOutput) -> NewOutput
     ) -> Parser.Map.Transform<Self, NewOutput> {
         .init(upstream: self, transform: transform)
     }
@@ -161,7 +161,7 @@ extension Parser.`Protocol` {
     /// - Returns: A parser that transforms its output, potentially failing.
     @inlinable
     public func tryMap<NewOutput, E: Swift.Error & Sendable>(
-        _ transform: @escaping @Sendable (Output) throws(E) -> NewOutput
+        _ transform: @escaping @Sendable (ParseOutput) throws(E) -> NewOutput
     ) -> Parser.Map.Throwing<Self, NewOutput, E> {
         .init(upstream: self, transform: transform)
     }
@@ -174,7 +174,7 @@ extension Parser.`Protocol` {
     /// - Returns: A parser that runs both parsers in sequence.
     @inlinable
     public func flatMap<P: Parser.`Protocol`>(
-        _ transform: @escaping @Sendable (Output) -> P
+        _ transform: @escaping @Sendable (ParseOutput) -> P
     ) -> Parser.FlatMap<Self, P>
     where P.Input == Input {
         .init(upstream: self, transform: transform)
@@ -188,7 +188,7 @@ extension Parser.`Protocol` {
     /// - Returns: A parser that fails if the predicate is false.
     @inlinable
     public func filter(
-        _ predicate: @escaping @Sendable (Output) -> Bool
+        _ predicate: @escaping @Sendable (ParseOutput) -> Bool
     ) -> Parser.Filter<Self> where Self: Sendable {
         .init(upstream: self, predicate: predicate)
     }

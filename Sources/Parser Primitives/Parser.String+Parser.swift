@@ -7,7 +7,7 @@
 
 extension String: Parser.`Protocol` {
     public typealias Input = Substring
-    public typealias Output = Void
+    public typealias ParseOutput = Void
     public typealias Failure = Parser.Match.Error
 
     @inlinable

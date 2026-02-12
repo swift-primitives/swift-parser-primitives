@@ -41,7 +41,7 @@ extension Parser {
     ///
     /// ```swift
     /// struct IntSerializer: Parser.Serializer {
-    ///     typealias Output = Int
+    ///     typealias ParseOutput = Int
     ///     typealias Buffer = [UInt8]
     ///     typealias Failure = Never
     ///
@@ -53,9 +53,9 @@ extension Parser {
     /// let serializer = IntSerializer()
     /// let bytes = serializer.serialize(42)  // [0x34, 0x32] ("42")
     /// ```
-    public protocol Serializer<Output, Buffer, Failure> {
+    public protocol Serializer<ParseOutput, Buffer, Failure> {
         /// The type of value this serializer accepts.
-        associatedtype Output
+        associatedtype ParseOutput
 
         /// The buffer type this serializer writes to.
         associatedtype Buffer
@@ -74,7 +74,7 @@ extension Parser {
         ///   - output: The value to serialize.
         ///   - buffer: The buffer to append to.
         /// - Throws: `Failure` if serialization fails.
-        func serialize(_ output: Output, into buffer: inout Buffer) throws(Failure)
+        func serialize(_ output: ParseOutput, into buffer: inout Buffer) throws(Failure)
     }
 }
 
@@ -89,7 +89,7 @@ extension Parser.Serializer where Buffer: RangeReplaceableCollection {
     /// - Returns: The serialized buffer.
     /// - Throws: `Failure` if serialization fails.
     @inlinable
-    public func serialize(_ output: Output) throws(Failure) -> Buffer {
+    public func serialize(_ output: ParseOutput) throws(Failure) -> Buffer {
         var buffer = Buffer()
         try serialize(output, into: &buffer)
         return buffer
@@ -106,7 +106,7 @@ extension Parser.Serializer where Failure == Never {
     /// - Parameter output: The value to serialize.
     /// - Returns: The serialized buffer.
     @inlinable
-    public func serialize(_ output: Output) -> Buffer
+    public func serialize(_ output: ParseOutput) -> Buffer
     where Buffer: RangeReplaceableCollection {
         var buffer = Buffer()
         serialize(output, into: &buffer)

@@ -2,7 +2,7 @@
 //  Parser.Map.swift
 //  swift-standards
 //
-//  Output transformation.
+//  ParseOutput transformation.
 //
 
 extension Parser {

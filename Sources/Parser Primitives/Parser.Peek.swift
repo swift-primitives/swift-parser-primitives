@@ -44,11 +44,11 @@ extension Parser {
 
 extension Parser.Peek: Parser.`Protocol` {
     public typealias Input = Upstream.Input
-    public typealias Output = Upstream.Output
+    public typealias ParseOutput = Upstream.ParseOutput
     public typealias Failure = Upstream.Failure
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         let saved = input
         let result = try upstream.parse(&input)
         input = saved  // Always restore

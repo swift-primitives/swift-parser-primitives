@@ -63,12 +63,12 @@ extension Parser.Many {
 }
 
 extension Parser.Many.Simple: Parser.`Protocol` {
-    public typealias Output = [Element.Output]
+    public typealias ParseOutput = [Element.ParseOutput]
     public typealias Failure = Parser.Many.Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
-        var results: [Element.Output] = []
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+        var results: [Element.ParseOutput] = []
 
         while maximum.map({ results.count < $0 }) ?? true {
             let saved = input
@@ -95,7 +95,7 @@ extension Parser.Many.Simple: Parser.`Protocol` {
 extension Parser.Many.Simple: Parser.Printer
 where Element: Parser.Printer {
     @inlinable
-    public func print(_ output: [Element.Output], into input: inout Input) throws(Failure) {
+    public func print(_ output: [Element.ParseOutput], into input: inout Input) throws(Failure) {
         // Validate count constraints
         if output.count < minimum {
             throw .countTooLow(expected: minimum, got: output.count)

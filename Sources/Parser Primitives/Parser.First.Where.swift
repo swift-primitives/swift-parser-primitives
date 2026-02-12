@@ -30,11 +30,11 @@ extension Parser.First {
 }
 
 extension Parser.First.Where: Parser.`Protocol` {
-    public typealias Output = Input.Element
+    public typealias ParseOutput = Input.Element
     public typealias Failure = Parser.Error.Either<Parser.EndOfInput.Error, Parser.Match.Error>
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         guard let element = input.first else {
             throw .left(.unexpected(expected: expected))
         }

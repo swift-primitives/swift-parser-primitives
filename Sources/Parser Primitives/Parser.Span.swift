@@ -9,7 +9,7 @@ extension Parser {
     /// A parser that wraps output with its source span.
     ///
     /// Captures start and end offsets around the upstream parser,
-    /// producing `Spanned<Output>`.
+    /// producing `Spanned<ParseOutput>`.
     ///
     /// ## Usage
     ///
@@ -20,7 +20,7 @@ extension Parser {
     /// print("Identifier '\(result.value)' at \(result.start)..<\(result.end)")
     /// ```
     public struct Span<Base: Input, Upstream: Parser.`Protocol`>: Sendable
-    where Upstream: Sendable, Base: Sendable, Upstream.Input == Base, Upstream.Output: Sendable {
+    where Upstream: Sendable, Base: Sendable, Upstream.Input == Base, Upstream.ParseOutput: Sendable {
         @usableFromInline
         let upstream: Upstream
 
@@ -33,14 +33,14 @@ extension Parser {
 
 extension Parser.Span: Parser.`Protocol` {
     public typealias Input = Parser.Tracked<Base>
-    public typealias Output = Parser.Spanned<Upstream.Output>
+    public typealias ParseOutput = Parser.Spanned<Upstream.ParseOutput>
     public typealias Failure = Parser.Error.Located<Upstream.Failure>
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         let start = input.currentOffset
         let countBefore = input.base.count
-        let value: Upstream.Output
+        let value: Upstream.ParseOutput
         do {
             value = try upstream.parse(&input.base)
         } catch {
@@ -56,11 +56,11 @@ extension Parser.Span: Parser.`Protocol` {
 
 // MARK: - Parser Extension
 
-extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input & Sendable, Output: Sendable {
+extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input & Sendable, ParseOutput: Sendable {
     /// Wraps this parser to produce spanned output.
     ///
     /// The returned parser requires `Tracked<Input>` and produces
-    /// `Spanned<Output>` with start/end offsets.
+    /// `Spanned<ParseOutput>` with start/end offsets.
     @inlinable
     public func spanned() -> Parser.Span<Input, Self> {
         Parser.Span(self)

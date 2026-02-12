@@ -81,12 +81,12 @@ extension Parser.Many {
 }
 
 extension Parser.Many.Separated: Parser.`Protocol` {
-    public typealias Output = [Element.Output]
+    public typealias ParseOutput = [Element.ParseOutput]
     public typealias Failure = Parser.Many.Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
-        var results: [Element.Output] = []
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+        var results: [Element.ParseOutput] = []
 
         // Parse first element
         do {
@@ -133,9 +133,9 @@ extension Parser.Many.Separated: Parser.`Protocol` {
 // MARK: - Printer Conformance
 
 extension Parser.Many.Separated: Parser.Printer
-where Element: Parser.Printer, Separator: Parser.Printer, Separator.Output == Void {
+where Element: Parser.Printer, Separator: Parser.Printer, Separator.ParseOutput == Void {
     @inlinable
-    public func print(_ output: [Element.Output], into input: inout Input) throws(Failure) {
+    public func print(_ output: [Element.ParseOutput], into input: inout Input) throws(Failure) {
         // Validate count constraints
         if output.count < minimum {
             throw Failure.countTooLow(expected: minimum, got: output.count)

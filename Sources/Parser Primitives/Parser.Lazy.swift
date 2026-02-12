@@ -75,11 +75,11 @@ extension Parser {
 
 extension Parser.Lazy: Parser.`Protocol` {
     public typealias Input = P.Input
-    public typealias Output = P.Output
+    public typealias ParseOutput = P.ParseOutput
     public typealias Failure = P.Failure
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         try build().parse(&input)
     }
 }
