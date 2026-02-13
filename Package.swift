@@ -16,6 +16,10 @@ let package = Package(
             name: "Parser Primitives",
             targets: ["Parser Primitives"]
         ),
+        .library(
+            name: "Parser Primitives Test Support",
+            targets: ["Parser Primitives Test Support"]
+        ),
     ],
     dependencies: [
         .package(path: "../swift-input-primitives"),
@@ -32,6 +36,21 @@ let package = Package(
             dependencies: [
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Effect Primitives", package: "swift-effect-primitives")
+            ]
+        ),
+        .target(
+            name: "Parser Primitives Test Support",
+            dependencies: [
+                "Parser Primitives",
+                .product(name: "Input Primitives Test Support", package: "swift-input-primitives"),
+            ],
+            path: "Tests/Support"
+        ),
+        .testTarget(
+            name: "Parser Primitives Tests",
+            dependencies: [
+                "Parser Primitives",
+                "Parser Primitives Test Support",
             ]
         ),
     ],

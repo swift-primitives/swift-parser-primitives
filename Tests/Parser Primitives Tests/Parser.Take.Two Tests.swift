@@ -1,0 +1,72 @@
+import Testing
+import Parser_Primitives_Test_Support
+
+// MARK: - Test Suite Structure
+
+@Suite("Parser.Take.Two")
+struct ParserTakeTwoTests {
+    @Suite struct Unit {}
+    @Suite struct EdgeCase {}
+}
+
+// MARK: - Unit Tests
+
+extension ParserTakeTwoTests.Unit {
+    @Test
+    func `runs both parsers and collects outputs`() throws {
+        let parser = Parser.Take.Two(
+            Parser.First.Element<ByteInput>(),
+            Parser.First.Element<ByteInput>()
+        )
+        var input = ByteInput([0x0A, 0x0B, 0x0C])
+
+        let (first, second) = try parser.parse(&input)
+
+        #expect(first == 0x0A)
+        #expect(second == 0x0B)
+        #expect(input.first == 0x0C)
+    }
+
+    @Test
+    func `map transforms tuple output`() throws {
+        let parser = Parser.Take.Two(
+            Parser.First.Element<ByteInput>(),
+            Parser.First.Element<ByteInput>()
+        ).map { a, b in Int(a) + Int(b) }
+        var input = ByteInput([0x01, 0x02])
+
+        let result = try parser.parse(&input)
+
+        #expect(result == 3)
+    }
+}
+
+// MARK: - Edge Case Tests
+
+extension ParserTakeTwoTests.EdgeCase {
+    @Test
+    func `fails when first parser fails`() {
+        let parser = Parser.Take.Two(
+            Parser.First.Element<ByteInput>(),
+            Parser.First.Element<ByteInput>()
+        )
+        var input = ByteInput([])
+
+        #expect(throws: (any Error).self) {
+            try parser.parse(&input)
+        }
+    }
+
+    @Test
+    func `fails when second parser fails after first succeeds`() {
+        let parser = Parser.Take.Two(
+            Parser.First.Element<ByteInput>(),
+            Parser.First.Element<ByteInput>()
+        )
+        var input = ByteInput([0x01])
+
+        #expect(throws: (any Error).self) {
+            try parser.parse(&input)
+        }
+    }
+}
