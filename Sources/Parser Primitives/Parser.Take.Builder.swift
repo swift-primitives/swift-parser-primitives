@@ -29,7 +29,7 @@ extension Parser.Take {
     ///
     /// Parsers with `Void` output are automatically skipped in the result tuple.
     @resultBuilder
-    public struct Builder<Input> {}
+    public struct Builder<Input: ~Escapable> {}
 }
 
 // MARK: - Empty and Single Block
