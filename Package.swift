@@ -24,6 +24,8 @@ let package = Package(
     dependencies: [
         .package(path: "../swift-input-primitives"),
         .package(path: "../swift-effect-primitives"),
+        .package(path: "../swift-array-primitives"),
+        .package(path: "../swift-buffer-primitives"),
         // SDG(wraps): parsers wrap parse errors
         // .package(path: "../swift-error-primitives"),
 
@@ -35,7 +37,8 @@ let package = Package(
             name: "Parser Primitives",
             dependencies: [
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
-                .product(name: "Effect Primitives", package: "swift-effect-primitives")
+                .product(name: "Effect Primitives", package: "swift-effect-primitives"),
+                .product(name: "Array Primitives", package: "swift-array-primitives"),
             ]
         ),
         .target(
@@ -43,6 +46,7 @@ let package = Package(
             dependencies: [
                 "Parser Primitives",
                 .product(name: "Input Primitives Test Support", package: "swift-input-primitives"),
+                .product(name: "Buffer Linear Primitives", package: "swift-buffer-primitives"),
             ],
             path: "Tests/Support"
         ),

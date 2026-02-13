@@ -1,16 +1,18 @@
 //
 //  Parser.Prefix.Through.swift
-//  swift-standards
+//  swift-parser-primitives
 //
 //  Prefix parser that consumes through (including) delimiter.
 //
+
+public import Collection_Primitives
 
 extension Parser.Prefix {
     /// A parser that consumes through (including) a delimiter sequence.
     ///
     /// Like `UpTo` but includes the delimiter in the consumed portion.
-    public struct Through<Input: Collection>: Sendable
-    where Input: Sendable, Input.Element: Equatable & Sendable, Input.SubSequence == Input {
+    public struct Through<Input: Collection.Slice.`Protocol`>: Sendable
+    where Input: Sendable, Input.Element: Equatable & Sendable {
         @usableFromInline
         let delimiter: [Input.Element]
 

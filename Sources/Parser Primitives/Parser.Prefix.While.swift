@@ -1,9 +1,11 @@
 //
 //  Parser.Prefix.While.swift
-//  swift-standards
+//  swift-parser-primitives
 //
 //  Prefix parser that consumes while predicate holds.
 //
+
+public import Collection_Primitives
 
 extension Parser.Prefix {
     /// A parser that consumes elements while a predicate holds.
@@ -20,8 +22,8 @@ extension Parser.Prefix {
     /// // Parse until delimiter
     /// let field = Parser.Prefix.While { $0 != UInt8(ascii: ",") }
     /// ```
-    public struct While<Input: Collection>: Sendable
-    where Input: Sendable, Input.SubSequence == Input {
+    public struct While<Input: Collection.Slice.`Protocol`>: Sendable
+    where Input: Sendable {
         @usableFromInline
         let minLength: Int
 
@@ -29,13 +31,13 @@ extension Parser.Prefix {
         let maxLength: Int?
 
         @usableFromInline
-        let predicate: @Sendable (Input.Element) -> Bool
+        let predicate: @Sendable (borrowing Input.Element) -> Bool
 
         @inlinable
         public init(
             minLength: Int = 0,
             maxLength: Int? = nil,
-            _ predicate: @escaping @Sendable (Input.Element) -> Bool
+            _ predicate: @escaping @Sendable (borrowing Input.Element) -> Bool
         ) {
             self.minLength = minLength
             self.maxLength = maxLength

@@ -1,9 +1,11 @@
 //
 //  Parser.Parser.swift
-//  swift-standards
+//  swift-parser-primitives
 //
 //  Core Parser protocol definition.
 //
+
+public import Collection_Primitives
 
 extension Parser {
     /// A type that can parse a value from an input.
@@ -100,7 +102,7 @@ extension Parser.`Protocol` {
     /// - Throws: `Either<Failure, Match.Error>` if parsing fails or input remains.
     @inlinable
     public func parse(_ input: Input) throws(Parser.Error.Either<Failure, Parser.Match.Error>) -> ParseOutput
-    where Input: Collection {
+    where Input: Collection.Slice.`Protocol` {
         var input = input
         let output: ParseOutput
         do {
@@ -109,7 +111,13 @@ extension Parser.`Protocol` {
             throw .left(error)
         }
         guard input.isEmpty else {
-            throw .right(.expectedEnd(remaining: input.count))
+            var remaining = 0
+            var i = input.startIndex
+            while i < input.endIndex {
+                i = input.index(after: i)
+                remaining += 1
+            }
+            throw .right(.expectedEnd(remaining: remaining))
         }
         return output
     }
@@ -125,11 +133,17 @@ extension Parser.`Protocol` where Failure == Parser.Match.Error {
     /// - Throws: `Match.Error` if parsing fails or input remains.
     @inlinable
     public func parse(_ input: Input) throws(Parser.Match.Error) -> ParseOutput
-    where Input: Collection {
+    where Input: Collection.Slice.`Protocol` {
         var input = input
         let output = try parse(&input)
         guard input.isEmpty else {
-            throw .expectedEnd(remaining: input.count)
+            var remaining = 0
+            var i = input.startIndex
+            while i < input.endIndex {
+                i = input.index(after: i)
+                remaining += 1
+            }
+            throw .expectedEnd(remaining: remaining)
         }
         return output
     }

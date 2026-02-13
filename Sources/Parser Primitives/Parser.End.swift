@@ -1,15 +1,17 @@
 //
 //  Parser.End.swift
-//  swift-standards
+//  swift-parser-primitives
 //
 //  End-of-input parser.
 //
+
+public import Collection_Primitives
 
 extension Parser {
     /// A parser that succeeds only at end of input.
     ///
     /// Consumes nothing and produces Void. Fails if input remains.
-    public struct End<Input: Collection>: Sendable
+    public struct End<Input: Collection.Slice.`Protocol`>: Sendable
     where Input: Sendable {
         @inlinable
         public init() {}
@@ -23,7 +25,13 @@ extension Parser.End: Parser.`Protocol` {
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) {
         guard input.isEmpty else {
-            throw .expectedEnd(remaining: input.count)
+            var remaining = 0
+            var i = input.startIndex
+            while i < input.endIndex {
+                i = input.index(after: i)
+                remaining += 1
+            }
+            throw .expectedEnd(remaining: remaining)
         }
     }
 }

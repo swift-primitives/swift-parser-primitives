@@ -1,14 +1,16 @@
 //
 //  Parser.Consume.Exactly.swift
-//  swift-standards
+//  swift-parser-primitives
 //
 //  Consume exactly N elements.
 //
 
+public import Collection_Primitives
+
 extension Parser.Consume {
     /// A parser that consumes exactly N elements.
-    public struct Exactly<Input: Collection>: Sendable
-    where Input: Sendable, Input.SubSequence == Input {
+    public struct Exactly<Input: Collection.Slice.`Protocol`>: Sendable
+    where Input: Sendable {
         @usableFromInline
         let count: Int
 
@@ -25,10 +27,13 @@ extension Parser.Consume.Exactly: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
-        let endIndex = input.index(input.startIndex, offsetBy: count, limitedBy: input.endIndex)
-            ?? input.endIndex
+        var endIndex = input.startIndex
+        var actualCount = 0
+        while actualCount < count, endIndex < input.endIndex {
+            endIndex = input.index(after: endIndex)
+            actualCount += 1
+        }
 
-        let actualCount = input.distance(from: input.startIndex, to: endIndex)
         guard actualCount == count else {
             throw .countTooLow(expected: count, got: actualCount)
         }
@@ -36,23 +41,5 @@ extension Parser.Consume.Exactly: Parser.`Protocol` {
         let result = input[input.startIndex..<endIndex]
         input = input[endIndex...]
         return result
-    }
-}
-
-// MARK: - Printer Conformance
-
-extension Parser.Consume.Exactly: Parser.Printer
-where Input: RangeReplaceableCollection {
-    @inlinable
-    public func print(_ output: Input, into input: inout Input) throws(Failure) {
-        let outputCount = output.count
-        guard outputCount == count else {
-            if outputCount < count {
-                throw .countTooLow(expected: count, got: outputCount)
-            } else {
-                throw .countTooHigh(expected: count, got: outputCount)
-            }
-        }
-        input.insert(contentsOf: output, at: input.startIndex)
     }
 }

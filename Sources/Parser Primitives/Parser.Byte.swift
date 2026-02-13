@@ -14,7 +14,7 @@ extension Parser {
     /// making it suitable for forward-only input sources.
     public struct Byte<Input: Parser.Streaming>: Sendable
     where Input: Sendable, Input.Element == UInt8 {
-        @usableFromInline
+        @usableFromInline   
         let expected: UInt8
 
         @inlinable

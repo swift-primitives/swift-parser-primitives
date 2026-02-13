@@ -1,17 +1,19 @@
 //
 //  Parser.Prefix.UpTo.swift
-//  swift-standards
+//  swift-parser-primitives
 //
 //  Prefix parser that consumes up to (not including) delimiter.
 //
+
+public import Collection_Primitives
 
 extension Parser.Prefix {
     /// A parser that consumes up to (but not including) a delimiter sequence.
     ///
     /// Unlike `While`, this looks for a specific delimiter sequence rather
     /// than testing each element.
-    public struct UpTo<Input: Collection>: Sendable
-    where Input: Sendable, Input.Element: Equatable & Sendable, Input.SubSequence == Input {
+    public struct UpTo<Input: Collection.Slice.`Protocol`>: Sendable
+    where Input: Sendable, Input.Element: Equatable & Sendable {
         @usableFromInline
         let delimiter: [Input.Element]
 
