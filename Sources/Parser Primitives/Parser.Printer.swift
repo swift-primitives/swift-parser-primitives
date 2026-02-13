@@ -45,7 +45,7 @@ extension Parser {
     /// ```
     public protocol Printer<Input, ParseOutput, Failure> {
         /// The input type this printer produces.
-        associatedtype Input
+        associatedtype Input: ~Escapable
 
         /// The output type this printer consumes.
         associatedtype ParseOutput

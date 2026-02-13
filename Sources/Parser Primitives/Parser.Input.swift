@@ -17,8 +17,7 @@ extension Parser {
     ///
     /// `Streaming` provides the minimal interface for forward-only parsing:
     /// - `isEmpty`: Check if input is exhausted
-    /// - `first`: Peek at the next element without consuming
-    /// - `removeFirst()`: Consume and return the next element
+    /// - `advance()`: Consume and return the next element
     ///
     /// For backtracking support, use ``Input`` instead.
     public typealias Streaming = Input_Primitives.Input.Streaming
@@ -82,12 +81,3 @@ extension Parser {
         where Base: Sendable, Base.Index: Sendable
 }
 
-// MARK: - Convenience Extensions
-
-extension Input_Primitives.Input.`Protocol` where Element: Equatable {
-    /// Checks if the input starts with the given element.
-    @inlinable
-    public func starts(with element: Element) -> Bool {
-        first == element
-    }
-}

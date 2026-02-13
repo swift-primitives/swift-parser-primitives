@@ -121,11 +121,6 @@ extension Parser.Tracked: Parser.Input {
     }
 
     @inlinable
-    public var first: Element? {
-        base.first
-    }
-
-    @inlinable
     public var checkpoint: Checkpoint {
         Checkpoint(baseCheckpoint: base.checkpoint, trackedOffset: offset)
     }

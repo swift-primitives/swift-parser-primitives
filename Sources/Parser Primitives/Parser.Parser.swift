@@ -61,10 +61,9 @@ extension Parser {
     public protocol `Protocol`<Input, ParseOutput, Failure> {
         /// The input type this parser consumes.
         ///
-        /// For bytes parsing, use `Parser.Bytes.Input` (an escapable cursor type)
-        /// rather than `Span<UInt8>` directly. Swift 6.2 does not allow `~Escapable`
-        /// constraints on protocol associated types.
-        associatedtype Input
+        /// Supports both escapable inputs (collections, cursors) and non-escapable
+        /// inputs like `Span<UInt8>` for zero-copy borrowed parsing.
+        associatedtype Input: ~Escapable
 
         /// The output type this parser produces.
         associatedtype ParseOutput

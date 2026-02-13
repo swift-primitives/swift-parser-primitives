@@ -11,7 +11,7 @@ extension Parser.First {
     /// This parser only requires `Streaming` capability (no backtracking),
     /// making it suitable for forward-only input sources.
     public struct Where<Input: Parser.Streaming>: Sendable
-    where Input: Sendable {
+    where Input: Sendable, Input.Element: Copyable {
         @usableFromInline
         let predicate: @Sendable (Input.Element) -> Bool
 
@@ -35,13 +35,13 @@ extension Parser.First.Where: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
-        guard let element = input.first else {
+        guard !input.isEmpty else {
             throw .left(.unexpected(expected: expected))
         }
+        let element = try! input.advance()
         guard predicate(element) else {
             throw .right(.predicateFailed(description: expected))
         }
-        // SAFETY: first returned Some, so advance() cannot throw .empty
-        return try! input.advance()
+        return element
     }
 }

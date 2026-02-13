@@ -30,14 +30,13 @@ extension Parser.Byte: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) {
-        guard let actual = input.first else {
+        guard !input.isEmpty else {
             throw .left(.unexpected(expected: "byte 0x\(String(expected, radix: 16, uppercase: true))"))
         }
+        let actual = try! input.advance()
         guard actual == expected else {
             throw .right(.byteMismatch(expected: [expected], found: [actual]))
         }
-        // SAFETY: first returned Some, so advance() cannot throw .empty
-        _ = try! input.advance()
     }
 }
 
