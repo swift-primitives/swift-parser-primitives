@@ -23,24 +23,25 @@ extension Parser.Prefix {
     /// let field = Parser.Prefix.While { $0 != UInt8(ascii: ",") }
     /// ```
     public struct While<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable {
+    where Input: Sendable, Input.Element: Copyable {
         @usableFromInline
         let minLength: Int
 
+        /// `Int.max` means no maximum.
         @usableFromInline
-        let maxLength: Int?
+        let maxLength: Int
 
         @usableFromInline
-        let predicate: @Sendable (borrowing Input.Element) -> Bool
+        let predicate: @Sendable (Input.Element) -> Bool
 
         @inlinable
         public init(
             minLength: Int = 0,
             maxLength: Int? = nil,
-            _ predicate: @escaping @Sendable (borrowing Input.Element) -> Bool
+            _ predicate: @escaping @Sendable (Input.Element) -> Bool
         ) {
             self.minLength = minLength
-            self.maxLength = maxLength
+            self.maxLength = maxLength ?? .max
             self.predicate = predicate
         }
     }
@@ -56,7 +57,7 @@ extension Parser.Prefix.While: Parser.`Protocol` {
         var endIndex = input.startIndex
 
         while endIndex < input.endIndex {
-            if let max = maxLength, count >= max {
+            if count >= maxLength {
                 break
             }
             guard predicate(input[endIndex]) else {

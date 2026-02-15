@@ -28,8 +28,9 @@ extension Parser.Many {
         @usableFromInline
         let minimum: Int
 
+        /// `Int.max` means no maximum.
         @usableFromInline
-        let maximum: Int?
+        let maximum: Int
 
         @inlinable
         public init(
@@ -38,7 +39,7 @@ extension Parser.Many {
         ) {
             self.element = element()
             self.minimum = range.lowerBound
-            self.maximum = nil
+            self.maximum = .max
         }
 
         @inlinable
@@ -57,7 +58,7 @@ extension Parser.Many {
         ) {
             self.element = element()
             self.minimum = 0
-            self.maximum = nil
+            self.maximum = .max
         }
     }
 }
@@ -70,7 +71,7 @@ extension Parser.Many.Simple: Parser.`Protocol` {
     public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         var results: [Element.ParseOutput] = []
 
-        while maximum.map({ results.count < $0 }) ?? true {
+        while results.count < maximum {
             let saved = input
 
             do {
@@ -100,8 +101,8 @@ where Element: Parser.Printer {
         if output.count < minimum {
             throw .countTooLow(expected: minimum, got: output.count)
         }
-        if let max = maximum, output.count > max {
-            throw .countTooHigh(expected: max, got: output.count)
+        if maximum < .max, output.count > maximum {
+            throw .countTooHigh(expected: maximum, got: output.count)
         }
 
         // Print in reverse order.

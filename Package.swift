@@ -46,7 +46,7 @@ let package = Package(
             dependencies: [
                 "Parser Primitives",
                 .product(name: "Input Primitives Test Support", package: "swift-input-primitives"),
-                .product(name: "Buffer Linear Primitives", package: "swift-buffer-primitives"),
+                .product(name: "Array Primitives", package: "swift-array-primitives"),
             ],
             path: "Tests/Support"
         ),
