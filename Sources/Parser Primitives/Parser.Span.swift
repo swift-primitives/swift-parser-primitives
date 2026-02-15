@@ -38,19 +38,8 @@ extension Parser.Span: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
-        let start = input.currentOffset
-        let countBefore = input.base.count
-        let value: Upstream.ParseOutput
-        do {
-            value = try upstream.parse(&input.base)
-        } catch {
-            throw Parser.Error.Located(error, at: Int(bitPattern: start))
-        }
-        // Update offset based on consumed elements
-        let consumed = countBefore.subtract.saturating(input.base.count)
-        input.offset += consumed
-        let end = input.currentOffset
-        return Parser.Spanned(value, start: Int(bitPattern: start), end: Int(bitPattern: end))
+        let (value, start) = try input.parseTracked(upstream)
+        return Parser.Spanned(value, start: start, end: input.currentOffset)
     }
 }
 

@@ -51,12 +51,13 @@ where Wrapped: Parser.Printer {
     @inlinable
     public func print(_ output: Wrapped.ParseOutput?, into input: inout Input) throws(Failure) {
         guard let output = output else { return }
-        // Optionally is infallible for parsing but can fail when printing
-        // We catch the error since we can't propagate Wrapped.Failure through Never
+        // WORKAROUND: Silently swallow printer errors
+        // WHY: Optionally is infallible (Failure == Never) so we cannot propagate
+        //   Wrapped.Failure. The type system prevents expressing partial failure here.
+        // WHEN TO REMOVE: When Parser.Printer supports a separate Failure type from
+        //   the parser's Failure, allowing the printer to throw independently.
         do {
             try wrapped.print(output, into: &input)
-        } catch {
-            // Silently fail - consistent with parsing behavior of returning nil
-        }
+        } catch {}
     }
 }

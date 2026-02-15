@@ -69,6 +69,18 @@ extension Parser {
     }
 }
 
+// MARK: - Typed Boundary Overload
+
+extension Parser.Spanned {
+    /// Creates a spanned value from typed index offsets.
+    ///
+    /// Boundary overload per [IMPL-010]: pushes `Int(bitPattern:)` to the edge.
+    @inlinable
+    public init<Element: ~Copyable>(_ value: T, start: Index<Element>, end: Index<Element>) {
+        self.init(value, start: Int(bitPattern: start), end: Int(bitPattern: end))
+    }
+}
+
 // MARK: - Equatable
 
 extension Parser.Spanned: Equatable where T: Equatable {}

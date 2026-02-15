@@ -25,13 +25,7 @@ extension Parser.End: Parser.`Protocol` {
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) {
         guard input.isEmpty else {
-            var remaining = 0
-            var i = input.startIndex
-            while i < input.endIndex {
-                i = input.index(after: i)
-                remaining += 1
-            }
-            throw .expectedEnd(remaining: remaining)
+            throw .expectedEnd(remaining: input.remainingCount)
         }
     }
 }

@@ -27,17 +27,6 @@ extension Parser.Discard.Exactly: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) {
-        var endIndex = input.startIndex
-        var actualCount = 0
-        while actualCount < count, endIndex < input.endIndex {
-            endIndex = input.index(after: endIndex)
-            actualCount += 1
-        }
-
-        guard actualCount == count else {
-            throw .countTooLow(expected: count, got: actualCount)
-        }
-
-        input = input[endIndex...]
+        _ = try Parser.Consume.Exactly<Input>(count).parse(&input)
     }
 }

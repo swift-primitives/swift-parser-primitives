@@ -89,6 +89,26 @@ extension Parser {
 
 // MARK: - Convenience Extensions
 
+// MARK: - Remaining Count
+
+extension Collection.Slice.`Protocol` {
+    /// Counts remaining elements by walking indices.
+    ///
+    /// Used for error reporting when a typed count is not available.
+    @usableFromInline
+    var remainingCount: Int {
+        var count = 0
+        var i = startIndex
+        while i < endIndex {
+            i = index(after: i)
+            count += 1
+        }
+        return count
+    }
+}
+
+// MARK: - Complete Input Parsing
+
 extension Parser.`Protocol` {
     /// Parses a complete input, requiring all bytes to be consumed.
     ///
@@ -111,13 +131,7 @@ extension Parser.`Protocol` {
             throw .left(error)
         }
         guard input.isEmpty else {
-            var remaining = 0
-            var i = input.startIndex
-            while i < input.endIndex {
-                i = input.index(after: i)
-                remaining += 1
-            }
-            throw .right(.expectedEnd(remaining: remaining))
+            throw .right(.expectedEnd(remaining: input.remainingCount))
         }
         return output
     }
@@ -137,13 +151,7 @@ extension Parser.`Protocol` where Failure == Parser.Match.Error {
         var input = input
         let output = try parse(&input)
         guard input.isEmpty else {
-            var remaining = 0
-            var i = input.startIndex
-            while i < input.endIndex {
-                i = input.index(after: i)
-                remaining += 1
-            }
-            throw .expectedEnd(remaining: remaining)
+            throw .expectedEnd(remaining: input.remainingCount)
         }
         return output
     }

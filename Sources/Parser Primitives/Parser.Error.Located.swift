@@ -48,6 +48,18 @@ extension Parser.Error {
     }
 }
 
+// MARK: - Typed Boundary Overload
+
+extension Parser.Error.Located {
+    /// Creates a located error from a typed index offset.
+    ///
+    /// Boundary overload per [IMPL-010]: pushes `Int(bitPattern:)` to the edge.
+    @inlinable
+    public init<Element: ~Copyable>(_ error: E, at offset: Index<Element>) {
+        self.init(error, at: Int(bitPattern: offset))
+    }
+}
+
 // MARK: - Equatable
 
 extension Parser.Error.Located: Equatable where E: Equatable {}

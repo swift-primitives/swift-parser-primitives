@@ -37,18 +37,7 @@ extension Parser.Locate: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
-        let errorOffset = input.currentOffset
-        let countBefore = input.base.count
-        let value: ParseOutput
-        do {
-            value = try upstream.parse(&input.base)
-        } catch {
-            throw Parser.Error.Located(error, at: Int(bitPattern: errorOffset))
-        }
-        // Update offset based on consumed elements
-        let consumed = countBefore.subtract.saturating(input.base.count)
-        input.offset += consumed
-        return value
+        try input.parseTracked(upstream).output
     }
 }
 

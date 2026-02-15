@@ -129,7 +129,7 @@ extension Parser.Tracked: Parser.Input {
     public var checkpointRange: ClosedRange<Checkpoint> {
         let baseRange = base.checkpointRange
         return Checkpoint(baseCheckpoint: baseRange.lowerBound, trackedOffset: .zero)
-            ... Checkpoint(baseCheckpoint: baseRange.upperBound, trackedOffset: Index<Element>(Ordinal(UInt.max)))
+            ... Checkpoint(baseCheckpoint: baseRange.upperBound, trackedOffset: .zero)
     }
 
     @inlinable
@@ -141,7 +141,7 @@ extension Parser.Tracked: Parser.Input {
     @inlinable
     @discardableResult
     public mutating func advance() throws(Input.Stream.Error) -> Element {
-        offset += Index<Element>.Count(Cardinal(1))
+        offset += .one
         return try base.advance()
     }
 
@@ -149,6 +149,30 @@ extension Parser.Tracked: Parser.Input {
     public mutating func advance(by count: Index<Element>.Count) {
         offset += count
         base.advance(by: count)
+    }
+}
+
+// MARK: - Tracked Parsing
+
+extension Parser.Tracked {
+    /// Parses upstream, tracking offset and wrapping errors with location.
+    ///
+    /// Shared logic for `Parser.Span` and `Parser.Locate`.
+    @inlinable
+    mutating func parseTracked<P: Parser.`Protocol`>(
+        _ parser: P
+    ) throws(Parser.Error.Located<P.Failure>) -> (output: P.ParseOutput, start: Index<Element>)
+    where P.Input == Base {
+        let start = currentOffset
+        let countBefore = base.count
+        let value: P.ParseOutput
+        do {
+            value = try parser.parse(&base)
+        } catch {
+            throw Parser.Error.Located(error, at: start)
+        }
+        offset += countBefore.subtract.saturating(base.count)
+        return (value, start)
     }
 }
 
