@@ -50,9 +50,14 @@ extension Parser.Peek: Parser.`Protocol` {
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         let saved = input
-        let result = try upstream.parse(&input)
-        input = saved  // Always restore
-        return result
+        do {
+            let result = try upstream.parse(&input)
+            input = saved
+            return result
+        } catch {
+            input = saved
+            throw error
+        }
     }
 }
 
