@@ -88,6 +88,11 @@ extension Parser.Many.Separated: Parser.`Protocol` {
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
         var results: [Element.ParseOutput] = []
+        if maximum < .max {
+            results.reserveCapacity(maximum)
+        } else if minimum > 0 {
+            results.reserveCapacity(minimum)
+        }
 
         // Parse first element
         do {
