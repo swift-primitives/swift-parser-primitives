@@ -587,6 +587,10 @@ let package = Package(
             name: "Parser Take Primitives Tests",
             dependencies: ["Parser Primitives Test Support"]
         ),
+        .testTarget(
+            name: "Parser Invariant Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )
