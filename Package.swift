@@ -506,12 +506,86 @@ let package = Package(
             ],
             path: "Tests/Support"
         ),
+
         .testTarget(
-            name: "Parser Primitives Tests",
-            dependencies: [
-                "Parser Primitives",
-                "Parser Primitives Test Support",
-            ]
+            name: "Parser Always Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Byte Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Consume Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser End Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Error Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Fail Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Filter Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser First Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser FlatMap Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Literal Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Many Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Map Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Not Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser OneOf Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Optional Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Peek Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Prefix Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Rest Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Spanned Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Take Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
         ),
     ],
     swiftLanguageModes: [.v6]
