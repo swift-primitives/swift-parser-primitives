@@ -21,8 +21,8 @@ extension Parser {
         internal let wrapped: Wrapped
 
         @inlinable
-        public init(@Parser.Take.Builder<Wrapped.Input> _ wrapped: () -> Wrapped) {
-            self.wrapped = wrapped()
+        public init(_ wrapped: Wrapped) {
+            self.wrapped = wrapped
         }
     }
 }

@@ -159,7 +159,7 @@ extension Parser.Tracked {
     ///
     /// Shared logic for `Parser.Span` and `Parser.Locate`.
     @inlinable
-    mutating func parseTracked<P: Parser.`Protocol`>(
+    public mutating func parseTracked<P: Parser.`Protocol`>(
         _ parser: P
     ) throws(Parser.Error.Located<P.Failure>) -> (output: P.ParseOutput, start: Index<Element>)
     where P.Input == Base {
