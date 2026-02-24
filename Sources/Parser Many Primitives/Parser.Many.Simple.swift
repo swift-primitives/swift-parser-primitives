@@ -77,13 +77,13 @@ extension Parser.Many.Simple: Parser.`Protocol` {
         }
 
         while results.count < maximum {
-            let saved = input
+            let checkpoint = input.checkpoint
 
             do {
                 let next = try element.parse(&input)
                 results.append(next)
             } catch {
-                input = saved
+                input.restore.to(__unchecked: (), checkpoint)
                 break
             }
         }

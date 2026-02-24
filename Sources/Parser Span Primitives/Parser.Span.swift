@@ -45,7 +45,7 @@ extension Parser.Span: Parser.`Protocol` {
 
 // MARK: - Parser Extension
 
-extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input & Sendable, ParseOutput: Sendable {
+extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input & Sendable & Copyable, ParseOutput: Sendable {
     /// Wraps this parser to produce spanned output.
     ///
     /// The returned parser requires `Tracked<Input>` and produces

@@ -107,13 +107,13 @@ extension Parser.Many.Separated: Parser.`Protocol` {
 
         // Parse remaining elements (with separator)
         while results.count < maximum {
-            let saved = input
+            let checkpoint = input.checkpoint
 
             // Try separator
             do {
                 _ = try separator.parse(&input)
             } catch {
-                input = saved
+                input.restore.to(__unchecked: (), checkpoint)
                 break
             }
 
@@ -122,7 +122,7 @@ extension Parser.Many.Separated: Parser.`Protocol` {
                 let next = try element.parse(&input)
                 results.append(next)
             } catch {
-                input = saved
+                input.restore.to(__unchecked: (), checkpoint)
                 break
             }
         }

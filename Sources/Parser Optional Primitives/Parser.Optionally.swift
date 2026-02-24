@@ -16,7 +16,7 @@ extension Parser {
     /// let optionalSign = Parser.Optionally { Sign() }
     /// ```
     public struct Optionally<Wrapped: Parser.`Protocol`>: Sendable
-    where Wrapped: Sendable {
+    where Wrapped: Sendable, Wrapped.Input: Parser.Input {
         @usableFromInline
         internal let wrapped: Wrapped
 
@@ -34,11 +34,11 @@ extension Parser.Optionally: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) -> ParseOutput {
-        let saved = input
+        let checkpoint = input.checkpoint
         do {
             return try wrapped.parse(&input)
         } catch {
-            input = saved
+            input.restore.to(__unchecked: (), checkpoint)
             return nil
         }
     }

@@ -43,7 +43,7 @@ extension Parser.Locate: Parser.`Protocol` {
 
 // MARK: - Parser Extension
 
-extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input & Sendable {
+extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input & Sendable & Copyable {
     /// Wraps this parser to produce located errors.
     ///
     /// The returned parser requires `Tracked<Input>` and produces

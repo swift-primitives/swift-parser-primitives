@@ -31,7 +31,7 @@ extension Parser {
     /// - Upstream fails → `Not` succeeds with `Void`
     /// - Input is **never** consumed
     public struct Not<Upstream: Parser.`Protocol`>: Sendable
-    where Upstream: Sendable {
+    where Upstream: Sendable, Upstream.Input: Parser.Input {
         @usableFromInline
         internal let upstream: Upstream
 
@@ -64,21 +64,21 @@ extension Parser.Not: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) {
-        let saved = input
+        let checkpoint = input.checkpoint
         if (try? upstream.parse(&input)) != nil {
             // Upstream succeeded - restore and fail
-            input = saved
+            input.restore.to(__unchecked: (), checkpoint)
             throw .unexpectedMatch
         } else {
             // Upstream failed - restore and succeed
-            input = saved
+            input.restore.to(__unchecked: (), checkpoint)
         }
     }
 }
 
 // MARK: - Parser Extension
 
-extension Parser.`Protocol` where Self: Sendable {
+extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input {
     /// Creates a parser that succeeds when this parser fails.
     ///
     /// Useful for negative lookahead - ensuring input does NOT

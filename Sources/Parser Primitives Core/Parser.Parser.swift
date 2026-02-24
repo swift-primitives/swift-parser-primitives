@@ -65,7 +65,7 @@ extension Parser {
         ///
         /// Supports both escapable inputs (collections, cursors) and non-escapable
         /// inputs like `Span<UInt8>` for zero-copy borrowed parsing.
-        associatedtype Input: ~Escapable
+        associatedtype Input: ~Copyable & ~Escapable
 
         /// The output type this parser produces.
         associatedtype ParseOutput

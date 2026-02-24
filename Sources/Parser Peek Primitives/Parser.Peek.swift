@@ -26,7 +26,7 @@ extension Parser {
     /// - On success: Returns upstream's output, input is **not** consumed
     /// - On failure: Throws upstream's error, input is **not** consumed
     public struct Peek<Upstream: Parser.`Protocol`>: Sendable
-    where Upstream: Sendable {
+    where Upstream: Sendable, Upstream.Input: Parser.Input {
         @usableFromInline
         internal let upstream: Upstream
 
@@ -49,13 +49,13 @@ extension Parser.Peek: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
-        let saved = input
+        let checkpoint = input.checkpoint
         do {
             let result = try upstream.parse(&input)
-            input = saved
+            input.restore.to(__unchecked: (), checkpoint)
             return result
         } catch {
-            input = saved
+            input.restore.to(__unchecked: (), checkpoint)
             throw error
         }
     }
@@ -63,7 +63,7 @@ extension Parser.Peek: Parser.`Protocol` {
 
 // MARK: - Parser Extension
 
-extension Parser.`Protocol` where Self: Sendable {
+extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input {
     /// Creates a parser that peeks ahead without consuming input.
     ///
     /// If this parser succeeds, returns the output but restores
