@@ -64,6 +64,10 @@ extension Parser.Error.Located {
 
 extension Parser.Error.Located: Equatable where E: Equatable {}
 
+// MARK: - Hashable
+
+extension Parser.Error.Located: Hashable where E: Hashable {}
+
 // MARK: - CustomStringConvertible
 
 extension Parser.Error.Located: CustomStringConvertible {
