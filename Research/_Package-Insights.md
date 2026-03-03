@@ -9,11 +9,6 @@ applies_to: [swift-parser-primitives]
 normative: false
 ---
 -->
-
-@Metadata {
-    @TitleHeading("Parser Primitives")
-}
-
 Design decisions, implementation patterns, and lessons learned specific to this package.
 
 ## Overview
@@ -95,8 +90,6 @@ These comments were written when the code was first designed. They transform pot
 
 ---
 
-## Topics
+## Related
 
-### Related Documents
-
-- <doc:Parsing>
+- Parsing
