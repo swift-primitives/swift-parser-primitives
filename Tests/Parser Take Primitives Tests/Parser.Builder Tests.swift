@@ -360,7 +360,6 @@ extension SkipWhitespaceCountRest: Parser.`Protocol` {
             switch either {
             case .left(let never): switch never {}
             case .right(let never): switch never {}
-            @unknown default: fatalError()
             }
         }
     }

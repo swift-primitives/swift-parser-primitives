@@ -53,6 +53,7 @@ extension Parser.Error {
     /// When one side is `Never` (infallible), the error simplifies:
     /// - `Either<Never, R>` → use `.error` to extract `R`
     /// - `Either<L, Never>` → use `.error` to extract `L`
+    @frozen
     public enum Either<Left: Swift.Error & Sendable, Right: Swift.Error & Sendable>:
         Swift.Error, Sendable {
         case left(Left)
