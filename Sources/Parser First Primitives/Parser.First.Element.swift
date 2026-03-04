@@ -20,11 +20,11 @@ extension Parser.First {
 }
 
 extension Parser.First.Element: Parser.`Protocol` {
-    public typealias ParseOutput = Input.Element
+    public typealias Output = Input.Element
     public typealias Failure = Parser.EndOfInput.Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         guard !input.isEmpty else {
             throw .unexpected(expected: "any element")
         }

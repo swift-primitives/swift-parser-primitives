@@ -25,7 +25,7 @@ extension Parser {
     /// ```swift
     /// struct IntParserPrinter: Parser.`Protocol`Printer {
     ///     typealias Input = Substring
-    ///     typealias ParseOutput = Int
+    ///     typealias Output = Int
     ///     typealias Failure = Parser.Match.Error
     ///
     ///     func parse(_ input: inout Substring) throws(Failure) -> Int {
@@ -37,5 +37,5 @@ extension Parser {
     ///     }
     /// }
     /// ```
-    public protocol ParserPrinter<Input, ParseOutput, Failure>: Parser.`Protocol`, Printer {}
+    public protocol ParserPrinter<Input, Output, Failure>: Parser.`Protocol`, Printer {}
 }

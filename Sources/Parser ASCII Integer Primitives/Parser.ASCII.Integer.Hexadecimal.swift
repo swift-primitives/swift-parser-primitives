@@ -25,7 +25,7 @@ extension Parser.ASCII.Integer {
 }
 
 extension Parser.ASCII.Integer.Hexadecimal: Parser.`Protocol` {
-    public typealias ParseOutput = T
+    public typealias Output = T
     public typealias Failure = Parser.ASCII.Integer.Error
 
     @inlinable

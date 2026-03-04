@@ -10,15 +10,15 @@ extension Parser.Error {
     ///
     /// This makes the parser infallible (`Failure == Never`).
     public struct Replace<Upstream: Parser.`Protocol`>: Sendable
-    where Upstream: Sendable, Upstream.ParseOutput: Sendable {
+    where Upstream: Sendable, Upstream.Output: Sendable {
         @usableFromInline
         let upstream: Upstream
 
         @usableFromInline
-        let output: Upstream.ParseOutput
+        let output: Upstream.Output
 
         @inlinable
-        init(_ upstream: Upstream, output: Upstream.ParseOutput) {
+        init(_ upstream: Upstream, output: Upstream.Output) {
             self.upstream = upstream
             self.output = output
         }
@@ -27,11 +27,11 @@ extension Parser.Error {
 
 extension Parser.Error.Replace: Parser.`Protocol` {
     public typealias Input = Upstream.Input
-    public typealias ParseOutput = Upstream.ParseOutput
+    public typealias Output = Upstream.Output
     public typealias Failure = Never
 
     @inlinable
-    public func parse(_ input: inout Input) -> ParseOutput {
+    public func parse(_ input: inout Input) -> Output {
         do {
             return try upstream.parse(&input)
         } catch {
@@ -40,7 +40,7 @@ extension Parser.Error.Replace: Parser.`Protocol` {
     }
 }
 
-extension Parser.Error.Transform where Upstream.ParseOutput: Sendable {
+extension Parser.Error.Transform where Upstream.Output: Sendable {
     /// Replaces any parse failure with a default output value.
     ///
     /// - Parameter output: The value to return when parsing fails.
@@ -52,7 +52,7 @@ extension Parser.Error.Transform where Upstream.ParseOutput: Sendable {
     /// // Returns 0 if parsing fails
     /// ```
     @inlinable
-    public func replace(with output: Upstream.ParseOutput) -> Parser.Error.Replace<Upstream> {
+    public func replace(with output: Upstream.Output) -> Parser.Error.Replace<Upstream> {
         Parser.Error.Replace(upstream, output: output)
     }
 }

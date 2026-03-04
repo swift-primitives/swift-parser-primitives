@@ -34,7 +34,7 @@ extension Parser.Builder {
         _ p0: P0,
         _ p1: P1
     ) -> Parser.Skip.First<P0, P1>
-    where P0.Input == Input, P1.Input == Input, P0.ParseOutput == Void {
+    where P0.Input == Input, P1.Input == Input, P0.Output == Void {
         Parser.Skip.First(p0, p1)
     }
 
@@ -44,7 +44,7 @@ extension Parser.Builder {
         _ p0: P0,
         _ p1: P1
     ) -> Parser.Skip.Second<P0, P1>
-    where P0.Input == Input, P1.Input == Input, P1.ParseOutput == Void {
+    where P0.Input == Input, P1.Input == Input, P1.Output == Void {
         Parser.Skip.Second(p0, p1)
     }
 }
@@ -80,8 +80,8 @@ extension Parser.Builder {
     where
         Accumulated.Input == Input,
         Next.Input == Input,
-        Accumulated.ParseOutput == (repeat each O1),
-        Next.ParseOutput == O2
+        Accumulated.Output == (repeat each O1),
+        Next.Output == O2
     {
         Parser.Take.Two(accumulated, next)
             .map { tuple, next in
@@ -95,7 +95,7 @@ extension Parser.Builder {
         accumulated: Accumulated,
         next: Next
     ) -> Parser.Skip.First<Accumulated, Next>
-    where Accumulated.Input == Input, Next.Input == Input, Accumulated.ParseOutput == Void {
+    where Accumulated.Input == Input, Next.Input == Input, Accumulated.Output == Void {
         Parser.Skip.First(accumulated, next)
     }
 
@@ -105,7 +105,7 @@ extension Parser.Builder {
         accumulated: Accumulated,
         next: Next
     ) -> Parser.Skip.Second<Accumulated, Next>
-    where Accumulated.Input == Input, Next.Input == Input, Next.ParseOutput == Void {
+    where Accumulated.Input == Input, Next.Input == Input, Next.Output == Void {
         Parser.Skip.Second(accumulated, next)
     }
 }
@@ -126,7 +126,7 @@ extension Parser.Builder {
     public static func buildEither<First: Parser.`Protocol`, Second: Parser.`Protocol`>(
         first: First
     ) -> Parser.Conditional<First, Second>
-    where First.Input == Input, Second.Input == Input, First.ParseOutput == Second.ParseOutput {
+    where First.Input == Input, Second.Input == Input, First.Output == Second.Output {
         Parser.Conditional.first(first)
     }
 
@@ -135,7 +135,7 @@ extension Parser.Builder {
     public static func buildEither<First: Parser.`Protocol`, Second: Parser.`Protocol`>(
         second: Second
     ) -> Parser.Conditional<First, Second>
-    where First.Input == Input, Second.Input == Input, First.ParseOutput == Second.ParseOutput {
+    where First.Input == Input, Second.Input == Input, First.Output == Second.Output {
         Parser.Conditional.second(second)
     }
 }

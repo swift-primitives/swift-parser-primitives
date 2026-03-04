@@ -352,7 +352,7 @@ extension ParserInvariantTests.CheckpointRestore {
         var input = ByteInput([0x01, 0x02, 0x03])
         let before = input.checkpoint
 
-        let result: Parser.Byte<ByteInput>.ParseOutput? = parser.parse(&input)
+        let result: Parser.Byte<ByteInput>.Output? = parser.parse(&input)
 
         #expect(result == nil)
         #expect(input.checkpoint == before)

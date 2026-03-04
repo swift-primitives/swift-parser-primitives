@@ -48,11 +48,11 @@ extension Parser.Prefix {
 }
 
 extension Parser.Prefix.While: Parser.`Protocol` {
-    public typealias ParseOutput = Input
+    public typealias Output = Input
     public typealias Failure = Parser.Constraint.Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         var count = 0
         var endIndex = input.startIndex
 

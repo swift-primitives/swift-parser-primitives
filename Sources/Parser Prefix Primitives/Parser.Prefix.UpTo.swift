@@ -25,11 +25,11 @@ extension Parser.Prefix {
 }
 
 extension Parser.Prefix.UpTo: Parser.`Protocol` {
-    public typealias ParseOutput = Input
+    public typealias Output = Input
     public typealias Failure = Never
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         var endIndex = input.startIndex
 
         outer: while endIndex < input.endIndex {

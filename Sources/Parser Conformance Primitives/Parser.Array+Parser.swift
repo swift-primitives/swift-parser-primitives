@@ -7,7 +7,7 @@
 
 extension Swift.Array: Parser.`Protocol` where Element: Equatable {
     public typealias Input = ArraySlice<Element>
-    public typealias ParseOutput = Void
+    public typealias Output = Void
     public typealias Failure = Parser.Match.Error
 
     @inlinable

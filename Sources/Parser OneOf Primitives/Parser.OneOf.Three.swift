@@ -10,7 +10,7 @@ extension Parser.OneOf {
     public struct Three<P0: Parser.`Protocol`, P1: Parser.`Protocol`, P2: Parser.`Protocol`>: Sendable
     where P0: Sendable, P1: Sendable, P2: Sendable,
           P0.Input == P1.Input, P1.Input == P2.Input,
-          P0.ParseOutput == P1.ParseOutput, P1.ParseOutput == P2.ParseOutput,
+          P0.Output == P1.Output, P1.Output == P2.Output,
           P0.Input: Parser.Input {
         @usableFromInline
         let p0: P0
@@ -32,11 +32,11 @@ extension Parser.OneOf {
 
 extension Parser.OneOf.Three: Parser.`Protocol` {
     public typealias Input = P0.Input
-    public typealias ParseOutput = P0.ParseOutput
+    public typealias Output = P0.Output
     public typealias Failure = Parser.OneOf.Errors<P0.Failure, P1.Failure, P2.Failure>
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         let checkpoint = input.checkpoint
 
         do { return try p0.parse(&input) } catch let error0 {
@@ -56,7 +56,7 @@ extension Parser.OneOf.Three: Parser.`Protocol` {
 extension Parser.OneOf.Three: Parser.Printer
 where P0: Parser.Printer, P1: Parser.Printer, P2: Parser.Printer {
     @inlinable
-    public func print(_ output: ParseOutput, into input: inout Input) throws(Failure) {
+    public func print(_ output: Output, into input: inout Input) throws(Failure) {
         // Try each printer in order, use first that succeeds
         let checkpoint = input.checkpoint
 

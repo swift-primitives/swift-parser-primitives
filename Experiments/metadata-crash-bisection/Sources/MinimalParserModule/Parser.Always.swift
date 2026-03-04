@@ -1,9 +1,9 @@
 extension Parser {
-    public struct Always<Input, ParseOutput>: Sendable where ParseOutput: Sendable {
-        public let output: ParseOutput
+    public struct Always<Input, Output>: Sendable where Output: Sendable {
+        public let output: Output
 
         @inlinable
-        public init(_ output: ParseOutput) {
+        public init(_ output: Output) {
             self.output = output
         }
     }
@@ -13,7 +13,7 @@ extension Parser.Always: Parser.`Protocol` {
     public typealias Failure = Never
 
     @inlinable
-    public func parse(_ input: inout Input) -> ParseOutput {
+    public func parse(_ input: inout Input) -> Output {
         output
     }
 }

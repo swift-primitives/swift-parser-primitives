@@ -125,14 +125,14 @@ enum ParseError: Error, Sendable { case unexpected }
 
 protocol InoutParserV7: ~Copyable {
     associatedtype Input: ~Escapable
-    associatedtype ParseOutput
+    associatedtype Output
     associatedtype Failure: Swift.Error & Sendable
-    func parse(_ input: inout Input) throws(Failure) -> ParseOutput
+    func parse(_ input: inout Input) throws(Failure) -> Output
 }
 
 struct IntArrayParser: InoutParserV7 {
     typealias Input = [UInt8]
-    typealias ParseOutput = UInt8
+    typealias Output = UInt8
     typealias Failure = ParseError
 
     func parse(_ input: inout [UInt8]) throws(ParseError) -> UInt8 {
@@ -190,8 +190,8 @@ print("V7 inout parser:  \(parsed) (remaining: \(inputBytes.count))")
 //
 // Implications for Parser.Protocol:
 // - `associatedtype Input: ~Escapable` is viable TODAY
-// - `func parse(_ input: inout Input) throws(Failure) -> ParseOutput` compiles as-is
-//   since Input is inout (not returned), and ParseOutput remains Escapable
+// - `func parse(_ input: inout Input) throws(Failure) -> Output` compiles as-is
+//   since Input is inout (not returned), and Output remains Escapable
 // - This would allow conformers to use Span<UInt8> as Input directly,
 //   eliminating the need for the `Parser.Bytes.Input` escapable cursor wrapper
 // - Caveat: with legacy flag, ALL conformers see Input as ~Escapable,

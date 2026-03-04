@@ -43,7 +43,7 @@ extension Parser {
     /// ```swift
     /// struct MediaTypeParser<Input: Collection.Slice.Protocol>: Parser.Protocol
     /// where Input: Sendable, Input.Element == UInt8 {
-    ///     typealias ParseOutput = MediaType
+    ///     typealias Output = MediaType
     ///     typealias Failure = MediaTypeParser<Input>.Error
     ///
     ///     var body: some Parser.Protocol<Input, MediaType, Failure> {
@@ -67,7 +67,7 @@ extension Parser {
     /// ```swift
     /// struct IntParser: Parser.`Protocol` {
     ///     typealias Input = Parser.Bytes.Input
-    ///     typealias ParseOutput = Int
+    ///     typealias Output = Int
     ///     typealias Failure = Parser.Match.Error
     ///
     ///     func parse(_ input: inout Input) throws(Failure) -> Int {
@@ -87,7 +87,7 @@ extension Parser {
     ///     }
     /// }
     /// ```
-    public protocol `Protocol`<Input, ParseOutput, Failure> {
+    public protocol `Protocol`<Input, Output, Failure> {
         /// The input type this parser consumes.
         ///
         /// Supports both escapable inputs (collections, cursors) and non-escapable
@@ -95,7 +95,7 @@ extension Parser {
         associatedtype Input: ~Copyable & ~Escapable
 
         /// The output type this parser produces.
-        associatedtype ParseOutput
+        associatedtype Output
 
         /// The error type this parser can throw.
         ///
@@ -121,7 +121,7 @@ extension Parser {
         /// - Parameter input: The input to parse from. Modified to reflect consumption.
         /// - Returns: The parsed value.
         /// - Throws: `Failure` if parsing fails.
-        func parse(_ input: inout Input) throws(Failure) -> ParseOutput
+        func parse(_ input: inout Input) throws(Failure) -> Output
     }
 }
 
@@ -139,11 +139,11 @@ extension Parser.`Protocol` where Body == Never {
 
 extension Parser.`Protocol`
 where Body: Parser.`Protocol`, Body.Input == Input,
-      Body.ParseOutput == ParseOutput, Body.Failure == Failure
+      Body.Output == Output, Body.Failure == Failure
 {
     /// Default parse implementation that delegates to ``body-swift.property``.
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         try body.parse(&input)
     }
 }

@@ -28,11 +28,11 @@ extension Parser.Error {
 
 extension Parser.Error.Map: Parser.`Protocol` {
     public typealias Input = Upstream.Input
-    public typealias ParseOutput = Upstream.ParseOutput
+    public typealias Output = Upstream.Output
     public typealias Failure = NewFailure
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         do {
             return try upstream.parse(&input)
         } catch {

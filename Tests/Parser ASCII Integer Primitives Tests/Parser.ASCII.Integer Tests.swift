@@ -1,4 +1,5 @@
 import Testing
+import Parser_ASCII_Integer_Primitives
 import Parser_Primitives_Test_Support
 
 // MARK: - Test Suite Structure

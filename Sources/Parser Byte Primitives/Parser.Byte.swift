@@ -25,7 +25,7 @@ extension Parser {
 }
 
 extension Parser.Byte: Parser.`Protocol` {
-    public typealias ParseOutput = Void
+    public typealias Output = Void
     public typealias Failure = Parser.Error.Either<Parser.EndOfInput.Error, Parser.Match.Error>
 
     @inlinable

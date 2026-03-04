@@ -17,12 +17,12 @@ extension Parser {
         let upstream: Upstream
 
         @usableFromInline
-        let transform: @Sendable (Upstream.ParseOutput) -> Downstream
+        let transform: @Sendable (Upstream.Output) -> Downstream
 
         @inlinable
         public init(
             upstream: Upstream,
-            transform: @escaping @Sendable (Upstream.ParseOutput) -> Downstream
+            transform: @escaping @Sendable (Upstream.Output) -> Downstream
         ) {
             self.upstream = upstream
             self.transform = transform
@@ -32,12 +32,12 @@ extension Parser {
 
 extension Parser.FlatMap: Parser.`Protocol` {
     public typealias Input = Upstream.Input
-    public typealias ParseOutput = Downstream.ParseOutput
+    public typealias Output = Downstream.Output
     public typealias Failure = Parser.Error.Either<Upstream.Failure, Downstream.Failure>
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
-        let upstreamOutput: Upstream.ParseOutput
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
+        let upstreamOutput: Upstream.Output
         do {
             upstreamOutput = try upstream.parse(&input)
         } catch {

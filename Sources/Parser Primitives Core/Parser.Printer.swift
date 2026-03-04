@@ -32,7 +32,7 @@ extension Parser {
     /// ```swift
     /// struct IntPrinter: Parser.Printer {
     ///     typealias Input = [UInt8]
-    ///     typealias ParseOutput = Int
+    ///     typealias Output = Int
     ///     typealias Failure = Parser.Constraint.Error
     ///
     ///     func print(_ output: Int, into input: inout [UInt8]) throws(Failure) {
@@ -43,12 +43,12 @@ extension Parser {
     ///     }
     /// }
     /// ```
-    public protocol Printer<Input, ParseOutput, Failure> {
+    public protocol Printer<Input, Output, Failure> {
         /// The input type this printer produces.
         associatedtype Input: ~Copyable & ~Escapable
 
         /// The output type this printer consumes.
-        associatedtype ParseOutput
+        associatedtype Output
 
         /// The error type this printer can throw.
         ///
@@ -64,7 +64,7 @@ extension Parser {
         ///   - output: The value to print.
         ///   - input: The input buffer to prepend to.
         /// - Throws: `Failure` if printing fails.
-        func print(_ output: ParseOutput, into input: inout Input) throws(Failure)
+        func print(_ output: Output, into input: inout Input) throws(Failure)
     }
 }
 
@@ -79,7 +79,7 @@ extension Parser.Printer where Input: RangeReplaceableCollection {
     /// - Returns: The constructed input.
     /// - Throws: `Failure` if printing fails.
     @inlinable
-    public func print(_ output: ParseOutput) throws(Failure) -> Input {
+    public func print(_ output: Output) throws(Failure) -> Input {
         var input = Input()
         try print(output, into: &input)
         return input

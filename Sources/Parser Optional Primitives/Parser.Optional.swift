@@ -23,11 +23,11 @@ extension Parser {
 
 extension Parser.Optional: Parser.`Protocol` {
     public typealias Input = Wrapped.Input
-    public typealias ParseOutput = Wrapped.ParseOutput?
+    public typealias Output = Wrapped.Output?
     public typealias Failure = Wrapped.Failure
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         guard let wrapped = wrapped else {
             return nil
         }
@@ -40,7 +40,7 @@ extension Parser.Optional: Parser.`Protocol` {
 extension Parser.Optional: Parser.Printer
 where Wrapped: Parser.Printer {
     @inlinable
-    public func print(_ output: Wrapped.ParseOutput?, into input: inout Input) throws(Failure) {
+    public func print(_ output: Wrapped.Output?, into input: inout Input) throws(Failure) {
         guard let wrapped = wrapped, let output = output else { return }
         try wrapped.print(output, into: &input)
     }

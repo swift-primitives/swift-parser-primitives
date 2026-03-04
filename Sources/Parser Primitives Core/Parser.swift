@@ -14,13 +14,13 @@
 //
 //  ## Architecture
 //
-//  The core abstraction is `Parser<Input, ParseOutput>`:
+//  The core abstraction is `Parser<Input, Output>`:
 //  - Input: The type being consumed (e.g., Span<UInt8>, [UInt8], Substring)
-//  - ParseOutput: The parsed result
+//  - Output: The parsed result
 //
 //  Parsers consume from the front of a mutable input reference:
 //  ```swift
-//  func parse(_ input: inout Input) throws(Error) -> ParseOutput
+//  func parse(_ input: inout Input) throws(Error) -> Output
 //  ```
 //
 //  This mutation-based approach enables:
@@ -36,15 +36,13 @@
 //  - `Substring` / `Substring.UTF8View` - String parsing
 //  - Custom types implementing the protocol
 //
-//  ## ParseOutput Protocols
-//
-//  Two protocols handle output construction with different semantics:
+//  ## Output Protocols
 //
 //  - `Parser.Printer`: Prepends to buffer for parser-printer round-trip symmetry.
 //    Use when you need `parse(print(value)) == value`.
 //
-//  - `Parser.Serializer`: Appends to buffer for O(1) amortized performance.
-//    Use for one-way serialization (JSON encoding, binary formats, logging).
+//  - `Serializer.Protocol` (in swift-serializer-primitives): Appends to buffer for
+//    O(1) amortized performance. Use for one-way serialization.
 //
 //  ## Relationship to Binary Module
 //

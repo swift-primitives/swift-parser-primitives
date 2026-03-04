@@ -10,7 +10,7 @@ extension Parser.OneOf {
     ///
     /// Type-safe variant for exactly two parsers. Used by result builders.
     public struct Two<P0: Parser.`Protocol`, P1: Parser.`Protocol`>: Sendable
-    where P0: Sendable, P1: Sendable, P0.Input == P1.Input, P0.ParseOutput == P1.ParseOutput,
+    where P0: Sendable, P1: Sendable, P0.Input == P1.Input, P0.Output == P1.Output,
           P0.Input: Parser.Input {
         @usableFromInline
         let p0: P0
@@ -28,11 +28,11 @@ extension Parser.OneOf {
 
 extension Parser.OneOf.Two: Parser.`Protocol` {
     public typealias Input = P0.Input
-    public typealias ParseOutput = P0.ParseOutput
+    public typealias Output = P0.Output
     public typealias Failure = Parser.OneOf.Errors<P0.Failure, P1.Failure>
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         let checkpoint = input.checkpoint
 
         do {
@@ -53,7 +53,7 @@ extension Parser.OneOf.Two: Parser.`Protocol` {
 extension Parser.OneOf.Two: Parser.Printer
 where P0: Parser.Printer, P1: Parser.Printer {
     @inlinable
-    public func print(_ output: ParseOutput, into input: inout Input) throws(Failure) {
+    public func print(_ output: Output, into input: inout Input) throws(Failure) {
         // Try first printer, fall back to second
         let checkpoint = input.checkpoint
         do {

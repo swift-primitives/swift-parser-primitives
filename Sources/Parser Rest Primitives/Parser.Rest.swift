@@ -19,11 +19,11 @@ extension Parser {
 }
 
 extension Parser.Rest: Parser.`Protocol` {
-    public typealias ParseOutput = Input
+    public typealias Output = Input
     public typealias Failure = Never
 
     @inlinable
-    public func parse(_ input: inout Input) -> ParseOutput {
+    public func parse(_ input: inout Input) -> Output {
         let result = input
         input = input[input.endIndex...]
         return result

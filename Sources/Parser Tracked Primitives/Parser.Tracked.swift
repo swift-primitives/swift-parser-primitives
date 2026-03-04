@@ -161,11 +161,11 @@ extension Parser.Tracked {
     @inlinable
     public mutating func parseTracked<P: Parser.`Protocol`>(
         _ parser: P
-    ) throws(Parser.Error.Located<P.Failure>) -> (output: P.ParseOutput, start: Index<Element>)
+    ) throws(Parser.Error.Located<P.Failure>) -> (output: P.Output, start: Index<Element>)
     where P.Input == Base {
         let start = currentOffset
         let countBefore = base.count
-        let value: P.ParseOutput
+        let value: P.Output
         do {
             value = try parser.parse(&base)
         } catch {

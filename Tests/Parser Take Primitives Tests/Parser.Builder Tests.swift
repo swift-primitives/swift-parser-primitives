@@ -24,7 +24,7 @@ extension Digit {
 }
 
 extension Digit: Parser.`Protocol` {
-    typealias ParseOutput = UInt8
+    typealias Output = UInt8
     typealias Failure = Digit<Input>.Error
 
     func parse(_ input: inout Input) throws(Failure) -> UInt8 {
@@ -50,7 +50,7 @@ extension Expect {
 }
 
 extension Expect: Parser.`Protocol` {
-    typealias ParseOutput = Void
+    typealias Output = Void
     typealias Failure = Expect<Input>.Error
 
     func parse(_ input: inout Input) throws(Failure) {
@@ -68,7 +68,7 @@ where Input: Sendable, Input.Element == UInt8 {
 }
 
 extension Whitespace: Parser.`Protocol` {
-    typealias ParseOutput = Void
+    typealias Output = Void
     typealias Failure = Never
 
     func parse(_ input: inout Input) {
@@ -86,7 +86,7 @@ where Input: Sendable, Input.Element == UInt8 {
 }
 
 extension CountRest: Parser.`Protocol` {
-    typealias ParseOutput = Int
+    typealias Output = Int
     typealias Failure = Never
 
     func parse(_ input: inout Input) -> Int {
@@ -118,7 +118,7 @@ where Input: Sendable, Input.Element == UInt8 {
 }
 
 extension SingleDigit: Parser.`Protocol` {
-    typealias ParseOutput = UInt8
+    typealias Output = UInt8
     typealias Failure = Digit<Input>.Error
 
     var body: some Parser.`Protocol`<Input, UInt8, Digit<Input>.Error> {
@@ -151,7 +151,7 @@ extension TwoDigits {
 }
 
 extension TwoDigits: Parser.`Protocol` {
-    typealias ParseOutput = (UInt8, UInt8)
+    typealias Output = (UInt8, UInt8)
     typealias Failure = TwoDigits<Input>.Error
 
     var body: some Parser.`Protocol`<Input, (UInt8, UInt8), TwoDigits<Input>.Error> {
@@ -187,7 +187,7 @@ where Input: Sendable, Input.Element == UInt8 {
 }
 
 extension SkipThenDigit: Parser.`Protocol` {
-    typealias ParseOutput = UInt8
+    typealias Output = UInt8
     typealias Failure = Digit<Input>.Error
 
     var body: some Parser.`Protocol`<Input, UInt8, Digit<Input>.Error> {
@@ -218,7 +218,7 @@ where Input: Sendable, Input.Element == UInt8 {
 }
 
 extension DigitThenSkip: Parser.`Protocol` {
-    typealias ParseOutput = UInt8
+    typealias Output = UInt8
     typealias Failure = Digit<Input>.Error
 
     var body: some Parser.`Protocol`<Input, UInt8, Digit<Input>.Error> {
@@ -280,7 +280,7 @@ extension Version {
 }
 
 extension Version.Parser: Parser_Primitives.Parser.`Protocol` {
-    typealias ParseOutput = Version
+    typealias Output = Version
     typealias Failure = Version.Error
 
     var body: some Parser_Primitives.Parser.`Protocol`<Input, Version, Version.Error> {
@@ -348,7 +348,7 @@ where Input: Sendable, Input.Element == UInt8 {
 }
 
 extension SkipWhitespaceCountRest: Parser.`Protocol` {
-    typealias ParseOutput = Int
+    typealias Output = Int
     typealias Failure = Never
 
     var body: some Parser.`Protocol`<Input, Int, Never> {
@@ -384,7 +384,7 @@ where Input: Sendable, Input.Element == UInt8 {
 }
 
 extension WhitespaceVersion: Parser.`Protocol` {
-    typealias ParseOutput = Version
+    typealias Output = Version
     typealias Failure = Version.Error
 
     var body: some Parser.`Protocol`<Input, Version, Version.Error> {
@@ -422,7 +422,7 @@ extension TwoDigitNumber {
 }
 
 extension TwoDigitNumber: Parser.`Protocol` {
-    typealias ParseOutput = Int
+    typealias Output = Int
     typealias Failure = TwoDigitNumber<Input>.Error
 
     var body: some Parser.`Protocol`<Input, Int, TwoDigitNumber<Input>.Error> {

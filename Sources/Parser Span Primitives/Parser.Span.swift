@@ -9,7 +9,7 @@ extension Parser {
     /// A parser that wraps output with its source span.
     ///
     /// Captures start and end offsets around the upstream parser,
-    /// producing `Spanned<ParseOutput>`.
+    /// producing `Spanned<Output>`.
     ///
     /// ## Usage
     ///
@@ -20,7 +20,7 @@ extension Parser {
     /// print("Identifier '\(result.value)' at \(result.start)..<\(result.end)")
     /// ```
     public struct Span<Base: Input, Upstream: Parser.`Protocol`>: Sendable
-    where Upstream: Sendable, Base: Sendable, Upstream.Input == Base, Upstream.ParseOutput: Sendable {
+    where Upstream: Sendable, Base: Sendable, Upstream.Input == Base, Upstream.Output: Sendable {
         @usableFromInline
         let upstream: Upstream
 
@@ -33,11 +33,11 @@ extension Parser {
 
 extension Parser.Span: Parser.`Protocol` {
     public typealias Input = Parser.Tracked<Base>
-    public typealias ParseOutput = Parser.Spanned<Upstream.ParseOutput>
+    public typealias Output = Parser.Spanned<Upstream.Output>
     public typealias Failure = Parser.Error.Located<Upstream.Failure>
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         let (value, start) = try input.parseTracked(upstream)
         return Parser.Spanned(value, start: start, end: input.currentOffset)
     }
@@ -45,11 +45,11 @@ extension Parser.Span: Parser.`Protocol` {
 
 // MARK: - Parser Extension
 
-extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input & Sendable & Copyable, ParseOutput: Sendable {
+extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input & Sendable & Copyable, Output: Sendable {
     /// Wraps this parser to produce spanned output.
     ///
     /// The returned parser requires `Tracked<Input>` and produces
-    /// `Spanned<ParseOutput>` with start/end offsets.
+    /// `Spanned<Output>` with start/end offsets.
     @inlinable
     public func spanned() -> Parser.Span<Input, Self> {
         Parser.Span(self)

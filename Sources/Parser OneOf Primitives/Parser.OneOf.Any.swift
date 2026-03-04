@@ -16,12 +16,12 @@ extension Parser.OneOf {
     ///
     /// By default, saves and restores input state between attempts.
     /// This enables clean backtracking when an alternative fails partway through.
-    public struct `Any`<Input: Parser.Input, ParseOutput>: Sendable {
+    public struct `Any`<Input: Parser.Input, Output>: Sendable {
         @usableFromInline
-        let parsers: [@Sendable (inout Input) throws(Error) -> ParseOutput]
+        let parsers: [@Sendable (inout Input) throws(Error) -> Output]
 
         @inlinable
-        public init(_ parsers: [@Sendable (inout Input) throws(Error) -> ParseOutput]) {
+        public init(_ parsers: [@Sendable (inout Input) throws(Error) -> Output]) {
             self.parsers = parsers
         }
     }
@@ -61,7 +61,7 @@ extension Parser.OneOf.`Any`: Parser.`Protocol` {
     public typealias Failure = Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         var errors: [Error] = []
         let checkpoint = input.checkpoint
 

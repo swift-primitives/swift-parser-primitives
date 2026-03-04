@@ -22,11 +22,11 @@ extension Parser.Consume {
 }
 
 extension Parser.Consume.Exactly: Parser.`Protocol` {
-    public typealias ParseOutput = Input
+    public typealias Output = Input
     public typealias Failure = Parser.Constraint.Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+    public func parse(_ input: inout Input) throws(Failure) -> Output {
         var endIndex = input.startIndex
         var actualCount = 0
         while actualCount < count, endIndex < input.endIndex {
