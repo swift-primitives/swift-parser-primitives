@@ -96,6 +96,7 @@ extension Parser.Take.Builder {
     }
 
     /// Accumulates into partial block (general case - two elements).
+    @_disfavoredOverload
     @inlinable
     public static func buildPartialBlock<Accumulated: Parser.`Protocol`, Next: Parser.`Protocol`>(
         accumulated: Accumulated,
