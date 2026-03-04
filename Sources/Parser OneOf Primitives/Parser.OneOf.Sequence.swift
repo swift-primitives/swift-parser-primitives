@@ -20,8 +20,7 @@ extension Parser.OneOf {
     /// ```
     public struct Sequence<Input, ParseOutput, Body: Parser.`Protocol`>: Sendable
     where Body: Sendable, Body.Input == Input, Body.ParseOutput == ParseOutput {
-        @usableFromInline
-        let body: Body
+        public let body: Body
 
         @inlinable
         public init(

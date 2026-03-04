@@ -35,7 +35,34 @@ extension Parser {
     /// - `OneOf` produces `Either<P0.Failure, P1.Failure>`
     /// - Infallible parsers use `Failure == Never`
     ///
-    /// ## Example
+    /// ## Declarative Composition
+    ///
+    /// Domain parsers can declare their grammar via ``body-swift.property``,
+    /// composing existing parsers with output and error mapping:
+    ///
+    /// ```swift
+    /// struct MediaTypeParser<Input: Collection.Slice.Protocol>: Parser.Protocol
+    /// where Input: Sendable, Input.Element == UInt8 {
+    ///     typealias ParseOutput = MediaType
+    ///     typealias Failure = MediaTypeParser<Input>.Error
+    ///
+    ///     var body: some Parser.Protocol<Input, MediaType, Failure> {
+    ///         Parser.Take.Sequence {
+    ///             OWS<Input>()
+    ///             Token<Input>()
+    ///             Slash<Input>()
+    ///             Token<Input>()
+    ///         }
+    ///         .map { (type, subtype) in MediaType(type, subtype) }
+    ///         .error.map { either -> Failure in ... }
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// The default ``parse(_:)`` delegates to ``body-swift.property``.
+    /// Leaf parsers implement ``parse(_:)`` directly; their ``Body`` is `Never`.
+    ///
+    /// ## Leaf Parser Example
     ///
     /// ```swift
     /// struct IntParser: Parser.`Protocol` {
@@ -75,6 +102,17 @@ extension Parser {
         /// Use `Never` for infallible parsers.
         associatedtype Failure: Swift.Error & Sendable
 
+        /// The type of the composed parser body, or `Never` for leaf parsers.
+        associatedtype Body
+
+        /// The composed parser body.
+        ///
+        /// Override this property to declare a parser declaratively.
+        /// Leaf parsers that implement ``parse(_:)`` directly do not
+        /// override this property — the default returns `Never`.
+        @Parser.Builder<Input>
+        var body: Body { get }
+
         /// Parses a value from the input.
         ///
         /// On success, consumes the parsed portion from input and returns the result.
@@ -84,6 +122,29 @@ extension Parser {
         /// - Returns: The parsed value.
         /// - Throws: `Failure` if parsing fails.
         func parse(_ input: inout Input) throws(Failure) -> ParseOutput
+    }
+}
+
+// MARK: - Leaf Parser Default (Body == Never)
+
+extension Parser.`Protocol` where Body == Never {
+    /// Leaf parsers do not have a body.
+    @inlinable
+    public var body: Never {
+        fatalError("\(Self.self) is a leaf parser — implement parse(_:) directly")
+    }
+}
+
+// MARK: - Declarative Parser Default (Body: Parser.Protocol)
+
+extension Parser.`Protocol`
+where Body: Parser.`Protocol`, Body.Input == Input,
+      Body.ParseOutput == ParseOutput, Body.Failure == Failure
+{
+    /// Default parse implementation that delegates to ``body-swift.property``.
+    @inlinable
+    public func parse(_ input: inout Input) throws(Failure) -> ParseOutput {
+        try body.parse(&input)
     }
 }
 

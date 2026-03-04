@@ -32,7 +32,7 @@ extension Parser {
     ///     let body: Spanned<Block>
     /// }
     /// ```
-    public struct Spanned<T: Sendable>: Sendable {
+    public struct Spanned<T> {
         /// The wrapped value.
         public let value: T
 
@@ -69,6 +69,10 @@ extension Parser {
     }
 }
 
+// MARK: - Sendable
+
+extension Parser.Spanned: Sendable where T: Sendable {}
+
 // MARK: - Typed Boundary Overload
 
 extension Parser.Spanned {
@@ -94,7 +98,7 @@ extension Parser.Spanned: Hashable where T: Hashable {}
 extension Parser.Spanned {
     /// Maps the value while preserving the span.
     @inlinable
-    public func map<U: Sendable>(_ transform: (T) -> U) -> Parser.Spanned<U> {
+    public func map<U>(_ transform: (T) -> U) -> Parser.Spanned<U> {
         Parser.Spanned<U>(transform(value), start: start, end: end)
     }
 }

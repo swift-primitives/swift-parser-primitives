@@ -19,8 +19,7 @@ extension Parser.Take {
     /// ```
     public struct Transform<Input, BodyOutput, ParseOutput, Body: Parser.`Protocol`>: Sendable
     where Body: Sendable, Body.Input == Input, Body.ParseOutput == BodyOutput {
-        @usableFromInline
-        let body: Body
+        public let body: Body
 
         @usableFromInline
         let transform: @Sendable (BodyOutput) -> ParseOutput
