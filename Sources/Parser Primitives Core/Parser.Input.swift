@@ -79,5 +79,16 @@ extension Parser {
     /// ```
     public typealias CollectionInput<Base: Collection.`Protocol`> = Input_Primitives.Input.Slice<Base>
         where Base: Sendable, Base.Index: Sendable
+
+    /// Concrete input type for parsing byte arrays with parser combinators.
+    ///
+    /// Standard bridge from `[UInt8]` / `String.UTF8View` to the
+    /// `Collection.Slice.Protocol`-constrained parser world.
+    ///
+    /// ```swift
+    /// var input = Parser.ByteInput(utf8: "text/html; charset=utf-8")
+    /// let result = try HTTP.MediaType.Parser<Parser.ByteInput>().parse(&input)
+    /// ```
+    public typealias ByteInput = Input_Primitives.Input.Slice<Array<UInt8>.Indexed<UInt8>>
 }
 
