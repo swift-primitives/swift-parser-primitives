@@ -195,6 +195,39 @@ extension Parser.Take.Builder {
     }
 }
 
+// MARK: - String Literal Support
+
+extension Parser.Take.Builder
+where Input: Parser.Streaming & Sendable, Input.Element == UInt8 {
+    /// Enables bare string literals as `Parser.Literal` in builder bodies.
+    ///
+    /// ```swift
+    /// Parser.Take.Sequence {
+    ///     ASCII.Decimal.Parser<_, UInt16>()
+    ///     ":"                                  // ← inferred as Parser.Literal<Input>
+    ///     ASCII.Decimal.Parser<_, UInt16>()
+    /// }
+    /// ```
+    @inlinable
+    public static func buildExpression(
+        _ literal: Parser.Literal<Input>
+    ) -> Parser.Literal<Input> {
+        literal
+    }
+
+    /// Re-declared generic pass-through for constrained extension.
+    ///
+    /// Without this, the `Parser.Literal` overload above shadows the
+    /// generic `buildExpression` from the unconstrained extension,
+    /// causing non-literal parsers to fail type-checking.
+    @inlinable
+    public static func buildExpression<P: Parser.`Protocol`>(
+        _ parser: P
+    ) -> P where P.Input == Input {
+        parser
+    }
+}
+
 // MARK: - Byte Array Literal Support
 
 extension Parser.Take.Builder where Input == ArraySlice<UInt8> {

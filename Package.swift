@@ -276,6 +276,7 @@ let package = Package(
                 "Parser Conditional Primitives",
                 "Parser Optional Primitives",
                 "Parser Always Primitives",
+                "Parser Literal Primitives",
             ]
         ),
 

@@ -90,5 +90,21 @@ extension Parser {
     /// let result = try HTTP.MediaType.Parser<Parser.ByteInput>().parse(&input)
     /// ```
     public typealias ByteInput = Input_Primitives.Input.Slice<Array<UInt8>.Indexed<UInt8>>
+
+    /// Common constraint set for byte-stream parser inputs.
+    ///
+    /// Bundles `Collection.Slice.Protocol & Parser.Streaming & Sendable`
+    /// into a single name, reducing constraint boilerplate on parser definitions.
+    ///
+    /// ```swift
+    /// // Before:
+    /// struct Parser<Input: Collection.Slice.Protocol & Parser.Streaming>: Sendable
+    /// where Input: Sendable, Input.Element == UInt8 { ... }
+    ///
+    /// // After:
+    /// struct Parser<Input: Parser.ByteStream>: Sendable
+    /// where Input.Element == UInt8 { ... }
+    /// ```
+    public typealias ByteStream = Collection.Slice.`Protocol` & Parser.Streaming & Sendable
 }
 
