@@ -157,14 +157,6 @@ let package = Package(
             targets: ["Parser Conformance Primitives"]
         ),
         .library(
-            name: "Parser ASCII Integer Primitives",
-            targets: ["Parser ASCII Integer Primitives"]
-        ),
-        .library(
-            name: "Parseable Integer Primitives",
-            targets: ["Parseable Integer Primitives"]
-        ),
-        .library(
             name: "Parser Primitives Test Support",
             targets: ["Parser Primitives Test Support"]
         ),
@@ -459,20 +451,6 @@ let package = Package(
                 "Parser Match Primitives",
             ]
         ),
-        .target(
-            name: "Parser ASCII Integer Primitives",
-            dependencies: [
-                "Parser Primitives Core",
-                "Parser EndOfInput Primitives",
-            ]
-        ),
-        .target(
-            name: "Parseable Integer Primitives",
-            dependencies: [
-                "Parser ASCII Integer Primitives",
-            ]
-        ),
-
         // MARK: - Umbrella
 
         .target(
@@ -513,8 +491,6 @@ let package = Package(
                 "Parser Byte Primitives",
                 "Parser Literal Primitives",
                 "Parser Conformance Primitives",
-                "Parser ASCII Integer Primitives",
-                "Parseable Integer Primitives",
             ]
         ),
 
@@ -612,10 +588,6 @@ let package = Package(
         ),
         .testTarget(
             name: "Parser Invariant Primitives Tests",
-            dependencies: ["Parser Primitives Test Support"]
-        ),
-        .testTarget(
-            name: "Parser ASCII Integer Primitives Tests",
             dependencies: ["Parser Primitives Test Support"]
         ),
     ],
