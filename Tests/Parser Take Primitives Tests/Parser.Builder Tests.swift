@@ -357,12 +357,9 @@ extension SkipWhitespaceCountRest: Parser.`Protocol` {
             CountRest<Input>()
         }
         .error.map { (either) -> Never in
-            // Either<Never, Never> is uninhabited — this closure is unreachable.
-            // Cannot exhaustively switch because Either is not @frozen.
             switch either {
             case .left(let never): switch never {}
             case .right(let never): switch never {}
-            default: fatalError("unreachable: Either<Never, Never>")
             }
         }
     }
