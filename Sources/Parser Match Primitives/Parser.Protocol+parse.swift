@@ -10,7 +10,7 @@ extension Parser.`Protocol` {
     /// - Returns: The parsed value.
     /// - Throws: `Either<Failure, Match.Error>` if parsing fails or input remains.
     @inlinable
-    public func parse(_ input: consuming Input) throws(Parser.Error.Either<Failure, Parser.Match.Error>) -> Output
+    public func parse(_ input: consuming Input) throws(Either<Failure, Parser.Match.Error>) -> Output
     where Input: Collection.Slice.`Protocol` & Copyable {
         var input = input
         let output: Output

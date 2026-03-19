@@ -34,7 +34,7 @@ extension Parser {
 extension Parser.Filter: Parser.`Protocol` {
     public typealias Input = Upstream.Input
     public typealias Output = Upstream.Output
-    public typealias Failure = Parser.Error.Either<Upstream.Failure, Parser.Constraint.Error>
+    public typealias Failure = Either<Upstream.Failure, Parser.Constraint.Error>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {

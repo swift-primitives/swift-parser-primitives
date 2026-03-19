@@ -294,8 +294,8 @@ where Input: Sendable, Input.Element == UInt8 {
 
 extension EndpointParser: Parser.`Protocol` {
     typealias Output = EndpointOutput
-    typealias Failure = Parser.Error.Either<
-        Parser.Error.Either<ASCII.Decimal.Error, Parser.Literal<Input>.Failure>,
+    typealias Failure = Either<
+        Either<ASCII.Decimal.Error, Parser.Literal<Input>.Failure>,
         ASCII.Decimal.Error
     >
 

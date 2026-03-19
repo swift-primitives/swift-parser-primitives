@@ -29,7 +29,7 @@ extension Parser.Take {
 extension Parser.Take.Two: Parser.`Protocol` {
     public typealias Input = P0.Input
     public typealias Output = (P0.Output, P1.Output)
-    public typealias Failure = Parser.Error.Either<P0.Failure, P1.Failure>
+    public typealias Failure = Either<P0.Failure, P1.Failure>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {

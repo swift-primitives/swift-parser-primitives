@@ -247,7 +247,7 @@ extension ParserInvariantTests.ErrorPropagation {
         #expect {
             try parser.parse(&input)
         } throws: { error in
-            guard let either = error as? Parser.Error.Either<
+            guard let either = error as? Either<
                 Parser.EndOfInput.Error,
                 Never
             > else { return false }
@@ -266,7 +266,7 @@ extension ParserInvariantTests.ErrorPropagation {
         #expect {
             try parser.parse(&input)
         } throws: { error in
-            guard let either = error as? Parser.Error.Either<
+            guard let either = error as? Either<
                 Never,
                 Parser.Constraint.Error
             > else { return false }
@@ -296,7 +296,7 @@ extension ParserInvariantTests.ErrorPropagation {
         #expect {
             try parser.parse(&input)
         } throws: { error in
-            guard let either = error as? Parser.Error.Either<
+            guard let either = error as? Either<
                 Parser.EndOfInput.Error,
                 Parser.Constraint.Error
             > else { return false }

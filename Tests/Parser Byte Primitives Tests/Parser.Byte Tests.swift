@@ -44,7 +44,7 @@ extension ParserByteTests.EdgeCase {
         #expect {
             try parser.parse(&input)
         } throws: { error in
-            guard let either = error as? Parser.Error.Either<Parser.EndOfInput.Error, Parser.Match.Error> else {
+            guard let either = error as? Either<Parser.EndOfInput.Error, Parser.Match.Error> else {
                 return false
             }
             return either.left != nil
@@ -59,7 +59,7 @@ extension ParserByteTests.EdgeCase {
         #expect {
             try parser.parse(&input)
         } throws: { error in
-            guard let either = error as? Parser.Error.Either<Parser.EndOfInput.Error, Parser.Match.Error> else {
+            guard let either = error as? Either<Parser.EndOfInput.Error, Parser.Match.Error> else {
                 return false
             }
             return either.right != nil

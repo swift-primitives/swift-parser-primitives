@@ -3,7 +3,7 @@ import Parser_Primitives_Test_Support
 
 // MARK: - Test Suite Structure
 
-@Suite("Parser.Error.Either")
+@Suite("Either")
 struct ParserErrorEitherTests {
     @Suite struct Unit {}
     @Suite struct EdgeCase {}
@@ -12,7 +12,7 @@ struct ParserErrorEitherTests {
 // MARK: - Unit Tests
 
 extension ParserErrorEitherTests.Unit {
-    typealias E = Parser.Error.Either<Parser.EndOfInput.Error, Parser.Match.Error>
+    typealias E = Either<Parser.EndOfInput.Error, Parser.Match.Error>
 
     @Test
     func `left case extracts left value`() {
@@ -53,20 +53,20 @@ extension ParserErrorEitherTests.Unit {
 extension ParserErrorEitherTests.EdgeCase {
     @Test
     func `left Never extracts right unconditionally`() {
-        let error: Parser.Error.Either<Never, Parser.Match.Error> =
+        let error: Either<Never, Parser.Match.Error> =
             .right(.expectedEnd(remaining: 3))
 
-        let extracted = error.error
+        let extracted = error.value
 
         #expect(extracted == .expectedEnd(remaining: 3))
     }
 
     @Test
     func `right Never extracts left unconditionally`() {
-        let error: Parser.Error.Either<Parser.Match.Error, Never> =
+        let error: Either<Parser.Match.Error, Never> =
             .left(.predicateFailed(description: "test"))
 
-        let extracted = error.error
+        let extracted = error.value
 
         #expect(extracted == .predicateFailed(description: "test"))
     }

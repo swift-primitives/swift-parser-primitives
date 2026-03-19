@@ -175,10 +175,10 @@ extension TwoDigits: Parser.`Protocol` {
 //         Whitespace<Input>()   // → Void (skipped automatically)
 //         Digit<Input>()        // → UInt8
 //     }                         // → UInt8 / Either<Never, Digit.Error>
-//     .error.map { $0.error }   // → UInt8 / Digit.Error
+//     .error.map { $0.value }   // → UInt8 / Digit.Error
 //
 // When a parser produces Void, the builder uses Skip.First.
-// Either<Never, X>.error eliminates the Never branch.
+// Either<Never, X>.value eliminates the Never branch (unconditional extraction).
 // ────────────────────────────────────────────────────────────
 
 struct SkipThenDigit<Input: Collection.Slice.`Protocol`>: Sendable
@@ -195,7 +195,7 @@ extension SkipThenDigit: Parser.`Protocol` {
             Whitespace<Input>()
             Digit<Input>()
         }
-        .error.map { $0.error }
+        .error.map { $0.value }
     }
 }
 
@@ -206,10 +206,10 @@ extension SkipThenDigit: Parser.`Protocol` {
 //         Digit<Input>()        // → UInt8
 //         Whitespace<Input>()   // → Void (skipped automatically)
 //     }                         // → UInt8 / Either<Digit.Error, Never>
-//     .error.map { $0.error }   // → UInt8 / Digit.Error
+//     .error.map { $0.value }   // → UInt8 / Digit.Error
 //
 // When the right parser produces Void, the builder uses Skip.Second.
-// Either<X, Never>.error eliminates the Never branch.
+// Either<X, Never>.value eliminates the Never branch.
 // ────────────────────────────────────────────────────────────
 
 struct DigitThenSkip<Input: Collection.Slice.`Protocol`>: Sendable
@@ -226,7 +226,7 @@ extension DigitThenSkip: Parser.`Protocol` {
             Digit<Input>()
             Whitespace<Input>()
         }
-        .error.map { $0.error }
+        .error.map { $0.value }
     }
 }
 
@@ -357,9 +357,12 @@ extension SkipWhitespaceCountRest: Parser.`Protocol` {
             CountRest<Input>()
         }
         .error.map { (either) -> Never in
+            // Either<Never, Never> is uninhabited — this closure is unreachable.
+            // Cannot exhaustively switch because Either is not @frozen.
             switch either {
             case .left(let never): switch never {}
             case .right(let never): switch never {}
+            default: fatalError("unreachable: Either<Never, Never>")
             }
         }
     }
@@ -372,7 +375,7 @@ extension SkipWhitespaceCountRest: Parser.`Protocol` {
 //         Whitespace<Input>()         // Void / Never (skipped)
 //         Version.Parser<Input>()     // Version / Version.Error
 //     }                               // → Version / Either<Never, Version.Error>
-//     .error.map { $0.error }         // → Version / Version.Error
+//     .error.map { $0.value }         // → Version / Version.Error
 //
 // A declarative parser can use another declarative parser in its body.
 // The inner parser's Failure (Version.Error) propagates outward.
@@ -392,7 +395,7 @@ extension WhitespaceVersion: Parser.`Protocol` {
             Whitespace<Input>()
             Version.Parser<Input>()
         }
-        .error.map { $0.error }
+        .error.map { $0.value }
     }
 }
 

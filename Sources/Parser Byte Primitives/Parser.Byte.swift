@@ -26,7 +26,7 @@ extension Parser {
 
 extension Parser.Byte: Parser.`Protocol` {
     public typealias Output = Void
-    public typealias Failure = Parser.Error.Either<Parser.EndOfInput.Error, Parser.Match.Error>
+    public typealias Failure = Either<Parser.EndOfInput.Error, Parser.Match.Error>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) {

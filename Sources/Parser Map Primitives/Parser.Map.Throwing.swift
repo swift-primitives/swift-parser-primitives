@@ -33,7 +33,7 @@ extension Parser.Map {
 
 extension Parser.Map.Throwing: Parser.`Protocol` {
     public typealias Input = Upstream.Input
-    public typealias Failure = Parser.Error.Either<Upstream.Failure, E>
+    public typealias Failure = Either<Upstream.Failure, E>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
