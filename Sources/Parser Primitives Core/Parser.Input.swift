@@ -2,26 +2,35 @@
 //  Parser.Input.swift
 //  swift-parser-primitives
 //
-//  Typealiases for Input protocols from swift-input-primitives.
+//  Namespace and typealiases for parser input types from swift-input-primitives.
 //
 
 public import Input_Primitives
 public import Collection_Primitives
 
 extension Parser {
-    /// A type that can be used as streaming input to a parser.
+    /// Namespace for parser input types.
     ///
-    /// This is a typealias to `Input.Streaming` from swift-input-primitives.
+    /// ## Protocol Hierarchy
     ///
-    /// ## Forward-Only Parsing
+    /// ```
+    /// Input.Streaming   ← minimal, forward-only (isEmpty, first, removeFirst)
+    ///     ↑
+    /// Input.Protocol    ← adds checkpoint/restore for backtracking
+    /// ```
     ///
-    /// `Streaming` provides the minimal interface for forward-only parsing:
-    /// - `isEmpty`: Check if input is exhausted
-    /// - `advance()`: Consume and return the next element
+    /// ## Concrete Types
     ///
-    /// For backtracking support, use ``Input`` instead.
-    public typealias Streaming = Input_Primitives.Input.Streaming
+    /// - ``Input/Bytes``: Concrete input for parsing `[UInt8]` / UTF-8 strings
+    /// - ``Input/Collection``: Generic input for any `Collection.Protocol`
+    ///
+    /// ## Constraint Bundles
+    ///
+    /// - ``Input/Stream``: `Collection.Slice.Protocol & Input.Streaming & Sendable`
+    public enum Input {}
+}
 
+extension Parser.Input {
     /// A type that can be used as input to a parser with backtracking support.
     ///
     /// This is a typealias to `Input.Protocol` from swift-input-primitives.
@@ -31,7 +40,7 @@ extension Parser {
     /// ```
     /// Streaming   ← minimal, forward-only (isEmpty, first, removeFirst)
     ///     ↑
-    ///   Input     ← adds checkpoint/restore for backtracking
+    ///   Protocol   ← adds checkpoint/restore for backtracking
     /// ```
     ///
     /// ## Checkpoint-Based Backtracking
@@ -40,7 +49,7 @@ extension Parser {
     /// backtracking without copying the entire input state:
     ///
     /// ```swift
-    /// var input = Input.Slice([1, 2, 3, 4, 5])
+    /// var input = Input_Primitives.Input.Slice([1, 2, 3, 4, 5])
     /// let checkpoint = input.checkpoint
     ///
     /// // Try to match something
@@ -56,16 +65,29 @@ extension Parser {
     ///
     /// Use `Input.Slice` for zero-copy parsing over collections:
     /// ```swift
-    /// var input = Input.Slice(bytes[...])
+    /// var input = Input_Primitives.Input.Slice(bytes[...])
     /// try parser.parse(&input)
     /// ```
     ///
     /// Use `Input.Buffer` for owned buffer parsing:
     /// ```swift
-    /// var input = Input.Buffer([1, 2, 3, 4, 5])
+    /// var input = Input_Primitives.Input.Buffer([1, 2, 3, 4, 5])
     /// try parser.parse(&input)
     /// ```
-    public typealias Input = Input_Primitives.Input.`Protocol`
+    public typealias `Protocol` = Input_Primitives.Input.`Protocol`
+
+    /// A type that can be used as streaming input to a parser.
+    ///
+    /// This is a typealias to `Input.Streaming` from swift-input-primitives.
+    ///
+    /// ## Forward-Only Parsing
+    ///
+    /// `Streaming` provides the minimal interface for forward-only parsing:
+    /// - `isEmpty`: Check if input is exhausted
+    /// - `advance()`: Consume and return the next element
+    ///
+    /// For backtracking support, use ``Protocol`` instead.
+    public typealias Streaming = Input_Primitives.Input.Streaming
 
     /// Wrapper to use any Collection as parser input.
     ///
@@ -74,10 +96,11 @@ extension Parser {
     /// Provides O(1) slicing by tracking start/end indices:
     ///
     /// ```swift
-    /// var input = Parser.CollectionInput(bytes[...])
+    /// var input = Parser.Input.Collection(bytes[...])
     /// try parser.parse(&input)
     /// ```
-    public typealias CollectionInput<Base: Collection.`Protocol`> = Input_Primitives.Input.Slice<Base>
+    public typealias Collection<Base: Collection_Primitives.Collection.`Protocol`>
+        = Input_Primitives.Input.Slice<Base>
         where Base: Sendable, Base.Index: Sendable
 
     /// Concrete input type for parsing byte arrays with parser combinators.
@@ -86,25 +109,25 @@ extension Parser {
     /// `Collection.Slice.Protocol`-constrained parser world.
     ///
     /// ```swift
-    /// var input = Parser.ByteInput(utf8: "text/html; charset=utf-8")
-    /// let result = try HTTP.MediaType.Parser<Parser.ByteInput>().parse(&input)
+    /// var input = Parser.Input.Bytes(utf8: "text/html; charset=utf-8")
+    /// let result = try HTTP.MediaType.Parser<Parser.Input.Bytes>().parse(&input)
     /// ```
-    public typealias ByteInput = Input_Primitives.Input.Slice<Array<UInt8>.Indexed<UInt8>>
+    public typealias Bytes = Input_Primitives.Input.Slice<Array<UInt8>.Indexed<UInt8>>
 
     /// Common constraint set for byte-stream parser inputs.
     ///
-    /// Bundles `Collection.Slice.Protocol & Parser.Streaming & Sendable`
+    /// Bundles `Collection.Slice.Protocol & Streaming & Sendable`
     /// into a single name, reducing constraint boilerplate on parser definitions.
     ///
     /// ```swift
     /// // Before:
-    /// struct Parser<Input: Collection.Slice.Protocol & Parser.Streaming>: Sendable
+    /// struct Parser<Input: Collection.Slice.Protocol & Parser.Input.Streaming>: Sendable
     /// where Input: Sendable, Input.Element == UInt8 { ... }
     ///
     /// // After:
-    /// struct Parser<Input: Parser.ByteStream>: Sendable
+    /// struct Parser<Input: Parser.Input.Stream>: Sendable
     /// where Input.Element == UInt8 { ... }
     /// ```
-    public typealias ByteStream = Collection.Slice.`Protocol` & Parser.Streaming & Sendable
+    public typealias Stream = Collection_Primitives.Collection.Slice.`Protocol`
+        & Streaming & Sendable
 }
-

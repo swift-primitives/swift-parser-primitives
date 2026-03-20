@@ -27,7 +27,7 @@ public protocol Parseable {
 // MARK: - Byte Input Convenience
 
 extension Parseable
-where Parser.Input == Parser_Primitives_Core.Parser.ByteInput,
+where Parser.Input == Parser_Primitives_Core.Parser.Input.Bytes,
       Parser.Output == Self
 {
     /// Creates a value by parsing ASCII bytes using the canonical parser.
@@ -36,7 +36,7 @@ where Parser.Input == Parser_Primitives_Core.Parser.ByteInput,
     /// - Throws: `Parser.Failure` if parsing fails.
     @inlinable
     public init(ascii: Swift.Array<UInt8>) throws(Parser.Failure) {
-        var input = Parser_Primitives_Core.Parser.ByteInput(ascii)
+        var input = Parser_Primitives_Core.Parser.Input.Bytes(ascii)
         self = try Self.parser.parse(&input)
     }
 }

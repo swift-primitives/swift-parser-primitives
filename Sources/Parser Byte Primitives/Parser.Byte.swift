@@ -12,7 +12,7 @@ extension Parser {
     ///
     /// This parser only requires `Streaming` capability (no backtracking),
     /// making it suitable for forward-only input sources.
-    public struct Byte<Input: Parser.Streaming>: Sendable
+    public struct Byte<Input: Parser.Input.Streaming>: Sendable
     where Input: Sendable, Input.Element == UInt8 {
         @usableFromInline   
         let expected: UInt8

@@ -5,14 +5,14 @@
 //  Inline parsing entry points on input types.
 //
 
-extension Collection.Slice.`Protocol` where Self: Parser.Streaming & Sendable {
+extension Collection.Slice.`Protocol` where Self: Parser.Input.Streaming & Sendable {
     /// Parses inline using a builder closure. Input type is inferred from `self`.
     ///
     /// The receiver provides the builder's `Input` generic parameter,
     /// enabling `<_, UInt16>` type placeholder inference for leaf parsers.
     ///
     /// ```swift
-    /// var input = Parser.ByteInput(utf8: "80:443")
+    /// var input = Parser.Input.Bytes(utf8: "80:443")
     /// let (host, port) = try input.parse {
     ///     ASCII.Decimal.Parser<_, UInt16>()
     ///     ":"
@@ -30,7 +30,7 @@ extension Collection.Slice.`Protocol` where Self: Parser.Streaming & Sendable {
     /// Parses inline, discarding remaining input. One-shot convenience.
     ///
     /// ```swift
-    /// let (host, port) = try Parser.ByteInput(utf8: "80:443").parsing {
+    /// let (host, port) = try Parser.Input.Bytes(utf8: "80:443").parsing {
     ///     ASCII.Decimal.Parser<_, UInt16>()
     ///     ":"
     ///     ASCII.Decimal.Parser<_, UInt16>()

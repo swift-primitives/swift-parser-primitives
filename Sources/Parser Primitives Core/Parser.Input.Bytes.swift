@@ -1,11 +1,11 @@
 //
-//  Parser.ByteInput.swift
+//  Parser.Input.Bytes.swift
 //  swift-parser-primitives
 //
-//  Convenience initializers for Parser.ByteInput.
+//  Convenience initializers for Parser.Input.Bytes.
 //
 
-extension Parser.ByteInput {
+extension Parser.Input.Bytes {
     @inlinable
     public init(_ bytes: Swift.Array<UInt8>) {
         var storage = Array<UInt8>()

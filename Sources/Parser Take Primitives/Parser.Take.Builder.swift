@@ -198,7 +198,7 @@ extension Parser.Take.Builder {
 // MARK: - String Literal Support
 
 extension Parser.Take.Builder
-where Input: Parser.Streaming & Sendable, Input.Element == UInt8 {
+where Input: Parser.Input.Streaming & Sendable, Input.Element == UInt8 {
     /// Enables bare string literals as `Parser.Literal` in builder bodies.
     ///
     /// ```swift

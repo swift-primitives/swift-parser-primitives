@@ -29,7 +29,7 @@ import ASCII_Decimal_Parser_Primitives
 // ════════════════════════════════════════════════════════════
 
 extension Parser.Take.Builder
-where Input: Parser.Streaming & Sendable, Input.Element == UInt8 {
+where Input: Parser.Input.Streaming & Sendable, Input.Element == UInt8 {
     // Concrete overload enables bare string literals (":" → Parser.Literal).
     static func buildExpression(
         _ literal: Parser.Literal<Input>
@@ -53,11 +53,11 @@ where Input: Parser.Streaming & Sendable, Input.Element == UInt8 {
 // Input type provides builder context, enabling <_, T> inference.
 // ════════════════════════════════════════════════════════════
 
-extension Collection.Slice.`Protocol` where Self: Parser.Streaming & Sendable {
+extension Collection.Slice.`Protocol` where Self: Parser.Input.Streaming & Sendable {
     /// Parse inline using a builder closure. Input type is inferred from `self`.
     ///
     /// ```swift
-    /// var input = Parser.ByteInput(utf8: "80:443")
+    /// var input = Parser.Input.Bytes(utf8: "80:443")
     /// let (host, port) = try input.parse {
     ///     ASCII.Decimal.Parser<_, UInt16>()
     ///     ":"
@@ -78,11 +78,11 @@ extension Collection.Slice.`Protocol` where Self: Parser.Streaming & Sendable {
 // One-shot convenience. Copies input, discards remainder.
 // ════════════════════════════════════════════════════════════
 
-extension Collection.Slice.`Protocol` where Self: Parser.Streaming & Sendable {
+extension Collection.Slice.`Protocol` where Self: Parser.Input.Streaming & Sendable {
     /// Parse inline, discarding remaining input. One-shot convenience.
     ///
     /// ```swift
-    /// let (host, port) = try Parser.ByteInput(utf8: "80:443").parsing {
+    /// let (host, port) = try Parser.Input.Bytes(utf8: "80:443").parsing {
     ///     ASCII.Decimal.Parser<_, UInt16>()
     ///     ":"
     ///     ASCII.Decimal.Parser<_, UInt16>()
@@ -101,9 +101,9 @@ extension Collection.Slice.`Protocol` where Self: Parser.Streaming & Sendable {
 // PROPOSAL: Protocol composition typealias (Priority 3)
 // ════════════════════════════════════════════════════════════
 
-extension Parser {
+extension Parser.Input {
     /// Bundles the common byte-stream constraint set.
-    typealias ByteStream = Collection.Slice.`Protocol` & Parser.Streaming & Sendable
+    typealias Stream = Collection.Slice.`Protocol` & Parser.Input.Streaming & Sendable
 }
 
 // ════════════════════════════════════════════════════════════
@@ -120,7 +120,7 @@ extension InlineParseErgonomicsTests {
     struct H1Tests {
         @Test("two values with colon delimiter")
         func twoValues() throws {
-            var input = Parser.ByteInput(utf8: "80:443")
+            var input = Parser.Input.Bytes(utf8: "80:443")
 
             let (host, port) = try input.parse {
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -135,7 +135,7 @@ extension InlineParseErgonomicsTests {
 
         @Test("three values with comma delimiter")
         func threeValues() throws {
-            var input = Parser.ByteInput(utf8: "10,20,30")
+            var input = Parser.Input.Bytes(utf8: "10,20,30")
 
             let (x, y, z) = try input.parse {
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -153,7 +153,7 @@ extension InlineParseErgonomicsTests {
 
         @Test("preserves remaining input")
         func preservesRemaining() throws {
-            var input = Parser.ByteInput(utf8: "80:443/path")
+            var input = Parser.Input.Bytes(utf8: "80:443/path")
 
             let (host, port) = try input.parse {
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -175,10 +175,10 @@ extension InlineParseErgonomicsTests {
     struct H2Tests {
         @Test("bare string literal in builder body")
         func bareStringLiteral() throws {
-            var input = Parser.ByteInput(utf8: "42:99")
+            var input = Parser.Input.Bytes(utf8: "42:99")
 
             // If buildExpression doesn't work, this won't compile —
-            // the compiler won't infer Parser.Literal<ByteInput> from ":"
+            // the compiler won't infer Parser.Literal<Input.Bytes> from ":"
             let (a, b) = try input.parse {
                 ASCII.Decimal.Parser<_, UInt16>()
                 ":"
@@ -191,7 +191,7 @@ extension InlineParseErgonomicsTests {
 
         @Test("multiple different delimiters")
         func multipleDelimiters() throws {
-            var input = Parser.ByteInput(utf8: "1-2")
+            var input = Parser.Input.Bytes(utf8: "1-2")
 
             let (a, b) = try input.parse {
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -212,7 +212,7 @@ extension InlineParseErgonomicsTests {
     struct H3Tests {
         @Test("one-shot parsing discards remainder")
         func oneShot() throws {
-            let (host, port) = try Parser.ByteInput(utf8: "80:443").parsing {
+            let (host, port) = try Parser.Input.Bytes(utf8: "80:443").parsing {
                 ASCII.Decimal.Parser<_, UInt16>()
                 ":"
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -226,7 +226,7 @@ extension InlineParseErgonomicsTests {
         func typedErrorPropagation() {
             // Verify that the error type is concrete, not any Error
             let result: Result<(UInt16, UInt16), _> = Result {
-                try Parser.ByteInput(utf8: "abc:443").parsing {
+                try Parser.Input.Bytes(utf8: "abc:443").parsing {
                     ASCII.Decimal.Parser<_, UInt16>()
                     ":"
                     ASCII.Decimal.Parser<_, UInt16>()
@@ -243,7 +243,7 @@ extension InlineParseErgonomicsTests {
 
         @Test("three values one-shot")
         func threeShotValues() throws {
-            let (x, y, z) = try Parser.ByteInput(utf8: "1,2,3").parsing {
+            let (x, y, z) = try Parser.Input.Bytes(utf8: "1,2,3").parsing {
                 ASCII.Decimal.Parser<_, UInt16>()
                 ","
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -264,16 +264,16 @@ extension InlineParseErgonomicsTests {
     @Suite("H4: Protocol composition typealias")
     struct H4Tests {
         // If this compiles, the typealias works.
-        // Uses Parser.ByteStream instead of the full constraint set.
-        struct TestParser<Input: Parser.ByteStream>: Sendable
+        // Uses Parser.Input.Stream instead of the full constraint set.
+        struct TestParser<Input: Parser.Input.Stream>: Sendable
         where Input.Element == UInt8 {
             init() {}
         }
 
         @Test("typealias constrains correctly")
         func typealiasWorks() {
-            // ByteInput should satisfy Parser.ByteStream
-            let _ = TestParser<Parser.ByteInput>()
+            // Input.Bytes should satisfy Parser.Input.Stream
+            let _ = TestParser<Parser.Input.Bytes>()
         }
     }
 }
@@ -287,7 +287,7 @@ struct EndpointOutput: Equatable, Sendable {
 
 /// A reusable composed parser — leaf implementation (func parse).
 /// Tests that reusable parsers can be used inside input.parse { ... }.
-struct EndpointParser<Input: Collection.Slice.`Protocol` & Parser.Streaming>: Sendable
+struct EndpointParser<Input: Collection.Slice.`Protocol` & Parser.Input.Streaming>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
     init() {}
 }
@@ -317,10 +317,10 @@ extension InlineParseErgonomicsTests {
     struct H5Tests {
         @Test("nested composed parser in inline parse")
         func nestedComposition() throws {
-            var input = Parser.ByteInput(utf8: "80:443/10")
+            var input = Parser.Input.Bytes(utf8: "80:443/10")
 
             let (endpoint, weight) = try input.parse {
-                EndpointParser<Parser.ByteInput>()
+                EndpointParser<Parser.Input.Bytes>()
                 "/"
                 ASCII.Decimal.Parser<_, UInt16>()
             }
@@ -332,8 +332,8 @@ extension InlineParseErgonomicsTests {
 
         @Test("nested composed parser one-shot")
         func nestedOneShot() throws {
-            let (endpoint, weight) = try Parser.ByteInput(utf8: "80:443/10").parsing {
-                EndpointParser<Parser.ByteInput>()
+            let (endpoint, weight) = try Parser.Input.Bytes(utf8: "80:443/10").parsing {
+                EndpointParser<Parser.Input.Bytes>()
                 "/"
                 ASCII.Decimal.Parser<_, UInt16>()
             }
@@ -359,9 +359,9 @@ extension InlineParseErgonomicsTests {
             }
 
             let parser = Parser.Take.Sequence {
-                ASCII.Decimal.Parser<Parser.ByteInput, UInt16>()
-                ":" as Parser.Literal<Parser.ByteInput>
-                ASCII.Decimal.Parser<Parser.ByteInput, UInt16>()
+                ASCII.Decimal.Parser<Parser.Input.Bytes, UInt16>()
+                ":" as Parser.Literal<Parser.Input.Bytes>
+                ASCII.Decimal.Parser<Parser.Input.Bytes, UInt16>()
             }
             .error.map { (either) -> EndpointError in
                 switch either {
@@ -371,7 +371,7 @@ extension InlineParseErgonomicsTests {
                 }
             }
 
-            var input = Parser.ByteInput(utf8: "abc:80")
+            var input = Parser.Input.Bytes(utf8: "abc:80")
             #expect(throws: EndpointError.invalidHost) {
                 try parser.parse(&input)
             }

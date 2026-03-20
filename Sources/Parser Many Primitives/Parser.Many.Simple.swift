@@ -20,7 +20,7 @@ extension Parser.Many {
     /// // Exactly 4 digits
     /// let pin = Parser.Many.Simple(4...4) { Digit() }
     /// ```
-    public struct Simple<Input: Parser.Input, Element: Parser.`Protocol`>: Sendable
+    public struct Simple<Input: Parser.Input.`Protocol`, Element: Parser.`Protocol`>: Sendable
     where Element: Sendable, Element.Input == Input {
         @usableFromInline
         let element: Element

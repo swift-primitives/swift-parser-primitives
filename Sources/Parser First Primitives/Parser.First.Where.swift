@@ -10,7 +10,7 @@ extension Parser.First {
     ///
     /// This parser only requires `Streaming` capability (no backtracking),
     /// making it suitable for forward-only input sources.
-    public struct Where<Input: Parser.Streaming>: Sendable
+    public struct Where<Input: Parser.Input.Streaming>: Sendable
     where Input: Sendable, Input.Element: Copyable {
         @usableFromInline
         let predicate: @Sendable (Input.Element) -> Bool

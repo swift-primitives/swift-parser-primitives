@@ -16,7 +16,7 @@ extension Parser {
     /// This parser only requires `Streaming` capability (no backtracking),
     /// making it suitable for forward-only input sources. Note that on
     /// partial match failure, input is left partially consumed.
-    public struct Literal<Input: Parser.Streaming>: Sendable
+    public struct Literal<Input: Parser.Input.Streaming>: Sendable
     where Input: Sendable, Input.Element == UInt8 {
         @usableFromInline
         let bytes: [UInt8]

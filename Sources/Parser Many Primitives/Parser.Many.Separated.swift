@@ -28,7 +28,7 @@ extension Parser.Many {
     ///     ","
     /// }
     /// ```
-    public struct Separated<Input: Parser.Input, Element: Parser.`Protocol`, Separator: Parser.`Protocol`>: Sendable
+    public struct Separated<Input: Parser.Input.`Protocol`, Element: Parser.`Protocol`, Separator: Parser.`Protocol`>: Sendable
     where Element: Sendable, Separator: Sendable,
           Element.Input == Input, Separator.Input == Input {
         @usableFromInline
