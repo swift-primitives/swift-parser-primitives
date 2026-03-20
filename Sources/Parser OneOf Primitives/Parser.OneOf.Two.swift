@@ -29,7 +29,7 @@ extension Parser.OneOf {
 extension Parser.OneOf.Two: Parser.`Protocol` {
     public typealias Input = P0.Input
     public typealias Output = P0.Output
-    public typealias Failure = Parser.OneOf.Errors<P0.Failure, P1.Failure>
+    public typealias Failure = Product<P0.Failure, P1.Failure>
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
