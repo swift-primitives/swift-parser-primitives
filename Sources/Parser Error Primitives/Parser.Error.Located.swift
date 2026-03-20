@@ -88,20 +88,6 @@ extension Parser.Error.Located {
     }
 }
 
-// MARK: - LocatedError Protocol
-
-extension Parser.Error {
-    /// Protocol for errors that carry location information.
-    ///
-    /// Used to enable location-aware utilities on `Either` compositions.
-    public protocol LocatedError: Swift.Error {
-        /// The byte offset where this error occurred.
-        var offset: Int { get }
-    }
-}
-
-extension Parser.Error.Located: Parser.Error.LocatedError {}
-
 // MARK: - Backward Compatibility
 
 extension Parser {

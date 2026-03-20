@@ -87,8 +87,8 @@ where Right: _EitherChain,
 
 // MARK: - Located Error Utilities
 
-extension Either: Parser.Error.LocatedError
-where Left: Parser.Error.LocatedError, Right: Parser.Error.LocatedError {
+extension Either: Parser.Error.Located.`Protocol`
+where Left: Parser.Error.Located.`Protocol`, Right: Parser.Error.Located.`Protocol` {
     /// The byte offset of this composed error.
     ///
     /// Returns the offset of whichever branch is active.
@@ -102,7 +102,7 @@ where Left: Parser.Error.LocatedError, Right: Parser.Error.LocatedError {
 }
 
 extension Either
-where Left: Parser.Error.LocatedError, Right: Parser.Error.LocatedError {
+where Left: Parser.Error.Located.`Protocol`, Right: Parser.Error.Located.`Protocol` {
     /// Returns the earliest offset from either branch.
     ///
     /// Useful for finding the "first" error position in a chain
