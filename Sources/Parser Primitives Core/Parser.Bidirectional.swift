@@ -1,5 +1,5 @@
 //
-//  Parser.ParserPrinter.swift
+//  Parser.Bidirectional.swift
 //  swift-standards
 //
 //  Bidirectional protocol combining Parser and Printer.
