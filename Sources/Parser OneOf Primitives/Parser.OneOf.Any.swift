@@ -60,9 +60,6 @@ extension Parser.OneOf.`Any` {
 extension Parser.OneOf.`Any`: Parser.`Protocol` {
     public typealias Failure = Error
 
-    // WORKAROUND: @_optimize(none) suppresses CopyPropagation false positive.
-    // TRACKING: swift-buffer-primitives/Research/rawlayout-release-crash-investigation.md (Bug 2)
-    @_optimize(none)
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
         var errors: [Error] = []
