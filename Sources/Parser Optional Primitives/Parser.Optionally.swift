@@ -32,6 +32,10 @@ extension Parser.Optionally: Parser.`Protocol` {
     public typealias Output = Wrapped.Output?
     public typealias Failure = Never
 
+    // WORKAROUND: @_optimize(none) suppresses CopyPropagation false positive
+    // on Property.View accessor chains (input.restore.to) in multiple control flow paths.
+    // TRACKING: swift-buffer-primitives/Research/rawlayout-release-crash-investigation.md (Bug 2)
+    @_optimize(none)
     @inlinable
     public func parse(_ input: inout Input) -> Output {
         let checkpoint = input.checkpoint

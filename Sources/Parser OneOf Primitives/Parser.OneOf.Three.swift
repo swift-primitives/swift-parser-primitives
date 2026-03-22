@@ -35,6 +35,9 @@ extension Parser.OneOf.Three: Parser.`Protocol` {
     public typealias Output = P0.Output
     public typealias Failure = Product<P0.Failure, P1.Failure, P2.Failure>
 
+    // WORKAROUND: @_optimize(none) suppresses CopyPropagation false positive.
+    // TRACKING: swift-buffer-primitives/Research/rawlayout-release-crash-investigation.md (Bug 2)
+    @_optimize(none)
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
         let checkpoint = input.checkpoint
@@ -55,6 +58,9 @@ extension Parser.OneOf.Three: Parser.`Protocol` {
 
 extension Parser.OneOf.Three: Parser.Printer
 where P0: Parser.Printer, P1: Parser.Printer, P2: Parser.Printer {
+    // WORKAROUND: @_optimize(none) suppresses CopyPropagation false positive.
+    // TRACKING: swift-buffer-primitives/Research/rawlayout-release-crash-investigation.md (Bug 2)
+    @_optimize(none)
     @inlinable
     public func print(_ output: Output, into input: inout Input) throws(Failure) {
         // Try each printer in order, use first that succeeds

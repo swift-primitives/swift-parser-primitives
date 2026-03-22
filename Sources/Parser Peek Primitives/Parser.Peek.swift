@@ -47,6 +47,10 @@ extension Parser.Peek: Parser.`Protocol` {
     public typealias Output = Upstream.Output
     public typealias Failure = Upstream.Failure
 
+    // WORKAROUND: @_optimize(none) suppresses CopyPropagation false positive
+    // on Property.View accessor chains (input.restore.to) in multiple control flow paths.
+    // TRACKING: swift-buffer-primitives/Research/rawlayout-release-crash-investigation.md (Bug 2)
+    @_optimize(none)
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
         let checkpoint = input.checkpoint

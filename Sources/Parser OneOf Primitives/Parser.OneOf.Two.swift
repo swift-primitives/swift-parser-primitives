@@ -31,6 +31,10 @@ extension Parser.OneOf.Two: Parser.`Protocol` {
     public typealias Output = P0.Output
     public typealias Failure = Product<P0.Failure, P1.Failure>
 
+    // WORKAROUND: @_optimize(none) suppresses CopyPropagation false positive
+    // on Property.View accessor chains (input.restore.to) in multiple control flow paths.
+    // TRACKING: swift-buffer-primitives/Research/rawlayout-release-crash-investigation.md (Bug 2)
+    @_optimize(none)
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
         let checkpoint = input.checkpoint
@@ -52,6 +56,9 @@ extension Parser.OneOf.Two: Parser.`Protocol` {
 
 extension Parser.OneOf.Two: Parser.Printer
 where P0: Parser.Printer, P1: Parser.Printer {
+    // WORKAROUND: @_optimize(none) suppresses CopyPropagation false positive.
+    // TRACKING: swift-buffer-primitives/Research/rawlayout-release-crash-investigation.md (Bug 2)
+    @_optimize(none)
     @inlinable
     public func print(_ output: Output, into input: inout Input) throws(Failure) {
         // Try first printer, fall back to second
