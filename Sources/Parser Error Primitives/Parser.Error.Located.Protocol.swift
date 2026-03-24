@@ -5,6 +5,8 @@
 //  Protocol for errors that carry location information.
 //
 
+public import Text_Primitives
+
 // WORKAROUND: Protocol hoisted to module level because self-referential
 //   conformance (`Located: Located.Protocol`) creates a circular reference.
 //   The typealias on `Located` provides the canonical access path.
@@ -21,8 +23,8 @@
 /// - Important: Use `Parser.Error.Located.Protocol` to refer to this
 ///   protocol. Do not reference the hoisted name directly.
 public protocol __ParserErrorLocatedProtocol: Swift.Error {
-    /// The byte offset where this error occurred.
-    var offset: Int { get }
+    /// The text position where this error occurred.
+    var offset: Text.Position { get }
 }
 
 // MARK: - Typealias

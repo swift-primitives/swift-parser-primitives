@@ -6,6 +6,7 @@
 //
 
 import Algebra_Primitives
+public import Text_Primitives
 
 // MARK: - Protocol for Chain Access
 
@@ -89,11 +90,11 @@ where Right: _EitherChain,
 
 extension Either: Parser.Error.Located.`Protocol`
 where Left: Parser.Error.Located.`Protocol`, Right: Parser.Error.Located.`Protocol` {
-    /// The byte offset of this composed error.
+    /// The text position of this composed error.
     ///
     /// Returns the offset of whichever branch is active.
     @inlinable
-    public var offset: Int {
+    public var offset: Text.Position {
         switch self {
         case .left(let e): return e.offset
         case .right(let e): return e.offset
@@ -108,7 +109,7 @@ where Left: Parser.Error.Located.`Protocol`, Right: Parser.Error.Located.`Protoc
     /// Useful for finding the "first" error position in a chain
     /// of alternatives that all failed.
     @inlinable
-    public var earliestOffset: Int {
+    public var earliestOffset: Text.Position {
         offset
     }
 }

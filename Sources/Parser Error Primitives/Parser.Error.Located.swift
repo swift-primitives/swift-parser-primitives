@@ -5,10 +5,12 @@
 //  Error wrapper with source location.
 //
 
+public import Text_Primitives
+
 extension Parser.Error {
     /// An error with source location information.
     ///
-    /// `Located` wraps any error with its byte offset in the input,
+    /// `Located` wraps any error with its text position in the input,
     /// enabling precise error reporting without runtime overhead
     /// for parsers that don't need location tracking.
     ///
@@ -16,32 +18,31 @@ extension Parser.Error {
     ///
     /// ```swift
     /// // Wrap an error with location
-    /// throw Parser.Error.Located(error, at: 42)
+    /// let position: Text.Position = 42
+    /// throw Parser.Error.Located(error, at: position)
     ///
     /// // In error messages
-    /// print("Error at byte \(error.offset): \(error.error)")
+    /// print("Error at offset \(error.offset): \(error.error)")
     /// ```
     ///
     /// ## Line/Column
     ///
-    /// Byte offset is the primitive. Line/column can be derived:
-    /// ```swift
-    /// let line = input.prefix(error.offset).filter { $0 == "\n" }.count + 1
-    /// ```
+    /// Byte offset is the primitive. Use `Text.Line.Map` to derive
+    /// line/column from a `Text.Position`.
     public struct Located<E: Swift.Error & Sendable>: Swift.Error, Sendable {
         /// The underlying error.
         public let error: E
 
-        /// Byte offset from the start of input where the error occurred.
-        public let offset: Int
+        /// Text position from the start of input where the error occurred.
+        public let offset: Text.Position
 
         /// Creates a located error.
         ///
         /// - Parameters:
         ///   - error: The underlying error.
-        ///   - offset: Byte offset from input start.
+        ///   - offset: Text position from input start.
         @inlinable
-        public init(_ error: E, at offset: Int) {
+        public init(_ error: E, at offset: Text.Position) {
             self.error = error
             self.offset = offset
         }
@@ -53,10 +54,10 @@ extension Parser.Error {
 extension Parser.Error.Located {
     /// Creates a located error from a typed index offset.
     ///
-    /// Boundary overload per [IMPL-010]: pushes `Int(bitPattern:)` to the edge.
+    /// Boundary overload per [IMPL-010]: retags the index to `Text.Position`.
     @inlinable
     public init<Element: ~Copyable>(_ error: E, at offset: Index<Element>) {
-        self.init(error, at: Int(bitPattern: offset))
+        self.init(error, at: offset.retag(Text.self))
     }
 }
 

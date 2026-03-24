@@ -167,6 +167,7 @@ let package = Package(
         .package(path: "../swift-effect-primitives"),
         .package(path: "../swift-array-primitives"),
         .package(path: "../swift-buffer-primitives"),
+        .package(path: "../swift-text-primitives"),
     ],
     targets: [
         // MARK: - Core
@@ -186,6 +187,7 @@ let package = Package(
             dependencies: [
                 "Parser Primitives Core",
                 .product(name: "Algebra Primitives", package: "swift-algebra-primitives"),
+                .product(name: "Text Primitives", package: "swift-text-primitives"),
             ]
         ),
         .target(
