@@ -33,7 +33,6 @@ public struct ByteIterator: Sequence.Iterator.`Protocol`, IteratorProtocol, Send
             .extracting(first: take)
     }
 
-    @_lifetime(self: immortal)
     @inlinable
     public mutating func next() -> UInt8? {
         guard _index < _elements.count else { return nil }
