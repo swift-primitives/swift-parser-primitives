@@ -177,6 +177,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Array Primitives Core", package: "swift-array-primitives"),
+                .product(name: "Array Dynamic Primitives", package: "swift-array-primitives"),
             ]
         ),
 

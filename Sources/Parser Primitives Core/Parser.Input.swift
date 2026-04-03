@@ -7,6 +7,7 @@
 
 public import Input_Primitives
 public import Collection_Primitives
+public import Array_Dynamic_Primitives
 
 extension Parser {
     /// Namespace for parser input types.

@@ -5,6 +5,8 @@
 //  Convenience initializers for Parser.Input.Bytes.
 //
 
+public import Array_Dynamic_Primitives
+
 extension Parser.Input.Bytes {
     @inlinable
     public init(_ bytes: Swift.Array<UInt8>) {
