@@ -5,7 +5,7 @@
 //  Literal byte sequence matching.
 //
 
-import Array_Primitives
+import Array_Primitives_Core
 
 extension Parser {
     /// A parser that matches a specific byte sequence.
