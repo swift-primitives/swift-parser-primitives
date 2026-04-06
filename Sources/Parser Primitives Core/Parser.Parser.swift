@@ -100,7 +100,7 @@ extension Parser {
         /// The error type this parser can throw.
         ///
         /// Use `Never` for infallible parsers.
-        associatedtype Failure: Swift.Error & Sendable
+        associatedtype Failure: Swift.Error
 
         /// The type of the composed parser body, or `Never` for leaf parsers.
         associatedtype Body

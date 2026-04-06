@@ -29,7 +29,7 @@ extension Parser.Error {
     ///
     /// Byte offset is the primitive. Use `Text.Line.Map` to derive
     /// line/column from a `Text.Position`.
-    public struct Located<E: Swift.Error & Sendable>: Swift.Error, Sendable {
+    public struct Located<E: Swift.Error>: Swift.Error, Sendable {
         /// The underlying error.
         public let error: E
 
@@ -82,7 +82,7 @@ extension Parser.Error.Located: CustomStringConvertible {
 extension Parser.Error.Located {
     /// Maps the underlying error to a different type.
     @inlinable
-    public func map<NewE: Swift.Error & Sendable>(
+    public func map<NewE: Swift.Error>(
         _ transform: (E) -> NewE
     ) -> Parser.Error.Located<NewE> {
         Parser.Error.Located<NewE>(transform(error), at: offset)
@@ -94,5 +94,5 @@ extension Parser.Error.Located {
 extension Parser {
     /// Backward compatibility alias.
     @available(*, deprecated, renamed: "Error.Located")
-    public typealias Located<E: Swift.Error & Sendable> = Parser.Error.Located<E>
+    public typealias Located<E: Swift.Error> = Parser.Error.Located<E>
 }

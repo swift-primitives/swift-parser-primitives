@@ -10,7 +10,7 @@ extension Parser {
     ///
     /// `Fail` is useful as a fallback in error handling scenarios.
     /// The error type is specified as a generic parameter.
-    public struct Fail<Input, Output, F: Swift.Error & Sendable>: Sendable {
+    public struct Fail<Input, Output, F: Swift.Error>: Sendable {
         @usableFromInline
         let error: F
 

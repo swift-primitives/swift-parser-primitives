@@ -53,7 +53,7 @@ extension Parser {
         /// The error type this printer can throw.
         ///
         /// Use `Never` for infallible printers.
-        associatedtype Failure: Swift.Error & Sendable
+        associatedtype Failure: Swift.Error
 
         /// Prints a value into the input.
         ///

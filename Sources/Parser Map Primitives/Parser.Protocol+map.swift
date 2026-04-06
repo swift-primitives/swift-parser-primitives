@@ -20,7 +20,7 @@ extension Parser.`Protocol` {
     /// - Parameter transform: A throwing function to apply to successful output.
     /// - Returns: A parser that transforms its output, potentially failing.
     @inlinable
-    public func tryMap<NewOutput, E: Swift.Error & Sendable>(
+    public func tryMap<NewOutput, E: Swift.Error>(
         _ transform: @escaping @Sendable (Output) throws(E) -> NewOutput
     ) -> Parser.Map.Throwing<Self, NewOutput, E> {
         .init(upstream: self, transform: transform)

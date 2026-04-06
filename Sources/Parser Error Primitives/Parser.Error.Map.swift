@@ -7,7 +7,7 @@
 
 extension Parser.Error {
     /// A parser that transforms the failure type of an upstream parser.
-    public struct Map<Upstream: Parser.`Protocol`, NewFailure: Swift.Error & Sendable>: Sendable
+    public struct Map<Upstream: Parser.`Protocol`, NewFailure: Swift.Error>: Sendable
     where Upstream: Sendable {
         @usableFromInline
         let upstream: Upstream
@@ -54,7 +54,7 @@ extension Parser.Error.Transform {
     /// let parser = intParser.error.map { _ in MyError.invalid }
     /// ```
     @inlinable
-    public func map<NewFailure: Swift.Error & Sendable>(
+    public func map<NewFailure: Swift.Error>(
         _ transform: @escaping @Sendable (Upstream.Failure) -> NewFailure
     ) -> Parser.Error.Map<Upstream, NewFailure> {
         Parser.Error.Map(upstream, transform: transform)
