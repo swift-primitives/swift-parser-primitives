@@ -1,0 +1,58 @@
+{
+  "$schema": "https://swift-institute.org/schemas/experiments-index-v1.json",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-04-18",
+  "title": "Parser Primitives Experiments",
+  "blurb": "",
+  "scope": "swift-parser-primitives (swift-primitives)",
+  "experiments": [
+    {
+      "directory": "metadata-crash-bisection",
+      "displayName": "metadata-crash-bisection",
+      "purpose": "Bisect metadata crash",
+      "date": "",
+      "toolchain": "",
+      "status": "—",
+      "statusDetail": null,
+      "statusRaw": "—",
+      "supersededBy": null,
+      "crossRefs": []
+    },
+    {
+      "directory": "metadata-crash-investigation",
+      "displayName": "metadata-crash-investigation",
+      "purpose": "Investigate metadata crash",
+      "date": "",
+      "toolchain": "",
+      "status": "—",
+      "statusDetail": null,
+      "statusRaw": "—",
+      "supersededBy": null,
+      "crossRefs": []
+    },
+    {
+      "directory": "suppressed-escapable-associated-types",
+      "displayName": "suppressed-escapable-associated-types",
+      "purpose": "Test suppressed escapable associated types",
+      "date": "",
+      "toolchain": "",
+      "status": "—",
+      "statusDetail": null,
+      "statusRaw": "—",
+      "supersededBy": null,
+      "crossRefs": []
+    },
+    {
+      "directory": "swift-parsing-comparison",
+      "displayName": "swift-parsing-comparison",
+      "purpose": "Compare throughput: pointfreeco/swift-parsing vs parser-primitives pattern",
+      "date": "2026-02-15",
+      "toolchain": "swift-6.2-DEVELOPMENT-SNAPSHOT-2025-05-31-a",
+      "status": "CONFIRMED",
+      "statusDetail": null,
+      "statusRaw": "CONFIRMED",
+      "supersededBy": null,
+      "crossRefs": []
+    }
+  ]
+}
