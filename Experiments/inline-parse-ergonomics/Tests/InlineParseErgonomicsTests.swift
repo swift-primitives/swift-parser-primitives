@@ -118,8 +118,8 @@ struct InlineParseErgonomicsTests {}
 extension InlineParseErgonomicsTests {
     @Suite("H1: input.parse with type placeholder inference")
     struct H1Tests {
-        @Test("two values with colon delimiter")
-        func twoValues() throws {
+        @Test
+        func `two values with colon delimiter`() throws {
             var input = Parser.Input.Bytes(utf8: "80:443")
 
             let (host, port) = try input.parse {
@@ -133,8 +133,8 @@ extension InlineParseErgonomicsTests {
             #expect(input.isEmpty)
         }
 
-        @Test("three values with comma delimiter")
-        func threeValues() throws {
+        @Test
+        func `three values with comma delimiter`() throws {
             var input = Parser.Input.Bytes(utf8: "10,20,30")
 
             let (x, y, z) = try input.parse {
@@ -151,8 +151,8 @@ extension InlineParseErgonomicsTests {
             #expect(input.isEmpty)
         }
 
-        @Test("preserves remaining input")
-        func preservesRemaining() throws {
+        @Test
+        func `preserves remaining input`() throws {
             var input = Parser.Input.Bytes(utf8: "80:443/path")
 
             let (host, port) = try input.parse {
@@ -173,8 +173,8 @@ extension InlineParseErgonomicsTests {
 extension InlineParseErgonomicsTests {
     @Suite("H2: buildExpression for Parser.Literal")
     struct H2Tests {
-        @Test("bare string literal in builder body")
-        func bareStringLiteral() throws {
+        @Test
+        func `bare string literal in builder body`() throws {
             var input = Parser.Input.Bytes(utf8: "42:99")
 
             // If buildExpression doesn't work, this won't compile —
@@ -189,8 +189,8 @@ extension InlineParseErgonomicsTests {
             #expect(b == 99)
         }
 
-        @Test("multiple different delimiters")
-        func multipleDelimiters() throws {
+        @Test
+        func `multiple different delimiters`() throws {
             var input = Parser.Input.Bytes(utf8: "1-2")
 
             let (a, b) = try input.parse {
@@ -210,8 +210,8 @@ extension InlineParseErgonomicsTests {
 extension InlineParseErgonomicsTests {
     @Suite("H3: .parsing non-mutating variant")
     struct H3Tests {
-        @Test("one-shot parsing discards remainder")
-        func oneShot() throws {
+        @Test
+        func `one-shot parsing discards remainder`() throws {
             let (host, port) = try Parser.Input.Bytes(utf8: "80:443").parsing {
                 ASCII.Decimal.Parser<_, UInt16>()
                 ":"
@@ -222,8 +222,8 @@ extension InlineParseErgonomicsTests {
             #expect(port == 443)
         }
 
-        @Test("typed error propagation")
-        func typedErrorPropagation() {
+        @Test
+        func `typed error propagation`() {
             // Verify that the error type is concrete, not any Error
             let result: Result<(UInt16, UInt16), _> = Result {
                 try Parser.Input.Bytes(utf8: "abc:443").parsing {
@@ -241,8 +241,8 @@ extension InlineParseErgonomicsTests {
             }
         }
 
-        @Test("three values one-shot")
-        func threeShotValues() throws {
+        @Test
+        func `three values one-shot`() throws {
             let (x, y, z) = try Parser.Input.Bytes(utf8: "1,2,3").parsing {
                 ASCII.Decimal.Parser<_, UInt16>()
                 ","
@@ -270,8 +270,8 @@ extension InlineParseErgonomicsTests {
             init() {}
         }
 
-        @Test("typealias constrains correctly")
-        func typealiasWorks() {
+        @Test
+        func `typealias constrains correctly`() {
             // Input.Bytes should satisfy Parser.Input.Stream
             let _ = TestParser<Parser.Input.Bytes>()
         }
@@ -315,8 +315,8 @@ extension EndpointParser: Parser.`Protocol` {
 extension InlineParseErgonomicsTests {
     @Suite("H5: Nested composition inline")
     struct H5Tests {
-        @Test("nested composed parser in inline parse")
-        func nestedComposition() throws {
+        @Test
+        func `nested composed parser in inline parse`() throws {
             var input = Parser.Input.Bytes(utf8: "80:443/10")
 
             let (endpoint, weight) = try input.parse {
@@ -330,8 +330,8 @@ extension InlineParseErgonomicsTests {
             #expect(input.isEmpty)
         }
 
-        @Test("nested composed parser one-shot")
-        func nestedOneShot() throws {
+        @Test
+        func `nested composed parser one-shot`() throws {
             let (endpoint, weight) = try Parser.Input.Bytes(utf8: "80:443/10").parsing {
                 EndpointParser<Parser.Input.Bytes>()
                 "/"
@@ -349,8 +349,8 @@ extension InlineParseErgonomicsTests {
 extension InlineParseErgonomicsTests {
     @Suite("H6: Error mapping inline")
     struct H6Tests {
-        @Test("error.map works on inline parse result")
-        func errorMapInline() throws {
+        @Test
+        func `error.map works on inline parse result`() throws {
             // Build a parser inline, then map errors
             enum EndpointError: Error, Sendable, Equatable {
                 case invalidHost

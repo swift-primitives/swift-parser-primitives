@@ -209,8 +209,8 @@ extension ImperativeParser: Parser.`Protocol` {
     }
 }
 
-@Test("V1: Imperative parser works correctly")
-func imperativeParser() throws {
+@Test
+func `V1: Imperative parser works correctly`() throws {
     var input = Parser.ByteInput(utf8: "text/html; charset=utf-8")
     let mt = try ImperativeParser<Parser.ByteInput>().parse(&input)
     #expect(mt.type == "text")
@@ -223,8 +223,8 @@ func imperativeParser() throws {
 //             Void is skipped, output = Input.
 // Result: CONFIRMED — Void auto-skipped, output = Input
 
-@Test("V2: Two-parser builder — Void + Value → Skip.First")
-func twoParserVoidPlusValue() throws {
+@Test
+func `V2: Two-parser builder — Void + Value → Skip.First`() throws {
     var input = Parser.ByteInput(utf8: "  hello")
     let parser = Parser.Take.Sequence {
         OWSParser<Parser.ByteInput>()
@@ -238,8 +238,8 @@ func twoParserVoidPlusValue() throws {
 // Hypothesis: Token + Token → Take.Two, output = (Input, Input).
 // Result: CONFIRMED — Take.Two produces (Input, Input) tuple
 
-@Test("V3: Two-parser builder — Value + Value → Take.Two")
-func twoParserValuePlusValue() throws {
+@Test
+func `V3: Two-parser builder — Value + Value → Take.Two`() throws {
     // "hello/world" with manual slash skip first
     var input = Parser.ByteInput(utf8: "helloworld")
     let parser = Parser.Take.Sequence {
@@ -269,8 +269,8 @@ func twoParserValuePlusValue() throws {
 //             output = Input (just the Token).
 // Result: CONFIRMED — both Voids skipped, output = Input
 
-@Test("V4: Three-parser builder — Void + Value + Void")
-func threeParserComposition() throws {
+@Test
+func `V4: Three-parser builder — Void + Value + Void`() throws {
     var input = Parser.ByteInput(utf8: "  hello/")
     let parser = Parser.Take.Sequence {
         OWSParser<Parser.ByteInput>()
@@ -285,8 +285,8 @@ func threeParserComposition() throws {
 // Hypothesis: OWS + Token + Slash + Token composes, output = (Input, Input).
 // Result: CONFIRMED — after @_disfavoredOverload fix, output = (Input, Input)
 
-@Test("V5: Four-parser builder — media-type skeleton")
-func fourParserComposition() throws {
+@Test
+func `V5: Four-parser builder — media-type skeleton`() throws {
     var input = Parser.ByteInput(utf8: "text/html")
     let parser = Parser.Take.Sequence {
         OWSParser<Parser.ByteInput>()
@@ -304,8 +304,8 @@ func fourParserComposition() throws {
 //             trigger buildPartialBlock ambiguity with tuple flattening.
 // Result: CONFIRMED — 5 parsers compose, output = (Input, Input, [(name, value)])
 
-@Test("V6: Five-parser builder — full media-type")
-func fiveParserComposition() throws {
+@Test
+func `V6: Five-parser builder — full media-type`() throws {
     var input = Parser.ByteInput(utf8: "text/html; charset=utf-8")
     let parser = Parser.Take.Sequence {
         OWSParser<Parser.ByteInput>()
@@ -326,8 +326,8 @@ func fiveParserComposition() throws {
 // Hypothesis: The composed Failure type is a nested Either tree.
 // Result: CONFIRMED — error is structural Either tree, not domain enum
 
-@Test("V7: Error type from builder is an Either tree, not a domain enum")
-func errorTypeIsEitherTree() throws {
+@Test
+func `V7: Error type from builder is an Either tree, not a domain enum`() throws {
     let parser = Parser.Take.Sequence {
         OWSParser<Parser.ByteInput>()
         TokenParser<Parser.ByteInput>()
@@ -443,8 +443,8 @@ extension HybridParser: Parser.`Protocol` {
     }
 }
 
-@Test("V9: Hybrid — builder inside imperative parse()")
-func hybridParser() throws {
+@Test
+func `V9: Hybrid — builder inside imperative parse()`() throws {
     var input = Parser.ByteInput(utf8: "text/html; charset=utf-8")
     let mt = try HybridParser<Parser.ByteInput>().parse(&input)
     #expect(mt.type == "text")
@@ -452,8 +452,8 @@ func hybridParser() throws {
     #expect(mt.parameters["charset"] == "utf-8")
 }
 
-@Test("V9b: Hybrid error mapping")
-func hybridParserErrorMapping() throws {
+@Test
+func `V9b: Hybrid error mapping`() throws {
     var input = Parser.ByteInput(utf8: "text")
     #expect(throws: HybridParser<Parser.ByteInput>.Error.expectedSlash) {
         try HybridParser<Parser.ByteInput>().parse(&input)
@@ -464,8 +464,8 @@ func hybridParserErrorMapping() throws {
 // Hypothesis: Both produce identical results for all inputs.
 // Result: CONFIRMED — identical output for all test inputs
 
-@Test("V10: Imperative and hybrid produce same results")
-func imperativeHybridParity() throws {
+@Test
+func `V10: Imperative and hybrid produce same results`() throws {
     let testCases = [
         "text/html",
         "application/json",
@@ -489,8 +489,8 @@ func imperativeHybridParity() throws {
 //             converts the Either<...> tree to a concrete domain error.
 // Result: CONFIRMED — .error.map converts Either tree to domain error
 
-@Test("V11: .error.map() produces concrete Failure")
-func errorMapProducesConcreteFailure() throws {
+@Test
+func `V11: .error.map() produces concrete Failure`() throws {
     enum DomainError: Error, Sendable, Equatable {
         case expectedType
         case expectedSlash
@@ -612,8 +612,8 @@ extension DeclarativeMediaType: Parser.`Protocol` {
     // No explicit func parse — provided by Parser.Protocol default.
 }
 
-@Test("V12: var body with .map + .error.map — success")
-func declarativeMediaTypeSuccess() throws {
+@Test
+func `V12: var body with .map + .error.map — success`() throws {
     var input = Parser.ByteInput(utf8: "text/html; charset=utf-8")
     let mt = try DeclarativeMediaType<Parser.ByteInput>().parse(&input)
     #expect(mt.type == "text")
@@ -621,8 +621,8 @@ func declarativeMediaTypeSuccess() throws {
     #expect(mt.parameters["charset"] == "utf-8")
 }
 
-@Test("V12b: var body — domain errors")
-func declarativeMediaTypeErrors() throws {
+@Test
+func `V12b: var body — domain errors`() throws {
     var input1 = Parser.ByteInput(utf8: "")
     #expect(throws: DeclarativeMediaType<Parser.ByteInput>.Error.expectedType) {
         try DeclarativeMediaType<Parser.ByteInput>().parse(&input1)
@@ -639,8 +639,8 @@ func declarativeMediaTypeErrors() throws {
     }
 }
 
-@Test("V12c: var body — parity with imperative")
-func declarativeImperativeParity() throws {
+@Test
+func `V12c: var body — parity with imperative`() throws {
     let testCases = [
         "text/html",
         "application/json",
@@ -721,8 +721,8 @@ extension ProtoMediaType: Parser.`Protocol` {
     // No explicit func parse — provided by Parser.Protocol default.
 }
 
-@Test("V13: Protocol-based var body — success")
-func protoMediaTypeSuccess() throws {
+@Test
+func `V13: Protocol-based var body — success`() throws {
     var input = Parser.ByteInput(utf8: "text/html; charset=utf-8")
     let mt = try ProtoMediaType<Parser.ByteInput>().parse(&input)
     #expect(mt.type == "text")
@@ -730,8 +730,8 @@ func protoMediaTypeSuccess() throws {
     #expect(mt.parameters["charset"] == "utf-8")
 }
 
-@Test("V13b: Protocol-based var body — domain errors")
-func protoMediaTypeErrors() throws {
+@Test
+func `V13b: Protocol-based var body — domain errors`() throws {
     var input1 = Parser.ByteInput(utf8: "")
     #expect(throws: ProtoMediaType<Parser.ByteInput>.Error.expectedType) {
         try ProtoMediaType<Parser.ByteInput>().parse(&input1)
@@ -743,8 +743,8 @@ func protoMediaTypeErrors() throws {
     }
 }
 
-@Test("V13c: Protocol-based var body — parity with imperative")
-func protoImperativeParity() throws {
+@Test
+func `V13c: Protocol-based var body — parity with imperative`() throws {
     let testCases = [
         "text/html",
         "application/json",
@@ -874,8 +874,8 @@ extension FullTypedThrowsParser: Parser.`Protocol` {
     }
 }
 
-@Test("V14: FullTypedThrows — closure inference in .error.map")
-func fullTypedThrowsParser() throws {
+@Test
+func `V14: FullTypedThrows — closure inference in .error.map`() throws {
     var input = Parser.ByteInput(utf8: "text/html; charset=utf-8")
     let mt = try FullTypedThrowsParser<Parser.ByteInput>().parse(&input)
     #expect(mt.type == "text")
@@ -883,8 +883,8 @@ func fullTypedThrowsParser() throws {
     #expect(mt.parameters["charset"] == "utf-8")
 }
 
-@Test("V14b: FullTypedThrows — domain errors")
-func fullTypedThrowsErrors() throws {
+@Test
+func `V14b: FullTypedThrows — domain errors`() throws {
     var input1 = Parser.ByteInput(utf8: "")
     #expect(throws: FullTypedThrowsParser<Parser.ByteInput>.Error.expectedType) {
         try FullTypedThrowsParser<Parser.ByteInput>().parse(&input1)
