@@ -12,6 +12,11 @@ let package = Package(
         .visionOS(.v26)
     ],
     products: [
+        // MARK: - Namespace
+        .library(
+            name: "Parser Namespace",
+            targets: ["Parser Namespace"]
+        ),
         .library(
             name: "Parser Primitives",
             targets: ["Parser Primitives"]
@@ -170,11 +175,18 @@ let package = Package(
         .package(path: "../swift-text-primitives"),
     ],
     targets: [
+        // MARK: - Namespace
+        .target(
+            name: "Parser Namespace",
+            dependencies: []
+        ),
+
         // MARK: - Core
 
         .target(
             name: "Parser Primitives Core",
             dependencies: [
+                "Parser Namespace",
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Array Primitives Core", package: "swift-array-primitives"),
                 .product(name: "Array Dynamic Primitives", package: "swift-array-primitives"),
@@ -462,6 +474,7 @@ let package = Package(
         .target(
             name: "Parser Primitives",
             dependencies: [
+                "Parser Namespace",
                 "Parser Primitives Core",
                 "Parser Error Primitives",
                 "Parser Match Primitives",
