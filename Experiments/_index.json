@@ -1,7 +1,7 @@
 {
   "$schema": "https://swift-institute.org/schemas/experiments-index-v1.json",
   "schemaVersion": "1.0.0",
-  "generatedAt": "2026-04-18",
+  "generatedAt": "2026-04-30",
   "title": "Parser Primitives Experiments",
   "blurb": "",
   "scope": "swift-parser-primitives (swift-primitives)",
@@ -24,10 +24,10 @@
       "purpose": "Investigate metadata crash",
       "date": "",
       "toolchain": "",
-      "status": "—",
-      "statusDetail": null,
-      "statusRaw": "—",
-      "supersededBy": null,
+      "status": "SUPERSEDED",
+      "statusDetail": "Parser.Always builds clean post-investigation; see swift-parser-primitives production code (Phase 1b stale-triage 2026-04-30)",
+      "statusRaw": "— -> SUPERSEDED (Phase 1b stale-triage 2026-04-30)",
+      "supersededBy": "Parser.Always builds clean post-investigation; see swift-parser-primitives production code",
       "crossRefs": []
     },
     {
