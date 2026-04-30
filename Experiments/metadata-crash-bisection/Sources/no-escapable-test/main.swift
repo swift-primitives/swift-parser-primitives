@@ -2,6 +2,7 @@
 // Purpose: Test whether removing ~Escapable from Parser.Protocol fixes the crash
 // Hypothesis: Crash disappears when associatedtype Input has no ~Escapable constraint
 // Result: PENDING
+// Revalidated: Swift 6.3.1 (2026-04-30) — PASSES
 
 import NoEscapableModule
 import Buffer_Linear_Primitives

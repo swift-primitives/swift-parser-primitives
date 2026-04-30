@@ -119,6 +119,7 @@ extension ParserV1 {
 // Hypothesis: `func parse(_ input: inout Input) throws(Failure) -> Output`
 //   compiles when Input: ~Escapable — matching the real Parser.Protocol signature
 // Result: CONFIRMED — inout Input works with ~Escapable, typed throws works,
+// Revalidated: Swift 6.3.1 (2026-04-30) — PASSES
 //   exact Parser.Protocol method shape is compatible
 
 enum ParseError: Error, Sendable { case unexpected }

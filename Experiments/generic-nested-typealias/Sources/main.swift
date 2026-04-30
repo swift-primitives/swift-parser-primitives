@@ -6,6 +6,7 @@
 // Platform: macOS (arm64)
 //
 // Result: <pending>
+// Revalidated: Swift 6.3.1 (2026-04-30) — PASSES
 // Date: 2026-03-20
 
 struct TestErr: Swift.Error, Sendable {}
