@@ -10,7 +10,7 @@ public import Array_Dynamic_Primitives
 extension Parser.Input.Bytes {
     @inlinable
     public init(_ bytes: Swift.Array<UInt8>) {
-        var storage = [UInt8]()
+        var storage = Array<UInt8>()
         for byte in bytes {
             storage.append(byte)
         }
