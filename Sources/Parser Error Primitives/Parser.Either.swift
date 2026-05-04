@@ -52,9 +52,10 @@ extension Either where Right: _EitherChain, Right._Right: _EitherChain {
 }
 
 extension Either
-where Right: _EitherChain,
-      Right._Right: _EitherChain,
-      Right._Right._Right: _EitherChain
+where
+    Right: _EitherChain,
+    Right._Right: _EitherChain,
+    Right._Right._Right: _EitherChain
 {
     /// Fourth case in chain.
     @inlinable
@@ -62,10 +63,11 @@ where Right: _EitherChain,
 }
 
 extension Either
-where Right: _EitherChain,
-      Right._Right: _EitherChain,
-      Right._Right._Right: _EitherChain,
-      Right._Right._Right._Right: _EitherChain
+where
+    Right: _EitherChain,
+    Right._Right: _EitherChain,
+    Right._Right._Right: _EitherChain,
+    Right._Right._Right._Right: _EitherChain
 {
     /// Fifth case in chain.
     @inlinable
@@ -73,11 +75,12 @@ where Right: _EitherChain,
 }
 
 extension Either
-where Right: _EitherChain,
-      Right._Right: _EitherChain,
-      Right._Right._Right: _EitherChain,
-      Right._Right._Right._Right: _EitherChain,
-      Right._Right._Right._Right._Right: _EitherChain
+where
+    Right: _EitherChain,
+    Right._Right: _EitherChain,
+    Right._Right._Right: _EitherChain,
+    Right._Right._Right._Right: _EitherChain,
+    Right._Right._Right._Right._Right: _EitherChain
 {
     /// Sixth case in chain.
     @inlinable

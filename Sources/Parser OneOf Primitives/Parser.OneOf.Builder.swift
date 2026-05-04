@@ -38,8 +38,12 @@ extension Parser.OneOf.Builder {
         _ p0: P0,
         _ p1: P1
     ) -> Parser.OneOf.Two<P0, P1>
-    where P0.Input == Input, P1.Input == Input,
-          P0.Output == Output, P1.Output == Output {
+    where
+        P0.Input == Input,
+        P1.Input == Input,
+        P0.Output == Output,
+        P1.Output == Output
+    {
         Parser.OneOf.Two(p0, p1)
     }
 
@@ -50,8 +54,14 @@ extension Parser.OneOf.Builder {
         _ p1: P1,
         _ p2: P2
     ) -> Parser.OneOf.Three<P0, P1, P2>
-    where P0.Input == Input, P1.Input == Input, P2.Input == Input,
-          P0.Output == Output, P1.Output == Output, P2.Output == Output {
+    where
+        P0.Input == Input,
+        P1.Input == Input,
+        P2.Input == Input,
+        P0.Output == Output,
+        P1.Output == Output,
+        P2.Output == Output
+    {
         Parser.OneOf.Three(p0, p1, p2)
     }
 
@@ -69,8 +79,12 @@ extension Parser.OneOf.Builder {
         accumulated: Accumulated,
         next: Next
     ) -> Parser.OneOf.Two<Accumulated, Next>
-    where Accumulated.Input == Input, Next.Input == Input,
-          Accumulated.Output == Output, Next.Output == Output {
+    where
+        Accumulated.Input == Input,
+        Next.Input == Input,
+        Accumulated.Output == Output,
+        Next.Output == Output
+    {
         Parser.OneOf.Two(accumulated, next)
     }
 }

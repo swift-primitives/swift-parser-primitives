@@ -1,5 +1,5 @@
-import Testing
 import Parser_Primitives_Test_Support
+import Testing
 
 // MARK: - Test Suite Structure
 
@@ -247,10 +247,13 @@ extension ParserInvariantTests.ErrorPropagation {
         #expect {
             try parser.parse(&input)
         } throws: { error in
-            guard let either = error as? Either<
-                Parser.EndOfInput.Error,
-                Never
-            > else { return false }
+            guard
+                let either = error
+                    as? Either<
+                        Parser.EndOfInput.Error,
+                        Never
+                    >
+            else { return false }
             return either.left != nil
         }
     }
@@ -266,10 +269,13 @@ extension ParserInvariantTests.ErrorPropagation {
         #expect {
             try parser.parse(&input)
         } throws: { error in
-            guard let either = error as? Either<
-                Never,
-                Parser.Constraint.Error
-            > else { return false }
+            guard
+                let either = error
+                    as? Either<
+                        Never,
+                        Parser.Constraint.Error
+                    >
+            else { return false }
             return either.right != nil
         }
     }
@@ -296,10 +302,13 @@ extension ParserInvariantTests.ErrorPropagation {
         #expect {
             try parser.parse(&input)
         } throws: { error in
-            guard let either = error as? Either<
-                Parser.EndOfInput.Error,
-                Parser.Constraint.Error
-            > else { return false }
+            guard
+                let either = error
+                    as? Either<
+                        Parser.EndOfInput.Error,
+                        Parser.Constraint.Error
+                    >
+            else { return false }
             return either.right != nil
         }
     }

@@ -128,8 +128,7 @@ extension Parser.Tracked: Parser.Input.`Protocol` {
     @inlinable
     public var checkpointRange: ClosedRange<Checkpoint> {
         let baseRange = base.checkpointRange
-        return Checkpoint(baseCheckpoint: baseRange.lowerBound, trackedOffset: .zero)
-            ... Checkpoint(baseCheckpoint: baseRange.upperBound, trackedOffset: .zero)
+        return Checkpoint(baseCheckpoint: baseRange.lowerBound, trackedOffset: .zero)...Checkpoint(baseCheckpoint: baseRange.upperBound, trackedOffset: .zero)
     }
 
     @inlinable

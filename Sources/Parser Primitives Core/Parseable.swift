@@ -27,8 +27,9 @@ public protocol Parseable {
 // MARK: - Byte Input Convenience
 
 extension Parseable
-where Parser.Input == Parser_Primitives_Core.Parser.Input.Bytes,
-      Parser.Output == Self
+where
+    Parser.Input == Parser_Primitives_Core.Parser.Input.Bytes,
+    Parser.Output == Self
 {
     /// Creates a value by parsing ASCII bytes using the canonical parser.
     ///

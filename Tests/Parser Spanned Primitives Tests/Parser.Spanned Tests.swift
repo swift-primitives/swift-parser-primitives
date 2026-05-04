@@ -1,5 +1,5 @@
-import Testing
 import Parser_Primitives_Test_Support
+import Testing
 
 // MARK: - Test Suite Structure
 

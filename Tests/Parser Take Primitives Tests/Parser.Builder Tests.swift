@@ -1,5 +1,5 @@
-import Testing
 import Parser_Primitives_Test_Support
+import Testing
 
 // MARK: - Test Suite Structure
 
@@ -55,7 +55,7 @@ extension Expect: Parser.`Protocol` {
 
     func parse(_ input: inout Input) throws(Failure) {
         guard input.startIndex < input.endIndex,
-              input[input.startIndex] == byte
+            input[input.startIndex] == byte
         else { throw .expected(byte) }
         input = input[input.index(after: input.startIndex)...]
     }
@@ -73,7 +73,8 @@ extension Whitespace: Parser.`Protocol` {
 
     func parse(_ input: inout Input) {
         while input.startIndex < input.endIndex,
-              input[input.startIndex] == 0x20 {
+            input[input.startIndex] == 0x20
+        {
             input = input[input.index(after: input.startIndex)...]
         }
     }
@@ -300,21 +301,21 @@ extension Version.Parser: Parser_Primitives.Parser.`Protocol` {
             // Peel from the right — each .right is the Nth parser's error.
             switch either {
             case .right:
-                return .expectedPatch       // 5th: Digit
+                return .expectedPatch  // 5th: Digit
             case .left(let e4):
                 switch e4 {
                 case .right:
-                    return .expectedDot      // 4th: Expect('.')
+                    return .expectedDot  // 4th: Expect('.')
                 case .left(let e3):
                     switch e3 {
                     case .right:
-                        return .expectedMinor // 3rd: Digit
+                        return .expectedMinor  // 3rd: Digit
                     case .left(let e2):
                         switch e2 {
                         case .right:
-                            return .expectedDot   // 2nd: Expect('.')
+                            return .expectedDot  // 2nd: Expect('.')
                         case .left:
-                            return .expectedMajor // 1st: Digit
+                            return .expectedMajor  // 1st: Digit
                         }
                     }
                 }

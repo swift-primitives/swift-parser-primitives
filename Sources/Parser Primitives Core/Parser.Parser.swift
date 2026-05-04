@@ -138,8 +138,11 @@ extension Parser.`Protocol` where Body == Never {
 // MARK: - Declarative Parser Default (Body: Parser.Protocol)
 
 extension Parser.`Protocol`
-where Body: Parser.`Protocol`, Body.Input == Input,
-      Body.Output == Output, Body.Failure == Failure
+where
+    Body: Parser.`Protocol`,
+    Body.Input == Input,
+    Body.Output == Output,
+    Body.Failure == Failure
 {
     /// Default parse implementation that delegates to ``body-swift.property``.
     @inlinable

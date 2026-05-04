@@ -10,8 +10,12 @@ extension Parser {
     ///
     /// Used by `Take.Builder` for `if-else` statements.
     public enum Conditional<First: Parser.`Protocol`, Second: Parser.`Protocol`>: Sendable
-    where First: Sendable, Second: Sendable,
-          First.Input == Second.Input, First.Output == Second.Output {
+    where
+        First: Sendable,
+        Second: Sendable,
+        First.Input == Second.Input,
+        First.Output == Second.Output
+    {
         case first(First)
         case second(Second)
     }

@@ -5,9 +5,9 @@
 //  Namespace and typealiases for parser input types from swift-input-primitives.
 //
 
-public import Input_Primitives
-public import Collection_Primitives
 public import Array_Dynamic_Primitives
+public import Collection_Primitives
+public import Input_Primitives
 
 extension Parser {
     /// Namespace for parser input types.
@@ -100,9 +100,8 @@ extension Parser.Input {
     /// var input = Parser.Input.Collection(bytes[...])
     /// try parser.parse(&input)
     /// ```
-    public typealias Collection<Base: Collection_Primitives.Collection.`Protocol`>
-        = Input_Primitives.Input.Slice<Base>
-        where Base: Sendable, Base.Index: Sendable
+    public typealias Collection<Base: Collection_Primitives.Collection.`Protocol`> = Input_Primitives.Input.Slice<Base>
+    where Base: Sendable, Base.Index: Sendable
 
     /// Concrete input type for parsing byte arrays with parser combinators.
     ///

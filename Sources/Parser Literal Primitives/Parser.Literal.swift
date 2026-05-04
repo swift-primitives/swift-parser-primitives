@@ -28,9 +28,11 @@ extension Parser {
 
         @inlinable
         public init(_ string: StaticString) {
-            self.bytes = unsafe Swift.Array(string.utf8Start.withMemoryRebound(to: UInt8.self, capacity: string.utf8CodeUnitCount) {
-                unsafe UnsafeBufferPointer(start: $0, count: string.utf8CodeUnitCount)
-            })
+            self.bytes = unsafe Swift.Array(
+                string.utf8Start.withMemoryRebound(to: UInt8.self, capacity: string.utf8CodeUnitCount) {
+                    unsafe UnsafeBufferPointer(start: $0, count: string.utf8CodeUnitCount)
+                }
+            )
         }
     }
 }

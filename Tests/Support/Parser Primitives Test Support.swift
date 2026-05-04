@@ -1,5 +1,5 @@
-public import Parser_Primitives
 public import Collection_Primitives
+public import Parser_Primitives
 
 // MARK: - ByteIterator
 

@@ -8,10 +8,16 @@
 extension Parser.OneOf {
     /// A parser that tries three alternatives.
     public struct Three<P0: Parser.`Protocol`, P1: Parser.`Protocol`, P2: Parser.`Protocol`>: Sendable
-    where P0: Sendable, P1: Sendable, P2: Sendable,
-          P0.Input == P1.Input, P1.Input == P2.Input,
-          P0.Output == P1.Output, P1.Output == P2.Output,
-          P0.Input: Parser.Input.`Protocol` {
+    where
+        P0: Sendable,
+        P1: Sendable,
+        P2: Sendable,
+        P0.Input == P1.Input,
+        P1.Input == P2.Input,
+        P0.Output == P1.Output,
+        P1.Output == P2.Output,
+        P0.Input: Parser.Input.`Protocol`
+    {
         @usableFromInline
         let p0: P0
 
