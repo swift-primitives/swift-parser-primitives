@@ -67,7 +67,7 @@ extension Parser.Many.Simple: Parser.`Protocol` {
     public typealias Output = [Element.Output]
     public typealias Failure = Parser.Many.Error
 
-    // on Property.View accessor chains (input.restore.to) in multiple control flow paths.
+    // on Property.Inout accessor chains (input.restore.to) in multiple control flow paths.
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
         var results: [Element.Output] = []

@@ -32,7 +32,7 @@ extension Parser.Optionally: Parser.`Protocol` {
     public typealias Output = Wrapped.Output?
     public typealias Failure = Never
 
-    // on Property.View accessor chains (input.restore.to) in multiple control flow paths.
+    // on Property.Inout accessor chains (input.restore.to) in multiple control flow paths.
     @inlinable
     public func parse(_ input: inout Input) -> Output {
         let checkpoint = input.checkpoint

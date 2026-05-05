@@ -36,7 +36,7 @@ extension Parser.OneOf.Two: Parser.`Protocol` {
     public typealias Output = P0.Output
     public typealias Failure = Product<P0.Failure, P1.Failure>
 
-    // on Property.View accessor chains (input.restore.to) in multiple control flow paths.
+    // on Property.Inout accessor chains (input.restore.to) in multiple control flow paths.
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
         let checkpoint = input.checkpoint
