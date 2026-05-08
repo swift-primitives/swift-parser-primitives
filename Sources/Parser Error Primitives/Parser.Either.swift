@@ -5,7 +5,7 @@
 //  Parser-specific extensions on the canonical Either type.
 //
 
-import Algebra_Primitives
+import Either_Primitives
 public import Text_Primitives
 
 // MARK: - Protocol for Chain Access

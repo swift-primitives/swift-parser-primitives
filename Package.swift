@@ -167,7 +167,8 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../swift-algebra-primitives"),
+        .package(path: "../swift-either-primitives"),
+        .package(path: "../swift-product-primitives"),
         .package(path: "../swift-input-primitives"),
         .package(path: "../swift-effect-primitives"),
         .package(path: "../swift-array-primitives"),
@@ -199,7 +200,8 @@ let package = Package(
             name: "Parser Error Primitives",
             dependencies: [
                 "Parser Primitives Core",
-                .product(name: "Algebra Primitives", package: "swift-algebra-primitives"),
+                .product(name: "Either Primitives", package: "swift-either-primitives"),
+                .product(name: "Product Primitives", package: "swift-product-primitives"),
                 .product(name: "Text Primitives", package: "swift-text-primitives"),
             ]
         ),
