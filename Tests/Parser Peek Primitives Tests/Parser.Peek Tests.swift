@@ -44,7 +44,7 @@ extension ParserPeekTests.EdgeCase {
         let parser = Parser.Byte<ByteInput>(0x41).peek()
         var input = ByteInput([0x42])
 
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
         }
         #expect(input.first == 0x42)

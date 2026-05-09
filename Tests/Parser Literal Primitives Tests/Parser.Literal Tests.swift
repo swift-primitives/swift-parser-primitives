@@ -61,7 +61,7 @@ extension ParserLiteralTests.EdgeCase {
         let parser: Parser.Literal<ByteInput> = "x"
         var input = ByteInput([])
 
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
         }
     }
@@ -71,7 +71,7 @@ extension ParserLiteralTests.EdgeCase {
         let parser: Parser.Literal<ByteInput> = "abc"
         var input = ByteInput(utf8: "abx")
 
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
         }
     }

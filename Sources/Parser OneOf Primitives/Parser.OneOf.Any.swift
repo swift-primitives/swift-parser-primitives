@@ -18,10 +18,10 @@ extension Parser.OneOf {
     /// This enables clean backtracking when an alternative fails partway through.
     public struct `Any`<Input: Parser.Input.`Protocol`, Output>: Sendable {
         @usableFromInline
-        let parsers: [@Sendable (inout Input) throws(Error) -> Output]
+        let parsers: [@Sendable (inout Input) throws(Self.Error) -> Output]
 
         @inlinable
-        public init(_ parsers: [@Sendable (inout Input) throws(Error) -> Output]) {
+        public init(_ parsers: [@Sendable (inout Input) throws(Self.Error) -> Output]) {
             self.parsers = parsers
         }
     }
@@ -39,17 +39,17 @@ extension Parser.OneOf.`Any` {
         public let message: String
 
         /// Errors from each attempted alternative.
-        public let underlying: [Error]
+        public let underlying: [Swift.Error]
 
         @inlinable
-        public init(_ message: String, underlying: [Error] = []) {
+        public init(_ message: String, underlying: [Swift.Error] = []) {
             self.message = message
             self.underlying = underlying
         }
 
         /// Creates an error for no matching alternative.
         @inlinable
-        public static func noMatch(tried errors: [Error]) -> Self {
+        public static func noMatch(tried errors: [Swift.Error]) -> Self {
             Self("No matching alternative", underlying: errors)
         }
     }
@@ -58,11 +58,11 @@ extension Parser.OneOf.`Any` {
 // MARK: - Parser Conformance
 
 extension Parser.OneOf.`Any`: Parser.`Protocol` {
-    public typealias Failure = Error
+    public typealias Failure = Swift.Error
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
-        var errors: [Error] = []
+        var errors: [Swift.Error] = []
         let checkpoint = input.checkpoint
 
         for parser in parsers {

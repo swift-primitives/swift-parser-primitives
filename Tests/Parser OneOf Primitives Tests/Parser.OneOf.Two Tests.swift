@@ -50,7 +50,7 @@ extension ParserOneOfTwoTests.EdgeCase {
         )
         var input = ByteInput([0x43])
 
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
         }
     }

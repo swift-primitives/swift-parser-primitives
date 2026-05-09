@@ -36,7 +36,7 @@ extension ParserFlatMapTests.EdgeCase {
             .flatMap { _ in Parser.Always<ByteInput, Int>(0) }
         var input = ByteInput([])
 
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
         }
     }
@@ -49,7 +49,7 @@ extension ParserFlatMapTests.EdgeCase {
             }
         var input = ByteInput([0x01, 0x02])
 
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
         }
     }

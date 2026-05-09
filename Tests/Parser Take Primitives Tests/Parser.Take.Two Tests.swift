@@ -52,7 +52,7 @@ extension ParserTakeTwoTests.EdgeCase {
         )
         var input = ByteInput([])
 
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
         }
     }
@@ -65,7 +65,7 @@ extension ParserTakeTwoTests.EdgeCase {
         )
         var input = ByteInput([0x01])
 
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
         }
     }

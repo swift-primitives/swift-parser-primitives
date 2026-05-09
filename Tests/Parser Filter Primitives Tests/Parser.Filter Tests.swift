@@ -33,7 +33,7 @@ extension ParserFilterTests.EdgeCase {
             .filter { $0 == 0x00 }
         var input = ByteInput([0xFF])
 
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
         }
     }
@@ -44,7 +44,7 @@ extension ParserFilterTests.EdgeCase {
             .filter { _ in true }
         var input = ByteInput([])
 
-        #expect(throws: (any Error).self) {
+        #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
         }
     }
