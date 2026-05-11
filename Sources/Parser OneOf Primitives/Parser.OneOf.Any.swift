@@ -18,10 +18,10 @@ extension Parser.OneOf {
     /// This enables clean backtracking when an alternative fails partway through.
     public struct `Any`<Input: Parser.Input.`Protocol`, Output>: Sendable {
         @usableFromInline
-        let parsers: [@Sendable (inout Input) throws(Self.Error) -> Output]
+        let parsers: [@Sendable (inout Input) throws(Parser.OneOf.Error) -> Output]
 
         @inlinable
-        public init(_ parsers: [@Sendable (inout Input) throws(Self.Error) -> Output]) {
+        public init(_ parsers: [@Sendable (inout Input) throws(Parser.OneOf.Error) -> Output]) {
             self.parsers = parsers
         }
     }
@@ -34,7 +34,7 @@ extension Parser.OneOf.`Any` {
     ///
     /// Since `Any` uses type-erased closures, it needs a common error type
     /// to aggregate failures from heterogeneous parsers.
-    public struct Error: Swift.Error, Sendable, Equatable {
+    public struct Error: Swift.Error, Sendable {
         /// Description of the failure.
         public let message: String
 
@@ -58,7 +58,7 @@ extension Parser.OneOf.`Any` {
 // MARK: - Parser Conformance
 
 extension Parser.OneOf.`Any`: Parser.`Protocol` {
-    public typealias Failure = Swift.Error
+    public typealias Failure = Parser.OneOf.`Any`<Input, Output>.Error
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
