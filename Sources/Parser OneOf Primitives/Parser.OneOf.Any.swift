@@ -18,10 +18,10 @@ extension Parser.OneOf {
     /// This enables clean backtracking when an alternative fails partway through.
     public struct `Any`<Input: Parser.Input.`Protocol`, Output>: Sendable {
         @usableFromInline
-        let parsers: [@Sendable (inout Input) throws(Parser.OneOf.Error) -> Output]
+        let parsers: [@Sendable (inout Input) throws(Self.Error) -> Output]
 
         @inlinable
-        public init(_ parsers: [@Sendable (inout Input) throws(Parser.OneOf.Error) -> Output]) {
+        public init(_ parsers: [@Sendable (inout Input) throws(Self.Error) -> Output]) {
             self.parsers = parsers
         }
     }
