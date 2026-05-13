@@ -27,7 +27,7 @@ extension Parser {
     ///
     /// ## Constraint Bundles
     ///
-    /// - ``Input/Stream``: `Collection.Slice.Protocol & Input.Streaming & Sendable`
+    /// - ``Input/Stream``: `Collection.Slice.Protocol & Input.Streaming`
     public enum Input {}
 }
 
