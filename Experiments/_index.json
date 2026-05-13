@@ -53,6 +53,22 @@
       "statusRaw": "CONFIRMED",
       "supersededBy": null,
       "crossRefs": []
+    },
+    {
+      "directory": "parser-protocol-self-noncopyable-witness-tables",
+      "displayName": "parser-protocol-self-noncopyable-witness-tables",
+      "purpose": "Empirically test whether `Parser.`Protocol`: ~Copyable` on Self introduces a cross-module witness-table SIGSEGV under current toolchains, per the 2026-02-14 Research/witness-table-sigsegv-with-noncopyable-protocol-constraints.md crash pattern (Swift 6.2.3, swiftlang/swift#85441 pattern). Six variants: V1-V2 leaf Fail with local Input; V3-V4 composed Map<Fail<...>> single + triple-nested; V5 full original-crash conditions (external-package Input.Slice<Buffer<UInt8>.Linear>, composed, cross-module, Self: ~Copyable); V6 Parser.Lazy closure-returning-~Copyable. Toolchains: Swift 6.2.3 / 6.3.2 (default) / 6.4-dev nightly 2026-05-07.",
+      "date": "2026-05-13",
+      "toolchain": "swift-6.3.2 + swift-6.2.3 + swift-DEVELOPMENT-SNAPSHOT-2026-05-07-a",
+      "status": "REFUTED",
+      "statusDetail": "Hypothesis `Self: ~Copyable on Parser.\\`Protocol\\` triggers a witness-table SIGSEGV` REFUTED. All variants PASS on Swift 6.3.2 with the full original-crash conditions present in V5. The 2026-02-14 documented crash on Swift 6.2.3 appears to have been resolved by an unannounced Swift 6.3.x compiler fix. Authored in support of swift-institute/Research/2026-05-13-parser-protocol-noncopyable-escapable-relaxation.md v1.1.0 — downgrades the witness-table SIGSEGV cost item from `verified-unfixed compiler bug` (v1.0.0 dominant) to `resolved-empirically` (v1.1.0).",
+      "statusRaw": "REFUTED (SIGSEGV does not reproduce on Swift 6.3.2)",
+      "supersededBy": null,
+      "crossRefs": [
+        "swift-institute/Research/2026-05-13-parser-protocol-noncopyable-escapable-relaxation.md",
+        "Research/witness-table-sigsegv-with-noncopyable-protocol-constraints.md",
+        "Experiments/metadata-crash-bisection/"
+      ]
     }
   ]
 }
