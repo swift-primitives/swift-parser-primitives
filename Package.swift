@@ -168,7 +168,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../swift-either-primitives"),
-        .package(path: "../swift-product-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-product-primitives.git", branch: "main"),
         .package(path: "../swift-input-primitives"),
         .package(path: "../swift-effect-primitives"),
         .package(path: "../swift-array-primitives"),

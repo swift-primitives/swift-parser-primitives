@@ -7,7 +7,7 @@ extension Parser.`Protocol` {
     /// - Returns: A parser that transforms its output.
     @inlinable
     public func map<NewOutput>(
-        _ transform: @escaping @Sendable (Output) -> NewOutput
+        _ transform: @escaping (Output) -> NewOutput
     ) -> Parser.Map.Transform<Self, NewOutput> {
         .init(upstream: self, transform: transform)
     }
@@ -21,7 +21,7 @@ extension Parser.`Protocol` {
     /// - Returns: A parser that transforms its output, potentially failing.
     @inlinable
     public func tryMap<NewOutput, E: Swift.Error>(
-        _ transform: @escaping @Sendable (Output) throws(E) -> NewOutput
+        _ transform: @escaping (Output) throws(E) -> NewOutput
     ) -> Parser.Map.Throwing<Self, NewOutput, E> {
         .init(upstream: self, transform: transform)
     }

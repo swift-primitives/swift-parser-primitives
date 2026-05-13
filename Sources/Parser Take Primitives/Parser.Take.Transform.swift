@@ -17,16 +17,16 @@ extension Parser.Take {
     ///     IntParser()
     /// }
     /// ```
-    public struct Transform<Input, BodyOutput, Output, Body: Parser.`Protocol`>: Sendable
-    where Body: Sendable, Body.Input == Input, Body.Output == BodyOutput {
+    public struct Transform<Input, BodyOutput, Output, Body: Parser.`Protocol`>
+    where Body.Input == Input, Body.Output == BodyOutput {
         public let body: Body
 
         @usableFromInline
-        let transform: @Sendable (BodyOutput) -> Output
+        let transform: (BodyOutput) -> Output
 
         @inlinable
         public init(
-            _ transform: @escaping @Sendable (BodyOutput) -> Output,
+            _ transform: @escaping (BodyOutput) -> Output,
             @Parser.Take.Builder<Input> _ build: () -> Body
         ) {
             self.body = build()

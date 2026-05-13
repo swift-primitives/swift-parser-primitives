@@ -9,8 +9,7 @@ public import Collection_Primitives
 
 extension Parser.Consume {
     /// A parser that consumes exactly N elements.
-    public struct Exactly<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable {
+    public struct Exactly<Input: Collection.Slice.`Protocol`> {
         @usableFromInline
         let count: Int
 

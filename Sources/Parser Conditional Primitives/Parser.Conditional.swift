@@ -9,10 +9,8 @@ extension Parser {
     /// A parser that represents a conditional branch.
     ///
     /// Used by `Take.Builder` for `if-else` statements.
-    public enum Conditional<First: Parser.`Protocol`, Second: Parser.`Protocol`>: Sendable
+    public enum Conditional<First: Parser.`Protocol`, Second: Parser.`Protocol`>
     where
-        First: Sendable,
-        Second: Sendable,
         First.Input == Second.Input,
         First.Output == Second.Output
     {

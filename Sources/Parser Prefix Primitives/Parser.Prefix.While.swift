@@ -22,8 +22,8 @@ extension Parser.Prefix {
     /// // Parse until delimiter
     /// let field = Parser.Prefix.While { $0 != UInt8(ascii: ",") }
     /// ```
-    public struct While<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element: Copyable {
+    public struct While<Input: Collection.Slice.`Protocol`>
+    where Input.Element: Copyable {
         @usableFromInline
         let minLength: Int
 
@@ -32,13 +32,13 @@ extension Parser.Prefix {
         let maxLength: Int
 
         @usableFromInline
-        let predicate: @Sendable (Input.Element) -> Bool
+        let predicate: (Input.Element) -> Bool
 
         @inlinable
         public init(
             minLength: Int = 0,
             maxLength: Int? = nil,
-            _ predicate: @escaping @Sendable (Input.Element) -> Bool
+            _ predicate: @escaping (Input.Element) -> Bool
         ) {
             self.minLength = minLength
             self.maxLength = maxLength ?? .max

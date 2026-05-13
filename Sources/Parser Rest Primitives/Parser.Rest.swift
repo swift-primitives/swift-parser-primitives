@@ -11,8 +11,7 @@ extension Parser {
     /// A parser that consumes and returns all remaining input.
     ///
     /// Always succeeds, possibly with empty output.
-    public struct Rest<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable {
+    public struct Rest<Input: Collection.Slice.`Protocol`> {
         @inlinable
         public init() {}
     }

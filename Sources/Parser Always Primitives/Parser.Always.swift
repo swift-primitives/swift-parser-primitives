@@ -9,7 +9,7 @@ extension Parser {
     /// A parser that always succeeds without consuming input.
     ///
     /// `Always` is useful as an identity element and for injecting values.
-    public struct Always<Input, Output>: Sendable where Output: Sendable {
+    public struct Always<Input, Output> {
         public let output: Output
 
         @inlinable

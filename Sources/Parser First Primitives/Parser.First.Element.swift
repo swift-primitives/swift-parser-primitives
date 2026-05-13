@@ -12,8 +12,8 @@ extension Parser.First {
     ///
     /// This parser only requires `Streaming` capability (no backtracking),
     /// making it suitable for forward-only input sources.
-    public struct Element<Input: Parser.Input.Streaming>: Sendable
-    where Input: Sendable, Input.Element: Copyable {
+    public struct Element<Input: Parser.Input.Streaming>
+    where Input.Element: Copyable {
         @inlinable
         public init() {}
     }

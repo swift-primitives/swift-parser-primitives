@@ -10,8 +10,8 @@ extension Parser.Take {
     ///
     /// The outputs are combined into a tuple `(P0.Output, P1.Output)`.
     /// Created by `Take.Builder` when combining two non-Void parsers.
-    public struct Two<P0: Parser.`Protocol`, P1: Parser.`Protocol`>: Sendable
-    where P0: Sendable, P1: Sendable, P0.Input == P1.Input {
+    public struct Two<P0: Parser.`Protocol`, P1: Parser.`Protocol`>
+    where P0.Input == P1.Input {
         @usableFromInline
         internal let p0: P0
 
@@ -53,7 +53,7 @@ extension Parser.Take.Two {
     /// Maps the output of this parser using the given transform.
     @inlinable
     public func map<NewOutput>(
-        _ transform: @escaping @Sendable (P0.Output, P1.Output) -> NewOutput
+        _ transform: @escaping (P0.Output, P1.Output) -> NewOutput
     ) -> Parser.Take.Two<P0, P1>.Map<NewOutput> {
         Map(upstream: self, transform: transform)
     }

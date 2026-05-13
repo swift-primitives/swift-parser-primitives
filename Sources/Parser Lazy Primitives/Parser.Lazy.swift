@@ -48,16 +48,15 @@ extension Parser {
     /// The closure is called on every `parse` invocation, creating a
     /// new parser instance each time. For hot paths, consider caching
     /// the parser externally if profiling shows this as a bottleneck.
-    public struct Lazy<P: Parser.`Protocol`>: Sendable
-    where P: Sendable {
+    public struct Lazy<P: Parser.`Protocol`> {
         @usableFromInline
-        internal let build: @Sendable () -> P
+        internal let build: () -> P
 
         /// Creates a lazy parser from an autoclosure.
         ///
         /// - Parameter build: An expression that creates the parser.
         @inlinable
-        public init(_ build: @escaping @Sendable @autoclosure () -> P) {
+        public init(_ build: @escaping @autoclosure () -> P) {
             self.build = build
         }
 
@@ -65,7 +64,7 @@ extension Parser {
         ///
         /// - Parameter build: A closure that creates the parser.
         @inlinable
-        public init(_ build: @escaping @Sendable () -> P) {
+        public init(_ build: @escaping () -> P) {
             self.build = build
         }
     }

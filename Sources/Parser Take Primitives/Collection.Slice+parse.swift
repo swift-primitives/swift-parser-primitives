@@ -5,7 +5,7 @@
 //  Inline parsing entry points on input types.
 //
 
-extension Collection.Slice.`Protocol` where Self: Parser.Input.Streaming & Sendable {
+extension Collection.Slice.`Protocol` where Self: Parser.Input.Streaming {
     /// Parses inline using a builder closure. Input type is inferred from `self`.
     ///
     /// The receiver provides the builder's `Input` generic parameter,

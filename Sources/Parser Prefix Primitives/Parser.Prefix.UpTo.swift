@@ -12,8 +12,8 @@ extension Parser.Prefix {
     ///
     /// Unlike `While`, this looks for a specific delimiter sequence rather
     /// than testing each element.
-    public struct UpTo<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element: Equatable & Sendable {
+    public struct UpTo<Input: Collection.Slice.`Protocol`>
+    where Input.Element: Equatable {
         @usableFromInline
         let delimiter: [Input.Element]
 

@@ -12,18 +12,17 @@ extension Parser.Map {
     /// transformation to successful parsing results.
     ///
     /// Created via `parser.map(_:)`.
-    public struct Transform<Upstream: Parser.`Protocol`, Output>: Sendable
-    where Upstream: Sendable {
+    public struct Transform<Upstream: Parser.`Protocol`, Output> {
         @usableFromInline
         internal let upstream: Upstream
 
         @usableFromInline
-        internal let transform: @Sendable (Upstream.Output) -> Output
+        internal let transform: (Upstream.Output) -> Output
 
         @inlinable
         public init(
             upstream: Upstream,
-            transform: @escaping @Sendable (Upstream.Output) -> Output
+            transform: @escaping (Upstream.Output) -> Output
         ) {
             self.upstream = upstream
             self.transform = transform

@@ -76,8 +76,11 @@ extension Parser {
     /// - **Search**: Explore multiple paths, backtrack on failure
     /// - **Testing**: Observe which alternatives were tried
     /// - **Profiling**: Measure backtracking frequency
+    // Output: Sendable retained pending upstream compiler-bug workaround in
+    // Effect.Continuation.One (see swift-effect-primitives/.../Effect.Continuation.One.swift
+    // lines 39-49 — task-allocator / Optional<~Copyable> / @Sendable capture interaction).
     public struct Backtrack<Input: Parser.Input.`Protocol`, Output: Sendable, E: Swift.Error>: Effect.`Protocol` {
-        public typealias Alternative = @Sendable (inout Input) throws(E) -> Output
+        public typealias Alternative = (inout Input) throws(E) -> Output
         public typealias Arguments = [Alternative]
         public typealias Value = Output
         public typealias Failure = E

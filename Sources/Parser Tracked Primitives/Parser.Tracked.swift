@@ -35,8 +35,7 @@ extension Parser {
     ///     throw Located(error, at: input.offset)
     /// }
     /// ```
-    public struct Tracked<Base: Input.`Protocol`>: Sendable
-    where Base: Sendable {
+    public struct Tracked<Base: Input.`Protocol`> {
         /// The underlying input.
         @usableFromInline
         internal var base: Base

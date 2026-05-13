@@ -28,8 +28,7 @@ extension Parser {
     /// var logs: [String] = []
     /// let parser = myParser.trace("test") { logs.append($0) }
     /// ```
-    public struct Trace<Upstream: Parser.`Protocol`>: Sendable
-    where Upstream: Sendable {
+    public struct Trace<Upstream: Parser.`Protocol`> {
         @usableFromInline
         let upstream: Upstream
 
@@ -37,7 +36,7 @@ extension Parser {
         let label: String
 
         @usableFromInline
-        let log: @Sendable (String) -> Void
+        let log: (String) -> Void
 
         /// Creates a tracing parser.
         ///
@@ -49,7 +48,7 @@ extension Parser {
         public init(
             _ upstream: Upstream,
             label: String,
-            log: @escaping @Sendable (String) -> Void = { print($0) }
+            log: @escaping (String) -> Void = { print($0) }
         ) {
             self.upstream = upstream
             self.label = label
@@ -81,7 +80,7 @@ extension Parser.Trace: Parser.`Protocol` {
 
 // MARK: - Parser Extension
 
-extension Parser.`Protocol` where Self: Sendable {
+extension Parser.`Protocol` {
     /// Wraps this parser with debug tracing.
     ///
     /// Logs entry, success, and failure events to help debug
@@ -104,7 +103,7 @@ extension Parser.`Protocol` where Self: Sendable {
     @inlinable
     public func trace(
         _ label: String,
-        log: @escaping @Sendable (String) -> Void = { print($0) }
+        log: @escaping (String) -> Void = { print($0) }
     ) -> Parser.Trace<Self> {
         Parser.Trace(self, label: label, log: log)
     }

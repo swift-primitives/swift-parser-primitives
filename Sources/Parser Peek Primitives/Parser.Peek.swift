@@ -25,8 +25,8 @@ extension Parser {
     ///
     /// - On success: Returns upstream's output, input is **not** consumed
     /// - On failure: Throws upstream's error, input is **not** consumed
-    public struct Peek<Upstream: Parser.`Protocol`>: Sendable
-    where Upstream: Sendable, Upstream.Input: Parser.Input.`Protocol` {
+    public struct Peek<Upstream: Parser.`Protocol`>
+    where Upstream.Input: Parser.Input.`Protocol` {
         @usableFromInline
         internal let upstream: Upstream
 
@@ -64,7 +64,7 @@ extension Parser.Peek: Parser.`Protocol` {
 
 // MARK: - Parser Extension
 
-extension Parser.`Protocol` where Self: Sendable, Input: Parser.Input.`Protocol` {
+extension Parser.`Protocol` where Input: Parser.Input.`Protocol` {
     /// Creates a parser that peeks ahead without consuming input.
     ///
     /// If this parser succeeds, returns the output but restores

@@ -9,8 +9,7 @@ public import Collection_Primitives
 
 extension Parser.Discard {
     /// A parser that skips N elements without returning them.
-    public struct Exactly<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable {
+    public struct Exactly<Input: Collection.Slice.`Protocol`> {
         @usableFromInline
         let count: Int
 

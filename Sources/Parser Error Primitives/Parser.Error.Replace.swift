@@ -9,8 +9,7 @@ extension Parser.Error {
     /// A parser that replaces failures with a default output value.
     ///
     /// This makes the parser infallible (`Failure == Never`).
-    public struct Replace<Upstream: Parser.`Protocol`>: Sendable
-    where Upstream: Sendable, Upstream.Output: Sendable {
+    public struct Replace<Upstream: Parser.`Protocol`> {
         @usableFromInline
         let upstream: Upstream
 
@@ -40,7 +39,7 @@ extension Parser.Error.Replace: Parser.`Protocol` {
     }
 }
 
-extension Parser.Error.Transform where Upstream.Output: Sendable {
+extension Parser.Error.Transform {
     /// Replaces any parse failure with a default output value.
     ///
     /// - Parameter output: The value to return when parsing fails.

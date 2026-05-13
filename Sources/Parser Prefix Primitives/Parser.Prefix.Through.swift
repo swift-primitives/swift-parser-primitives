@@ -11,8 +11,8 @@ extension Parser.Prefix {
     /// A parser that consumes through (including) a delimiter sequence.
     ///
     /// Like `UpTo` but includes the delimiter in the consumed portion.
-    public struct Through<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element: Equatable & Sendable {
+    public struct Through<Input: Collection.Slice.`Protocol`>
+    where Input.Element: Equatable {
         @usableFromInline
         let delimiter: [Input.Element]
 

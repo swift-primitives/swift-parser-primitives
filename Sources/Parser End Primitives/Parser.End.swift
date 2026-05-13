@@ -11,8 +11,7 @@ extension Parser {
     /// A parser that succeeds only at end of input.
     ///
     /// Consumes nothing and produces Void. Fails if input remains.
-    public struct End<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable {
+    public struct End<Input: Collection.Slice.`Protocol`> {
         @inlinable
         public init() {}
     }

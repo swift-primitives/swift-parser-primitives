@@ -7,8 +7,8 @@ extension Parser.`Protocol` {
     /// - Returns: A parser that fails if the predicate is false.
     @inlinable
     public func filter(
-        _ predicate: @escaping @Sendable (Output) -> Bool
-    ) -> Parser.Filter<Self> where Self: Sendable {
+        _ predicate: @escaping (Output) -> Bool
+    ) -> Parser.Filter<Self> {
         .init(upstream: self, predicate: predicate)
     }
 }

@@ -18,8 +18,8 @@ extension Parser.OneOf {
     ///     "false".map { false }
     /// }
     /// ```
-    public struct Sequence<Input, Output, Body: Parser.`Protocol`>: Sendable
-    where Body: Sendable, Body.Input == Input, Body.Output == Output {
+    public struct Sequence<Input, Output, Body: Parser.`Protocol`>
+    where Body.Input == Input, Body.Output == Output {
         public let body: Body
 
         @inlinable

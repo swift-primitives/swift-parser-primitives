@@ -143,7 +143,7 @@ extension Parser.Builder {
 // MARK: - String Literal Support
 
 extension Parser.Builder
-where Input: Parser.Input.Streaming & Sendable, Input.Element == UInt8 {
+where Input: Parser.Input.Streaming, Input.Element == UInt8 {
     /// Enables bare string literals as `Parser.Literal` in `var body` builders.
     @inlinable
     public static func buildExpression(

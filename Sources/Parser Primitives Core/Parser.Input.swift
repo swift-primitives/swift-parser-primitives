@@ -116,18 +116,18 @@ extension Parser.Input {
 
     /// Common constraint set for byte-stream parser inputs.
     ///
-    /// Bundles `Collection.Slice.Protocol & Streaming & Sendable`
+    /// Bundles `Collection.Slice.Protocol & Streaming`
     /// into a single name, reducing constraint boilerplate on parser definitions.
     ///
     /// ```swift
     /// // Before:
-    /// struct Parser<Input: Collection.Slice.Protocol & Parser.Input.Streaming>: Sendable
-    /// where Input: Sendable, Input.Element == UInt8 { ... }
+    /// struct Parser<Input: Collection.Slice.Protocol & Parser.Input.Streaming>
+    /// where Input.Element == UInt8 { ... }
     ///
     /// // After:
-    /// struct Parser<Input: Parser.Input.Stream>: Sendable
+    /// struct Parser<Input: Parser.Input.Stream>
     /// where Input.Element == UInt8 { ... }
     /// ```
     public typealias Stream = Collection_Primitives.Collection.Slice.`Protocol`
-        & Streaming & Sendable
+        & Streaming
 }

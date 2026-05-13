@@ -21,8 +21,7 @@ extension Parser.Error {
     ///     MyCustomError(from: error)
     /// }
     /// ```
-    public struct Transform<Upstream: Parser.`Protocol`>: Sendable
-    where Upstream: Sendable {
+    public struct Transform<Upstream: Parser.`Protocol`> {
         @usableFromInline
         let upstream: Upstream
 
@@ -35,7 +34,7 @@ extension Parser.Error {
 
 // MARK: - Parser.error Property
 
-extension Parser.`Protocol` where Self: Sendable {
+extension Parser.`Protocol` {
     /// Access error transformation methods.
     ///
     /// ## Transform Error Type

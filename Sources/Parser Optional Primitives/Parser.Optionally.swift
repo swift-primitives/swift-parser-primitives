@@ -15,8 +15,8 @@ extension Parser {
     /// ```swift
     /// let optionalSign = Parser.Optionally { Sign() }
     /// ```
-    public struct Optionally<Wrapped: Parser.`Protocol`>: Sendable
-    where Wrapped: Sendable, Wrapped.Input: Parser.Input.`Protocol` {
+    public struct Optionally<Wrapped: Parser.`Protocol`>
+    where Wrapped.Input: Parser.Input.`Protocol` {
         @usableFromInline
         internal let wrapped: Wrapped
 
