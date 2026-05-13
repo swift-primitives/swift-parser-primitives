@@ -43,7 +43,7 @@ extension Parser {
     ///     }
     /// }
     /// ```
-    public protocol Printer<Input, Output, Failure> {
+    public protocol Printer<Input, Output, Failure>: ~Copyable {
         /// The input type this printer produces.
         associatedtype Input: ~Copyable & ~Escapable
 
@@ -64,13 +64,13 @@ extension Parser {
         ///   - output: The value to print.
         ///   - input: The input buffer to prepend to.
         /// - Throws: `Failure` if printing fails.
-        func print(_ output: Output, into input: inout Input) throws(Failure)
+        borrowing func print(_ output: Output, into input: inout Input) throws(Failure)
     }
 }
 
 // MARK: - Convenience Extensions
 
-extension Parser.Printer where Input: RangeReplaceableCollection {
+extension Parser.Printer where Self: ~Copyable, Input: RangeReplaceableCollection {
     /// Prints a value, returning the constructed input.
     ///
     /// Use this for top-level printing where you want to create a new input.
@@ -79,7 +79,7 @@ extension Parser.Printer where Input: RangeReplaceableCollection {
     /// - Returns: The constructed input.
     /// - Throws: `Failure` if printing fails.
     @inlinable
-    public func print(_ output: Output) throws(Failure) -> Input {
+    public borrowing func print(_ output: Output) throws(Failure) -> Input {
         var input = Input()
         try print(output, into: &input)
         return input

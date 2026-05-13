@@ -87,7 +87,7 @@ extension Parser {
     ///     }
     /// }
     /// ```
-    public protocol `Protocol`<Input, Output, Failure> {
+    public protocol `Protocol`<Input, Output, Failure>: ~Copyable {
         /// The input type this parser consumes.
         ///
         /// Supports both escapable inputs (collections, cursors) and non-escapable
@@ -103,7 +103,7 @@ extension Parser {
         associatedtype Failure: Swift.Error
 
         /// The type of the composed parser body, or `Never` for leaf parsers.
-        associatedtype Body
+        associatedtype Body: ~Copyable
 
         /// The composed parser body.
         ///
@@ -111,7 +111,7 @@ extension Parser {
         /// Leaf parsers that implement ``parse(_:)`` directly do not
         /// override this property — the default returns `Never`.
         @Parser.Builder<Input>
-        var body: Body { get }
+        var body: Body { borrowing get }
 
         /// Parses a value from the input.
         ///
@@ -121,17 +121,19 @@ extension Parser {
         /// - Parameter input: The input to parse from. Modified to reflect consumption.
         /// - Returns: The parsed value.
         /// - Throws: `Failure` if parsing fails.
-        func parse(_ input: inout Input) throws(Failure) -> Output
+        borrowing func parse(_ input: inout Input) throws(Failure) -> Output
     }
 }
 
 // MARK: - Leaf Parser Default (Body == Never)
 
-extension Parser.`Protocol` where Body == Never {
+extension Parser.`Protocol` where Self: ~Copyable, Body == Never {
     /// Leaf parsers do not have a body.
     @inlinable
     public var body: Never {
-        fatalError("\(Self.self) is a leaf parser — implement parse(_:) directly")
+        borrowing get {
+            fatalError("\(Self.self) is a leaf parser — implement parse(_:) directly")
+        }
     }
 }
 
@@ -139,6 +141,7 @@ extension Parser.`Protocol` where Body == Never {
 
 extension Parser.`Protocol`
 where
+    Self: ~Copyable,
     Body: Parser.`Protocol`,
     Body.Input == Input,
     Body.Output == Output,
@@ -146,7 +149,7 @@ where
 {
     /// Default parse implementation that delegates to ``body-swift.property``.
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Output {
+    public borrowing func parse(_ input: inout Input) throws(Failure) -> Output {
         try body.parse(&input)
     }
 }
