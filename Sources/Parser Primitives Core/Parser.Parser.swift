@@ -103,7 +103,7 @@ extension Parser {
         associatedtype Failure: Swift.Error
 
         /// The type of the composed parser body, or `Never` for leaf parsers.
-        associatedtype Body: ~Copyable
+        associatedtype Body: ~Copyable = Never
 
         /// The composed parser body.
         ///
