@@ -10,7 +10,7 @@
 //
 //  Hypotheses:
 //    H1: `input.parse { ... }` works with <_, UInt16> placeholder inference
-//    H2: `buildExpression` for Parser.Literal works in Parser.Take.Builder
+//    H2: `buildExpression` for Byte.Literal.Parser works in Parser.Take.Builder
 //        (not just in test-local extensions)
 //    H3: `.parsing { ... }` non-mutating variant compiles with typed throws
 //    H4: Protocol composition typealias compiles and constrains correctly
@@ -22,9 +22,12 @@ import Testing
 import Parser_Primitives
 import Parser_Primitives_Test_Support
 import ASCII_Decimal_Parser_Primitives
+import Byte_Parser_Primitives
+import Collection_Primitives
+import Input_Primitives
 
 // ════════════════════════════════════════════════════════════
-// PROPOSAL: buildExpression for Parser.Literal (Priority 1)
+// PROPOSAL: buildExpression for Byte.Literal.Parser (Priority 1)
 //
 // This belongs in Parser Take Primitives or Parser Literal Primitives.
 // Currently only validated in test code. Placing it here simulates
@@ -32,11 +35,11 @@ import ASCII_Decimal_Parser_Primitives
 // ════════════════════════════════════════════════════════════
 
 extension Parser.Take.Builder
-where Input: Parser.Input.Streaming & Sendable, Input.Element == UInt8 {
-    // Concrete overload enables bare string literals (":" → Parser.Literal).
+where Input: Input_Primitives.Input.Streaming & Sendable, Input.Element == UInt8 {
+    // Concrete overload enables bare string literals (":" → Byte.Literal.Parser).
     static func buildExpression(
-        _ literal: Parser.Literal<Input>
-    ) -> Parser.Literal<Input> {
+        _ literal: Byte.Literal.Parser<Input>
+    ) -> Byte.Literal.Parser<Input> {
         literal
     }
 
@@ -56,11 +59,11 @@ where Input: Parser.Input.Streaming & Sendable, Input.Element == UInt8 {
 // Input type provides builder context, enabling <_, T> inference.
 // ════════════════════════════════════════════════════════════
 
-extension Collection.Slice.`Protocol` where Self: Parser.Input.Streaming & Sendable {
+extension Collection.Slice.`Protocol` where Self: Input_Primitives.Input.Streaming & Sendable {
     /// Parse inline using a builder closure. Input type is inferred from `self`.
     ///
     /// ```swift
-    /// var input = Parser.Input.Bytes(utf8: "80:443")
+    /// var input = Byte.Input(utf8: "80:443")
     /// let (host, port) = try input.parse {
     ///     ASCII.Decimal.Parser<_, UInt16>()
     ///     ":"
@@ -81,11 +84,11 @@ extension Collection.Slice.`Protocol` where Self: Parser.Input.Streaming & Senda
 // One-shot convenience. Copies input, discards remainder.
 // ════════════════════════════════════════════════════════════
 
-extension Collection.Slice.`Protocol` where Self: Parser.Input.Streaming & Sendable {
+extension Collection.Slice.`Protocol` where Self: Input_Primitives.Input.Streaming & Sendable {
     /// Parse inline, discarding remaining input. One-shot convenience.
     ///
     /// ```swift
-    /// let (host, port) = try Parser.Input.Bytes(utf8: "80:443").parsing {
+    /// let (host, port) = try Byte.Input(utf8: "80:443").parsing {
     ///     ASCII.Decimal.Parser<_, UInt16>()
     ///     ":"
     ///     ASCII.Decimal.Parser<_, UInt16>()
@@ -101,13 +104,12 @@ extension Collection.Slice.`Protocol` where Self: Parser.Input.Streaming & Senda
 }
 
 // ════════════════════════════════════════════════════════════
-// PROPOSAL: Protocol composition typealias (Priority 3)
+// (H4 originally tested a `Parser.Input.Stream` typealias which was
+//  deleted in the byte-extraction sister arc — Parser.Input.*
+//  re-exports removed. H4's constraint test now lives inline in
+//  H4Tests below, using the canonical Collection.Slice.Protocol &
+//  Input.Streaming bundle directly.)
 // ════════════════════════════════════════════════════════════
-
-extension Parser.Input {
-    /// Bundles the common byte-stream constraint set.
-    typealias Stream = Collection.Slice.`Protocol` & Parser.Input.Streaming & Sendable
-}
 
 // ════════════════════════════════════════════════════════════
 // Tests
@@ -123,7 +125,7 @@ extension InlineParseErgonomicsTests {
     struct H1Tests {
         @Test
         func `two values with colon delimiter`() throws {
-            var input = Parser.Input.Bytes(utf8: "80:443")
+            var input = Byte.Input(utf8: "80:443")
 
             let (host, port) = try input.parse {
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -138,7 +140,7 @@ extension InlineParseErgonomicsTests {
 
         @Test
         func `three values with comma delimiter`() throws {
-            var input = Parser.Input.Bytes(utf8: "10,20,30")
+            var input = Byte.Input(utf8: "10,20,30")
 
             let (x, y, z) = try input.parse {
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -156,7 +158,7 @@ extension InlineParseErgonomicsTests {
 
         @Test
         func `preserves remaining input`() throws {
-            var input = Parser.Input.Bytes(utf8: "80:443/path")
+            var input = Byte.Input(utf8: "80:443/path")
 
             let (host, port) = try input.parse {
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -171,17 +173,17 @@ extension InlineParseErgonomicsTests {
     }
 }
 
-// MARK: - H2: buildExpression for Parser.Literal
+// MARK: - H2: buildExpression for Byte.Literal.Parser
 
 extension InlineParseErgonomicsTests {
-    @Suite("H2: buildExpression for Parser.Literal")
+    @Suite("H2: buildExpression for Byte.Literal.Parser")
     struct H2Tests {
         @Test
         func `bare string literal in builder body`() throws {
-            var input = Parser.Input.Bytes(utf8: "42:99")
+            var input = Byte.Input(utf8: "42:99")
 
             // If buildExpression doesn't work, this won't compile —
-            // the compiler won't infer Parser.Literal<Input.Bytes> from ":"
+            // the compiler won't infer Byte.Literal.Parser<Input.Bytes> from ":"
             let (a, b) = try input.parse {
                 ASCII.Decimal.Parser<_, UInt16>()
                 ":"
@@ -194,7 +196,7 @@ extension InlineParseErgonomicsTests {
 
         @Test
         func `multiple different delimiters`() throws {
-            var input = Parser.Input.Bytes(utf8: "1-2")
+            var input = Byte.Input(utf8: "1-2")
 
             let (a, b) = try input.parse {
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -215,7 +217,7 @@ extension InlineParseErgonomicsTests {
     struct H3Tests {
         @Test
         func `one-shot parsing discards remainder`() throws {
-            let (host, port) = try Parser.Input.Bytes(utf8: "80:443").parsing {
+            let (host, port) = try Byte.Input(utf8: "80:443").parsing {
                 ASCII.Decimal.Parser<_, UInt16>()
                 ":"
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -229,7 +231,7 @@ extension InlineParseErgonomicsTests {
         func `typed error propagation`() {
             // Verify that the error type is concrete, not any Error
             let result: Result<(UInt16, UInt16), _> = Result {
-                try Parser.Input.Bytes(utf8: "abc:443").parsing {
+                try Byte.Input(utf8: "abc:443").parsing {
                     ASCII.Decimal.Parser<_, UInt16>()
                     ":"
                     ASCII.Decimal.Parser<_, UInt16>()
@@ -246,7 +248,7 @@ extension InlineParseErgonomicsTests {
 
         @Test
         func `three values one-shot`() throws {
-            let (x, y, z) = try Parser.Input.Bytes(utf8: "1,2,3").parsing {
+            let (x, y, z) = try Byte.Input(utf8: "1,2,3").parsing {
                 ASCII.Decimal.Parser<_, UInt16>()
                 ","
                 ASCII.Decimal.Parser<_, UInt16>()
@@ -261,22 +263,23 @@ extension InlineParseErgonomicsTests {
     }
 }
 
-// MARK: - H4: Protocol composition typealias
+// MARK: - H4: Protocol composition constraint
 
 extension InlineParseErgonomicsTests {
-    @Suite("H4: Protocol composition typealias")
+    @Suite("H4: Protocol composition constraint")
     struct H4Tests {
-        // If this compiles, the typealias works.
-        // Uses Parser.Input.Stream instead of the full constraint set.
-        struct TestParser<Input: Parser.Input.Stream>: Sendable
+        // Originally tested the `Parser.Input.Stream` typealias (deleted in
+        // byte-extraction sister arc — Parser.Input.* re-exports removed).
+        // Now expanded to the canonical constraint bundle inline.
+        struct TestParser<Input: Collection.Slice.`Protocol` & Input_Primitives.Input.Streaming>: Sendable
         where Input.Element == UInt8 {
             init() {}
         }
 
         @Test
-        func `typealias constrains correctly`() {
-            // Input.Bytes should satisfy Parser.Input.Stream
-            let _ = TestParser<Parser.Input.Bytes>()
+        func `constraint bundle compiles for Byte.Input`() {
+            // Byte.Input satisfies both Collection.Slice.Protocol and Input.Streaming.
+            let _ = TestParser<Byte.Input>()
         }
     }
 }
@@ -290,7 +293,7 @@ struct EndpointOutput: Equatable, Sendable {
 
 /// A reusable composed parser — leaf implementation (func parse).
 /// Tests that reusable parsers can be used inside input.parse { ... }.
-struct EndpointParser<Input: Collection.Slice.`Protocol` & Parser.Input.Streaming>: Sendable
+struct EndpointParser<Input: Collection.Slice.`Protocol` & Input_Primitives.Input.Streaming>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
     init() {}
 }
@@ -298,7 +301,7 @@ where Input: Sendable, Input.Element == UInt8 {
 extension EndpointParser: Parser.`Protocol` {
     typealias Output = EndpointOutput
     typealias Failure = Either<
-        Either<ASCII.Decimal.Error, Parser.Literal<Input>.Failure>,
+        Either<ASCII.Decimal.Error, Byte.Literal.Parser<Input>.Failure>,
         ASCII.Decimal.Error
     >
 
@@ -306,7 +309,7 @@ extension EndpointParser: Parser.`Protocol` {
         let host: UInt16
         do { host = try ASCII.Decimal.Parser<Input, UInt16>().parse(&input) }
         catch { throw .left(.left(error)) }
-        do { try Parser.Literal<Input>(":").parse(&input) }
+        do { try Byte.Literal.Parser<Input>(":").parse(&input) }
         catch { throw .left(.right(error)) }
         let port: UInt16
         do { port = try ASCII.Decimal.Parser<Input, UInt16>().parse(&input) }
@@ -320,10 +323,10 @@ extension InlineParseErgonomicsTests {
     struct H5Tests {
         @Test
         func `nested composed parser in inline parse`() throws {
-            var input = Parser.Input.Bytes(utf8: "80:443/10")
+            var input = Byte.Input(utf8: "80:443/10")
 
             let (endpoint, weight) = try input.parse {
-                EndpointParser<Parser.Input.Bytes>()
+                EndpointParser<Byte.Input>()
                 "/"
                 ASCII.Decimal.Parser<_, UInt16>()
             }
@@ -335,8 +338,8 @@ extension InlineParseErgonomicsTests {
 
         @Test
         func `nested composed parser one-shot`() throws {
-            let (endpoint, weight) = try Parser.Input.Bytes(utf8: "80:443/10").parsing {
-                EndpointParser<Parser.Input.Bytes>()
+            let (endpoint, weight) = try Byte.Input(utf8: "80:443/10").parsing {
+                EndpointParser<Byte.Input>()
                 "/"
                 ASCII.Decimal.Parser<_, UInt16>()
             }
@@ -362,9 +365,9 @@ extension InlineParseErgonomicsTests {
             }
 
             let parser = Parser.Take.Sequence {
-                ASCII.Decimal.Parser<Parser.Input.Bytes, UInt16>()
-                ":" as Parser.Literal<Parser.Input.Bytes>
-                ASCII.Decimal.Parser<Parser.Input.Bytes, UInt16>()
+                ASCII.Decimal.Parser<Byte.Input, UInt16>()
+                ":" as Byte.Literal.Parser<Byte.Input>
+                ASCII.Decimal.Parser<Byte.Input, UInt16>()
             }
             .error.map { (either) -> EndpointError in
                 switch either {
@@ -374,7 +377,7 @@ extension InlineParseErgonomicsTests {
                 }
             }
 
-            var input = Parser.Input.Bytes(utf8: "abc:80")
+            var input = Byte.Input(utf8: "abc:80")
             #expect(throws: EndpointError.invalidHost) {
                 try parser.parse(&input)
             }
