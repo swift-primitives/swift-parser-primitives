@@ -99,8 +99,9 @@ extension Parser {
 
         /// The error type this parser can throw.
         ///
-        /// Use `Never` for infallible parsers.
-        associatedtype Failure: Swift.Error
+        /// Defaults to `Never` for infallible parsers; conformers MAY override
+        /// to a domain-specific `Swift.Error`-conforming type.
+        associatedtype Failure: Swift.Error = Never
 
         /// The type of the composed parser body, or `Never` for leaf parsers.
         associatedtype Body: ~Copyable

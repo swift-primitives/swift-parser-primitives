@@ -49,4 +49,20 @@ extension Parser {
             self._parse = parse
         }
     }
+
+    /// A closure-backed parser that cannot fail.
+    ///
+    /// `Parser.Pure<Input, Output>` is shorthand for
+    /// `Parser.Witness<Input, Output, Never>`. Use it to elide the `Failure`
+    /// type argument when the parser is infallible.
+    ///
+    /// ```swift
+    /// let p = Parser.Pure<Substring, Int> { input in
+    ///     let n = input.count
+    ///     input = ""
+    ///     return n
+    /// }
+    /// ```
+    public typealias Pure<Input, Output> = Witness<Input, Output, Never>
+        where Input: ~Copyable & ~Escapable
 }
