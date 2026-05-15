@@ -1,6 +1,6 @@
 //
 //  Parser.Many.Separated.swift
-//  swift-standards
+//  swift-parser-primitives
 //
 //  Repetition parser with separators.
 //
@@ -28,11 +28,13 @@ extension Parser.Many {
     ///     ","
     /// }
     /// ```
-    public struct Separated<Input: Parser.Input.`Protocol`, Element: Parser.`Protocol`, Separator: Parser.`Protocol`>
-    where
-        Element.Input == Input,
-        Separator.Input == Input
-    {
+    ///
+    /// ## Shared generics
+    ///
+    /// `Input` and `Element` are inherited from the outer ``Parser/Many``;
+    /// only the `Separator` parameter is added at this nesting level.
+    public struct Separated<Separator: Parser.`Protocol`>
+    where Separator.Input == Input {
         @usableFromInline
         let element: Element
 
@@ -85,9 +87,8 @@ extension Parser.Many {
 
 extension Parser.Many.Separated: Parser.`Protocol` {
     public typealias Output = [Element.Output]
-    public typealias Failure = Parser.Many.Error
+    public typealias Failure = Parser.Many<Input, Element>.Error
 
-    // on Property.Inout accessor chains (input.restore.to) in multiple control flow paths.
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
         var results: [Element.Output] = []
@@ -97,7 +98,6 @@ extension Parser.Many.Separated: Parser.`Protocol` {
             results.reserveCapacity(minimum)
         }
 
-        // Parse first element
         do {
             let first = try element.parse(&input)
             results.append(first)
@@ -108,11 +108,9 @@ extension Parser.Many.Separated: Parser.`Protocol` {
             return results
         }
 
-        // Parse remaining elements (with separator)
         while results.count < maximum {
             let checkpoint = input.checkpoint
 
-            // Try separator
             do {
                 _ = try separator.parse(&input)
             } catch {
@@ -120,7 +118,6 @@ extension Parser.Many.Separated: Parser.`Protocol` {
                 break
             }
 
-            // Try next element
             do {
                 let next = try element.parse(&input)
                 results.append(next)
@@ -130,7 +127,6 @@ extension Parser.Many.Separated: Parser.`Protocol` {
             }
         }
 
-        // Check minimum
         if results.count < minimum {
             throw Failure.countTooLow(expected: minimum, got: results.count)
         }
@@ -145,7 +141,6 @@ extension Parser.Many.Separated: Parser.Printer
 where Element: Parser.Printer, Separator: Parser.Printer, Separator.Output == Void {
     @inlinable
     public func print(_ output: [Element.Output], into input: inout Input) throws(Failure) {
-        // Validate count constraints
         if output.count < minimum {
             throw Failure.countTooLow(expected: minimum, got: output.count)
         }
@@ -153,9 +148,6 @@ where Element: Parser.Printer, Separator: Parser.Printer, Separator.Output == Vo
             throw Failure.countTooHigh(expected: maximum, got: output.count)
         }
 
-        // Print in reverse order with separators between elements.
-        // Note: Element and separator printing failures cause early termination
-        // but are not propagated - this printer only throws count constraint errors.
         var isFirst = true
         for item in output.reversed() {
             if !isFirst {

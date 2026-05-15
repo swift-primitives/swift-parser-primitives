@@ -3,7 +3,7 @@ import Testing
 
 // MARK: - Test Suite Structure
 
-@Suite("Parser.Many.Simple")
+@Suite("Parser.Many")
 struct ParserManySimpleTests {
     @Suite struct Unit {}
     @Suite struct EdgeCase {}
@@ -14,7 +14,7 @@ struct ParserManySimpleTests {
 extension ParserManySimpleTests.Unit {
     @Test
     func `zero or more collects all matching elements`() throws {
-        let parser = Parser.Many.Simple<ByteInput, Parser.Byte<ByteInput>> {
+        let parser = Parser.Many<ByteInput, Parser.Byte<ByteInput>> {
             Parser.Byte<ByteInput>(0x41)
         }
         var input = ByteInput([0x41, 0x41, 0x41, 0x42])
@@ -27,7 +27,7 @@ extension ParserManySimpleTests.Unit {
 
     @Test
     func `one or more requires at least one match`() throws {
-        let parser = Parser.Many.Simple<ByteInput, Parser.First.Element<ByteInput>>(1...) {
+        let parser = Parser.Many<ByteInput, Parser.First.Element<ByteInput>>(1...) {
             Parser.First.Element<ByteInput>()
         }
         var input = ByteInput([0x0A, 0x0B])
@@ -39,7 +39,7 @@ extension ParserManySimpleTests.Unit {
 
     @Test
     func `exact count with closed range`() throws {
-        let parser = Parser.Many.Simple<ByteInput, Parser.First.Element<ByteInput>>(2...2) {
+        let parser = Parser.Many<ByteInput, Parser.First.Element<ByteInput>>(2...2) {
             Parser.First.Element<ByteInput>()
         }
         var input = ByteInput([0x01, 0x02, 0x03])
@@ -56,7 +56,7 @@ extension ParserManySimpleTests.Unit {
 extension ParserManySimpleTests.EdgeCase {
     @Test
     func `zero or more returns empty on no match`() throws {
-        let parser = Parser.Many.Simple<ByteInput, Parser.Byte<ByteInput>> {
+        let parser = Parser.Many<ByteInput, Parser.Byte<ByteInput>> {
             Parser.Byte<ByteInput>(0xFF)
         }
         var input = ByteInput([0x01])
@@ -69,19 +69,19 @@ extension ParserManySimpleTests.EdgeCase {
 
     @Test
     func `one or more fails on empty input`() {
-        let parser = Parser.Many.Simple<ByteInput, Parser.First.Element<ByteInput>>(1...) {
+        let parser = Parser.Many<ByteInput, Parser.First.Element<ByteInput>>(1...) {
             Parser.First.Element<ByteInput>()
         }
         var input = ByteInput([])
 
-        #expect(throws: Parser.Many.Error.self) {
+        #expect(throws: Parser.Many<ByteInput, Parser.First.Element<ByteInput>>.Error.self) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `zero or more succeeds on empty input`() throws {
-        let parser = Parser.Many.Simple<ByteInput, Parser.First.Element<ByteInput>> {
+        let parser = Parser.Many<ByteInput, Parser.First.Element<ByteInput>> {
             Parser.First.Element<ByteInput>()
         }
         var input = ByteInput([])

@@ -1,9 +1,11 @@
 //
 //  Parser.Map.Throwing.swift
-//  swift-standards
+//  swift-parser-primitives
 //
 //  Throwing output transformation.
 //
+
+public import Either_Primitives
 
 extension Parser.Map {
     /// A parser that transforms output using a throwing function.
@@ -12,7 +14,12 @@ extension Parser.Map {
     /// The resulting failure type is `Either<Upstream.Failure, E>`.
     ///
     /// Created via `parser.tryMap(_:)`.
-    public struct Throwing<Upstream: Parser.`Protocol`, Output, E: Swift.Error> {
+    ///
+    /// ## Shared generics
+    ///
+    /// `Upstream` and `Output` are inherited from the outer ``Parser/Map``
+    /// type; only the error parameter `E` is added at this nesting level.
+    public struct Throwing<E: Swift.Error> {
         @usableFromInline
         let upstream: Upstream
 

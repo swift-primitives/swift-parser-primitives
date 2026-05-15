@@ -14,7 +14,7 @@ struct ParserManySeparatedTests {
 extension ParserManySeparatedTests.Unit {
     @Test
     func `parses comma-separated bytes`() throws {
-        let parser = Parser.Many.Separated<ByteInput, Parser.First.Element<ByteInput>, Parser.Byte<ByteInput>> {
+        let parser = Parser.Many<ByteInput, Parser.First.Element<ByteInput>>.Separated<Parser.Byte<ByteInput>> {
             Parser.First.Element<ByteInput>()
         } separator: {
             Parser.Byte<ByteInput>(UInt8(ascii: ","))
@@ -31,7 +31,7 @@ extension ParserManySeparatedTests.Unit {
 
     @Test
     func `single element without separator`() throws {
-        let parser = Parser.Many.Separated<ByteInput, Parser.First.Element<ByteInput>, Parser.Byte<ByteInput>> {
+        let parser = Parser.Many<ByteInput, Parser.First.Element<ByteInput>>.Separated<Parser.Byte<ByteInput>> {
             Parser.First.Element<ByteInput>()
         } separator: {
             Parser.Byte<ByteInput>(UInt8(ascii: ","))
@@ -49,7 +49,7 @@ extension ParserManySeparatedTests.Unit {
 extension ParserManySeparatedTests.EdgeCase {
     @Test
     func `empty input returns empty array`() throws {
-        let parser = Parser.Many.Separated<ByteInput, Parser.Byte<ByteInput>, Parser.Byte<ByteInput>> {
+        let parser = Parser.Many<ByteInput, Parser.Byte<ByteInput>>.Separated<Parser.Byte<ByteInput>> {
             Parser.Byte<ByteInput>(0x41)
         } separator: {
             Parser.Byte<ByteInput>(UInt8(ascii: ","))
@@ -63,7 +63,7 @@ extension ParserManySeparatedTests.EdgeCase {
 
     @Test
     func `trailing separator not consumed`() throws {
-        let parser = Parser.Many.Separated<ByteInput, Parser.Byte<ByteInput>, Parser.Byte<ByteInput>> {
+        let parser = Parser.Many<ByteInput, Parser.Byte<ByteInput>>.Separated<Parser.Byte<ByteInput>> {
             Parser.Byte<ByteInput>(UInt8(ascii: "x"))
         } separator: {
             Parser.Byte<ByteInput>(UInt8(ascii: ","))
@@ -78,14 +78,14 @@ extension ParserManySeparatedTests.EdgeCase {
 
     @Test
     func `minimum count enforcement`() {
-        let parser = Parser.Many.Separated<ByteInput, Parser.Byte<ByteInput>, Parser.Byte<ByteInput>>(3...) {
+        let parser = Parser.Many<ByteInput, Parser.Byte<ByteInput>>.Separated<Parser.Byte<ByteInput>>(3...) {
             Parser.Byte<ByteInput>(UInt8(ascii: "a"))
         } separator: {
             Parser.Byte<ByteInput>(UInt8(ascii: ","))
         }
         var input = ByteInput(utf8: "a,a")
 
-        #expect(throws: Parser.Many.Error.self) {
+        #expect(throws: Parser.Many<ByteInput, Parser.Byte<ByteInput>>.Error.self) {
             try parser.parse(&input)
         }
     }
