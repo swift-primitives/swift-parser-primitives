@@ -85,7 +85,7 @@ extension Parser.Tracked: Parser.Input.`Protocol` {
     ///
     /// Equality and ordering delegate to `baseCheckpoint` only, matching
     /// the semantics of the underlying `Buffer.Ring.Checkpoint`.
-    public struct Checkpoint: Sendable, Comparable {
+    public struct Checkpoint: Comparable {
         @usableFromInline
         let baseCheckpoint: Base.Checkpoint
 
@@ -149,6 +149,13 @@ extension Parser.Tracked: Parser.Input.`Protocol` {
         base.advance(by: count)
     }
 }
+
+// MARK: - Conditional Sendable
+//
+// Data-container conditional Sendable per [MEM-SEND-013] out-of-scope carve-out.
+// Tracked.Checkpoint wraps Base.Checkpoint + Index<Element>; it is Sendable iff
+// Base.Checkpoint is Sendable. Index<Element> is unconditionally Sendable.
+extension Parser.Tracked.Checkpoint: Sendable where Base.Checkpoint: Sendable {}
 
 // MARK: - Tracked Parsing
 

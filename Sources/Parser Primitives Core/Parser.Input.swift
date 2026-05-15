@@ -101,7 +101,6 @@ extension Parser.Input {
     /// try parser.parse(&input)
     /// ```
     public typealias Collection<Base: Collection_Primitives.Collection.`Protocol`> = Input_Primitives.Input.Slice<Base>
-    where Base: Sendable, Base.Index: Sendable
 
     /// Concrete input type for parsing byte arrays with parser combinators.
     ///
