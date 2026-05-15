@@ -35,7 +35,7 @@ extension Parser {
     ///     throw Located(error, at: input.offset)
     /// }
     /// ```
-    public struct Tracked<Base: Input.`Protocol`> {
+    public struct Tracked<Base: Input_Primitives.Input.`Protocol`> {
         /// The underlying input.
         @usableFromInline
         internal var base: Base
@@ -78,7 +78,7 @@ extension Parser {
 
 // MARK: - Input Conformance
 
-extension Parser.Tracked: Parser.Input.`Protocol` {
+extension Parser.Tracked: Input_Primitives.Input.`Protocol` {
     public typealias Element = Base.Element
 
     /// Checkpoint stores both the base input checkpoint and tracked offset.

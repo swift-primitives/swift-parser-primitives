@@ -19,7 +19,7 @@ extension Parser {
     /// let result = try parser.parse(&input)
     /// print("Identifier '\(result.value)' at \(result.start)..<\(result.end)")
     /// ```
-    public struct Span<Base: Input.`Protocol`, Upstream: Parser.`Protocol`>
+    public struct Span<Base: Input_Primitives.Input.`Protocol`, Upstream: Parser.`Protocol`>
     where Upstream.Input == Base {
         @usableFromInline
         let upstream: Upstream
@@ -45,7 +45,7 @@ extension Parser.Span: Parser.`Protocol` {
 
 // MARK: - Parser Extension
 
-extension Parser.`Protocol` where Input: Parser.Input.`Protocol` & Copyable {
+extension Parser.`Protocol` where Input: Input_Primitives.Input.`Protocol` & Copyable {
     /// Wraps this parser to produce spanned output.
     ///
     /// The returned parser requires `Tracked<Input>` and produces

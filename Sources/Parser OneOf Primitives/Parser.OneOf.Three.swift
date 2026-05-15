@@ -13,7 +13,7 @@ extension Parser.OneOf {
         P1.Input == P2.Input,
         P0.Output == P1.Output,
         P1.Output == P2.Output,
-        P0.Input: Parser.Input.`Protocol`
+        P0.Input: Input_Primitives.Input.`Protocol`
     {
         @usableFromInline
         let p0: P0

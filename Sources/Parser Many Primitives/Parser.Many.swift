@@ -26,7 +26,7 @@ extension Parser {
     /// For repetition with separators between elements, see
     /// ``Parser/Many/Separated``, which inherits `Input` and `Element` from
     /// this type and adds a `Separator` parameter.
-    public struct Many<Input: Parser.Input.`Protocol`, Element: Parser.`Protocol`>
+    public struct Many<Input: Input_Primitives.Input.`Protocol`, Element: Parser.`Protocol`>
     where Element.Input == Input {
         @usableFromInline
         let element: Element

@@ -31,7 +31,7 @@ extension Parser {
     /// - Upstream fails → `Not` succeeds with `Void`
     /// - Input is **never** consumed
     public struct Not<Upstream: Parser.`Protocol`>
-    where Upstream.Input: Parser.Input.`Protocol` {
+    where Upstream.Input: Input_Primitives.Input.`Protocol` {
         @usableFromInline
         internal let upstream: Upstream
 
@@ -79,7 +79,7 @@ extension Parser.Not: Parser.`Protocol` {
 
 // MARK: - Parser Extension
 
-extension Parser.`Protocol` where Input: Parser.Input.`Protocol` {
+extension Parser.`Protocol` where Input: Input_Primitives.Input.`Protocol` {
     /// Creates a parser that succeeds when this parser fails.
     ///
     /// Useful for negative lookahead - ensuring input does NOT

@@ -164,7 +164,6 @@ let package = Package(
         .package(path: "../swift-input-primitives"),
         .package(path: "../swift-effect-primitives"),
         .package(path: "../swift-array-primitives"),
-        .package(path: "../swift-buffer-primitives"),
         .package(path: "../swift-text-primitives"),
     ],
     targets: [
