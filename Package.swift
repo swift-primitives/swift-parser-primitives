@@ -150,14 +150,6 @@ let package = Package(
             targets: ["Parser Parse Primitives"]
         ),
         .library(
-            name: "Parser Byte Primitives",
-            targets: ["Parser Byte Primitives"]
-        ),
-        .library(
-            name: "Parser Literal Primitives",
-            targets: ["Parser Literal Primitives"]
-        ),
-        .library(
             name: "Parser Conformance Primitives",
             targets: ["Parser Conformance Primitives"]
         ),
@@ -295,7 +287,6 @@ let package = Package(
                 "Parser Conditional Primitives",
                 "Parser Optional Primitives",
                 "Parser Always Primitives",
-                "Parser Literal Primitives",
             ]
         ),
 
@@ -447,24 +438,6 @@ let package = Package(
         // MARK: - Concrete Parsers
 
         .target(
-            name: "Parser Byte Primitives",
-            dependencies: [
-                "Parser Primitives Core",
-                "Parser Error Primitives",
-                "Parser Match Primitives",
-                "Parser EndOfInput Primitives",
-            ]
-        ),
-        .target(
-            name: "Parser Literal Primitives",
-            dependencies: [
-                "Parser Primitives Core",
-                "Parser Match Primitives",
-                "Parser EndOfInput Primitives",
-                "Parser Error Primitives",
-            ]
-        ),
-        .target(
             name: "Parser Conformance Primitives",
             dependencies: [
                 "Parser Primitives Core",
@@ -509,8 +482,6 @@ let package = Package(
                 "Parser Trace Primitives",
                 "Parser Backtrack Primitives",
                 "Parser Parse Primitives",
-                "Parser Byte Primitives",
-                "Parser Literal Primitives",
                 "Parser Conformance Primitives",
             ]
         ),
@@ -529,10 +500,6 @@ let package = Package(
 
         .testTarget(
             name: "Parser Always Primitives Tests",
-            dependencies: ["Parser Primitives Test Support"]
-        ),
-        .testTarget(
-            name: "Parser Byte Primitives Tests",
             dependencies: ["Parser Primitives Test Support"]
         ),
         .testTarget(
@@ -561,10 +528,6 @@ let package = Package(
         ),
         .testTarget(
             name: "Parser FlatMap Primitives Tests",
-            dependencies: ["Parser Primitives Test Support"]
-        ),
-        .testTarget(
-            name: "Parser Literal Primitives Tests",
             dependencies: ["Parser Primitives Test Support"]
         ),
         .testTarget(

@@ -15,8 +15,8 @@ extension ParserOneOfTwoTests.Unit {
     @Test
     func `returns first parser result when it succeeds`() throws {
         let parser = Parser.OneOf.Two(
-            Parser.Byte<ByteInput>(0x41).map { "A" },
-            Parser.Byte<ByteInput>(0x42).map { "B" }
+            Parser.First.Where<ByteInput> { $0 == 0x41 }.map { _ in "A" },
+            Parser.First.Where<ByteInput> { $0 == 0x42 }.map { _ in "B" }
         )
         var input = ByteInput([0x41])
 
@@ -28,8 +28,8 @@ extension ParserOneOfTwoTests.Unit {
     @Test
     func `falls back to second parser when first fails`() throws {
         let parser = Parser.OneOf.Two(
-            Parser.Byte<ByteInput>(0x41).map { "A" },
-            Parser.Byte<ByteInput>(0x42).map { "B" }
+            Parser.First.Where<ByteInput> { $0 == 0x41 }.map { _ in "A" },
+            Parser.First.Where<ByteInput> { $0 == 0x42 }.map { _ in "B" }
         )
         var input = ByteInput([0x42])
 
@@ -45,8 +45,8 @@ extension ParserOneOfTwoTests.EdgeCase {
     @Test
     func `fails when both alternatives fail`() {
         let parser = Parser.OneOf.Two(
-            Parser.Byte<ByteInput>(0x41),
-            Parser.Byte<ByteInput>(0x42)
+            Parser.First.Where<ByteInput> { $0 == 0x41 },
+            Parser.First.Where<ByteInput> { $0 == 0x42 }
         )
         var input = ByteInput([0x43])
 
@@ -58,7 +58,7 @@ extension ParserOneOfTwoTests.EdgeCase {
     @Test
     func `backtracks first attempt before trying second`() throws {
         let parser = Parser.OneOf.Two(
-            Parser.Byte<ByteInput>(0xFF).map { "first" },
+            Parser.First.Where<ByteInput> { $0 == 0xFF }.map { _ in "first" },
             Parser.First.Element<ByteInput>().map { _ in "second" }
         )
         var input = ByteInput([0x42])

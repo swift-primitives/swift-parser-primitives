@@ -41,7 +41,7 @@ extension ParserPeekTests.Unit {
 extension ParserPeekTests.EdgeCase {
     @Test
     func `upstream failure does not consume input`() {
-        let parser = Parser.Byte<ByteInput>(0x41).peek()
+        let parser = Parser.First.Where<ByteInput> { $0 == 0x41 }.peek()
         var input = ByteInput([0x42])
 
         #expect(throws: (any Swift.Error).self) {

@@ -140,33 +140,6 @@ extension Parser.Builder {
     }
 }
 
-// MARK: - String Literal Support
-
-extension Parser.Builder
-where Input: Parser.Input.Streaming, Input.Element == UInt8 {
-    /// Enables bare string literals as `Parser.Literal` in `var body` builders.
-    @inlinable
-    public static func buildExpression(
-        _ literal: Parser.Literal<Input>
-    ) -> Parser.Literal<Input> {
-        literal
-    }
-
-    /// Re-declared generic pass-through for constrained extension.
-    @inlinable
-    public static func buildExpression<P: Parser.`Protocol`>(
-        _ parser: P
-    ) -> P where P.Input == Input {
-        parser
-    }
-}
-
-// MARK: - Byte Array Literal Support
-
-extension Parser.Builder where Input == ArraySlice<UInt8> {
-    /// Converts a `[UInt8]` array literal to a parser.
-    @inlinable
-    public static func buildExpression(_ bytes: [UInt8]) -> [UInt8] {
-        bytes
-    }
-}
+// Byte-specific buildExpression overloads (string literal → Parser.Literal,
+// byte-array literal → [UInt8]) moved to swift-byte-parser-primitives' target
+// `Byte Parser Primitives` in Wave 3 of the byte-extraction arc.

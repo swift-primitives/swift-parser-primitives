@@ -15,7 +15,7 @@ extension ParserManySimpleTests.Unit {
     @Test
     func `zero or more collects all matching elements`() throws {
         let parser = Parser.Many {
-            Parser.Byte<ByteInput>(0x41)
+            Parser.First.Where<ByteInput> { $0 == 0x41 }
         }
         var input = ByteInput([0x41, 0x41, 0x41, 0x42])
 
@@ -57,7 +57,7 @@ extension ParserManySimpleTests.EdgeCase {
     @Test
     func `zero or more returns empty on no match`() throws {
         let parser = Parser.Many {
-            Parser.Byte<ByteInput>(0xFF)
+            Parser.First.Where<ByteInput> { $0 == 0xFF }
         }
         var input = ByteInput([0x01])
 

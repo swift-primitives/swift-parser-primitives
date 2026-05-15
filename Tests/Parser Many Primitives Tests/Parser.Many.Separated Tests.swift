@@ -17,7 +17,7 @@ extension ParserManySeparatedTests.Unit {
         let parser = Parser.Many.Separated {
             Parser.First.Element<ByteInput>()
         } separator: {
-            Parser.Byte<ByteInput>(UInt8(ascii: ","))
+            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: ",") }
         }
         var input = ByteInput(utf8: "a,b,c")
 
@@ -34,7 +34,7 @@ extension ParserManySeparatedTests.Unit {
         let parser = Parser.Many.Separated {
             Parser.First.Element<ByteInput>()
         } separator: {
-            Parser.Byte<ByteInput>(UInt8(ascii: ","))
+            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: ",") }
         }
         var input = ByteInput([0x42])
 
@@ -50,9 +50,9 @@ extension ParserManySeparatedTests.EdgeCase {
     @Test
     func `empty input returns empty array`() throws {
         let parser = Parser.Many.Separated {
-            Parser.Byte<ByteInput>(0x41)
+            Parser.First.Where<ByteInput> { $0 == 0x41 }
         } separator: {
-            Parser.Byte<ByteInput>(UInt8(ascii: ","))
+            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: ",") }
         }
         var input = ByteInput([])
 
@@ -64,9 +64,9 @@ extension ParserManySeparatedTests.EdgeCase {
     @Test
     func `trailing separator not consumed`() throws {
         let parser = Parser.Many.Separated {
-            Parser.Byte<ByteInput>(UInt8(ascii: "x"))
+            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: "x") }
         } separator: {
-            Parser.Byte<ByteInput>(UInt8(ascii: ","))
+            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: ",") }
         }
         var input = ByteInput(utf8: "x,x,")
 
@@ -79,13 +79,13 @@ extension ParserManySeparatedTests.EdgeCase {
     @Test
     func `minimum count enforcement`() {
         let parser = Parser.Many.Separated(3...) {
-            Parser.Byte<ByteInput>(UInt8(ascii: "a"))
+            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: "a") }
         } separator: {
-            Parser.Byte<ByteInput>(UInt8(ascii: ","))
+            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: ",") }
         }
         var input = ByteInput(utf8: "a,a")
 
-        #expect(throws: Parser.Many<ByteInput, Parser.Byte<ByteInput>>.Error.self) {
+        #expect(throws: Parser.Many<ByteInput, Parser.First.Where<ByteInput>>.Error.self) {
             try parser.parse(&input)
         }
     }

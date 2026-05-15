@@ -14,8 +14,8 @@ struct ParserOptionallyTests {
 extension ParserOptionallyTests.Unit {
     @Test
     func `returns value when parser succeeds`() {
-        let parser = Parser.Optionally<Parser.Byte<ByteInput>> {
-            Parser.Byte<ByteInput>(0x41)
+        let parser = Parser.Optionally<Parser.First.Where<ByteInput>> {
+            Parser.First.Where<ByteInput> { $0 == 0x41 }
         }
         var input = ByteInput([0x41, 0x42])
 
@@ -27,8 +27,8 @@ extension ParserOptionallyTests.Unit {
 
     @Test
     func `returns nil when parser fails`() {
-        let parser = Parser.Optionally<Parser.Byte<ByteInput>> {
-            Parser.Byte<ByteInput>(0x41)
+        let parser = Parser.Optionally<Parser.First.Where<ByteInput>> {
+            Parser.First.Where<ByteInput> { $0 == 0x41 }
         }
         var input = ByteInput([0x42])
 
@@ -43,8 +43,8 @@ extension ParserOptionallyTests.Unit {
 extension ParserOptionallyTests.EdgeCase {
     @Test
     func `backtracks on failure`() {
-        let parser = Parser.Optionally<Parser.Byte<ByteInput>> {
-            Parser.Byte<ByteInput>(0xFF)
+        let parser = Parser.Optionally<Parser.First.Where<ByteInput>> {
+            Parser.First.Where<ByteInput> { $0 == 0xFF }
         }
         var input = ByteInput([0x01, 0x02])
 

@@ -14,7 +14,7 @@ struct ParserNotTests {
 extension ParserNotTests.Unit {
     @Test
     func `succeeds when upstream fails`() throws {
-        let parser = Parser.Byte<ByteInput>(0x41).not()
+        let parser = Parser.First.Where<ByteInput> { $0 == 0x41 }.not()
         var input = ByteInput([0x42])
 
         try parser.parse(&input)
@@ -41,17 +41,17 @@ extension ParserNotTests.Unit {
 extension ParserNotTests.EdgeCase {
     @Test
     func `fails when upstream succeeds`() {
-        let parser = Parser.Byte<ByteInput>(0x41).not()
+        let parser = Parser.First.Where<ByteInput> { $0 == 0x41 }.not()
         var input = ByteInput([0x41])
 
-        #expect(throws: Parser.Not<Parser.Byte<ByteInput>>.Error.self) {
+        #expect(throws: Parser.Not<Parser.First.Where<ByteInput>>.Error.self) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `never consumes input on failure`() {
-        let parser = Parser.Byte<ByteInput>(0x41).not()
+        let parser = Parser.First.Where<ByteInput> { $0 == 0x41 }.not()
         var input = ByteInput([0x41, 0x42])
 
         _ = try? parser.parse(&input)

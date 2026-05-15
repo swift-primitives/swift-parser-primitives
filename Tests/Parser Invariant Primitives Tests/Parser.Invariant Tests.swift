@@ -52,7 +52,7 @@ extension ParserInvariantTests.InputPosition {
 
     @Test
     func `Not does not advance input on success`() throws {
-        let parser = Parser.Byte<ByteInput>(0xFF).not()
+        let parser = Parser.First.Where<ByteInput> { $0 == 0xFF }.not()
         var input = ByteInput([0x01, 0x02])
         let checkpoint = input.checkpoint
 
@@ -75,16 +75,6 @@ extension ParserInvariantTests.InputPosition {
     // MARK: - Input Position: Consuming Parsers
 
     @Test
-    func `Byte advances exactly one position`() throws {
-        let parser = Parser.Byte<ByteInput>(0x41)
-        var input = ByteInput([0x41, 0x42, 0x43])
-
-        try parser.parse(&input)
-
-        #expect(input.first == 0x42)
-    }
-
-    @Test
     func `First.Element advances exactly one position`() throws {
         let parser = Parser.First.Element<ByteInput>()
         var input = ByteInput([0x0A, 0x0B, 0x0C])
@@ -92,16 +82,6 @@ extension ParserInvariantTests.InputPosition {
         _ = try parser.parse(&input)
 
         #expect(input.first == 0x0B)
-    }
-
-    @Test
-    func `Literal advances by literal length`() throws {
-        let parser = Parser.Literal<ByteInput>([0x01, 0x02, 0x03])
-        var input = ByteInput([0x01, 0x02, 0x03, 0x04, 0x05])
-
-        try parser.parse(&input)
-
-        #expect(input.first == 0x04)
     }
 
     @Test
@@ -140,8 +120,8 @@ extension ParserInvariantTests.InputPosition {
     @Test
     func `OneOf restores position on failed first branch`() throws {
         let parser = Parser.OneOf.Two(
-            Parser.Byte<ByteInput>(0xFF),
-            Parser.Byte<ByteInput>(0x42)
+            Parser.First.Where<ByteInput> { $0 == 0xFF },
+            Parser.First.Where<ByteInput> { $0 == 0x42 }
         )
         var input = ByteInput([0x42, 0x43])
 
@@ -152,8 +132,8 @@ extension ParserInvariantTests.InputPosition {
 
     @Test
     func `Optional restores position on failure`() {
-        let parser = Parser.Optionally<Parser.Byte<ByteInput>> {
-            Parser.Byte<ByteInput>(0xFF)
+        let parser = Parser.Optionally<Parser.First.Where<ByteInput>> {
+            Parser.First.Where<ByteInput> { $0 == 0xFF }
         }
         var input = ByteInput([0x01, 0x02])
         let checkpoint = input.checkpoint
@@ -283,8 +263,8 @@ extension ParserInvariantTests.ErrorPropagation {
     @Test
     func `OneOf exposes error when all branches fail`() {
         let parser = Parser.OneOf.Two(
-            Parser.Byte<ByteInput>(0x41),
-            Parser.Byte<ByteInput>(0x42)
+            Parser.First.Where<ByteInput> { $0 == 0x41 },
+            Parser.First.Where<ByteInput> { $0 == 0x42 }
         )
         var input = ByteInput([0x43])
 
@@ -320,7 +300,7 @@ extension ParserInvariantTests.CheckpointRestore {
     @Test
     func `OneOf.Two restores position on first-branch failure`() throws {
         let parser = Parser.OneOf.Two(
-            Parser.Byte<ByteInput>(0xFF).map { "first" },
+            Parser.First.Where<ByteInput> { $0 == 0xFF }.map { _ in "first" },
             Parser.First.Element<ByteInput>().map { _ in "second" }
         )
         var input = ByteInput([0x42])
@@ -344,7 +324,7 @@ extension ParserInvariantTests.CheckpointRestore {
 
     @Test
     func `Not does not consume on success when inner fails`() throws {
-        let parser = Parser.Byte<ByteInput>(0xFF).not()
+        let parser = Parser.First.Where<ByteInput> { $0 == 0xFF }.not()
         var input = ByteInput([0x01])
         let before = input.checkpoint
 
@@ -355,13 +335,13 @@ extension ParserInvariantTests.CheckpointRestore {
 
     @Test
     func `Optional restores on inner failure`() {
-        let parser = Parser.Optionally<Parser.Byte<ByteInput>> {
-            Parser.Byte<ByteInput>(0xFF)
+        let parser = Parser.Optionally<Parser.First.Where<ByteInput>> {
+            Parser.First.Where<ByteInput> { $0 == 0xFF }
         }
         var input = ByteInput([0x01, 0x02, 0x03])
         let before = input.checkpoint
 
-        let result: Parser.Byte<ByteInput>.Output? = parser.parse(&input)
+        let result: Parser.First.Where<ByteInput>.Output? = parser.parse(&input)
 
         #expect(result == nil)
         #expect(input.checkpoint == before)
@@ -405,16 +385,6 @@ extension ParserInvariantTests.Boundary {
         var input = ByteInput([0xFF])
 
         _ = try parser.parse(&input)
-
-        #expect(input.isEmpty)
-    }
-
-    @Test
-    func `input exhausted exactly - Literal matches exact length`() throws {
-        let parser = Parser.Literal<ByteInput>([0x01, 0x02, 0x03])
-        var input = ByteInput([0x01, 0x02, 0x03])
-
-        try parser.parse(&input)
 
         #expect(input.isEmpty)
     }
