@@ -14,8 +14,8 @@ struct ParserFirstElementTests {
 extension ParserFirstElementTests.Unit {
     @Test
     func `returns first element and advances`() throws {
-        let parser = Parser.First.Element<ByteInput>()
-        var input = ByteInput([0x41, 0x42, 0x43])
+        let parser = Parser.First.Element<Parser.Test.Input>()
+        var input = Parser.Test.Input([0x41, 0x42, 0x43])
 
         let result = try parser.parse(&input)
 
@@ -25,8 +25,8 @@ extension ParserFirstElementTests.Unit {
 
     @Test
     func `consumes last element leaving input empty`() throws {
-        let parser = Parser.First.Element<ByteInput>()
-        var input = ByteInput([0xFF])
+        let parser = Parser.First.Element<Parser.Test.Input>()
+        var input = Parser.Test.Input([0xFF])
 
         let result = try parser.parse(&input)
 
@@ -40,8 +40,8 @@ extension ParserFirstElementTests.Unit {
 extension ParserFirstElementTests.EdgeCase {
     @Test
     func `fails on empty input`() {
-        let parser = Parser.First.Element<ByteInput>()
-        var input = ByteInput([])
+        let parser = Parser.First.Element<Parser.Test.Input>()
+        var input = Parser.Test.Input([])
 
         #expect(throws: Parser.EndOfInput.Error.self) {
             try parser.parse(&input)

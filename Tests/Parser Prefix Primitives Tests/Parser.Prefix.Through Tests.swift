@@ -14,23 +14,23 @@ struct ParserPrefixThroughTests {
 extension ParserPrefixThroughTests.Unit {
     @Test
     func `consumes through delimiter including it`() throws {
-        let parser = Parser.Prefix.Through<ByteInput>([UInt8(ascii: "\n")])
-        var input = ByteInput(utf8: "line1\nline2")
+        let parser = Parser.Prefix.Through<Parser.Test.Input>([UInt8(ascii: "\n")])
+        var input = Parser.Test.Input(utf8: "line1\nline2")
 
         let result = try parser.parse(&input)
 
-        #expect(result == ByteInput(utf8: "line1\n"))
+        #expect(result == Parser.Test.Input(utf8: "line1\n"))
         #expect(input.first == UInt8(ascii: "l"))
     }
 
     @Test
     func `handles multi-byte delimiter`() throws {
-        let parser = Parser.Prefix.Through<ByteInput>(Swift.Array("\r\n".utf8))
-        var input = ByteInput(utf8: "header\r\nbody")
+        let parser = Parser.Prefix.Through<Parser.Test.Input>(Swift.Array("\r\n".utf8))
+        var input = Parser.Test.Input(utf8: "header\r\nbody")
 
         let result = try parser.parse(&input)
 
-        #expect(result == ByteInput(utf8: "header\r\n"))
+        #expect(result == Parser.Test.Input(utf8: "header\r\n"))
     }
 }
 
@@ -39,8 +39,8 @@ extension ParserPrefixThroughTests.Unit {
 extension ParserPrefixThroughTests.EdgeCase {
     @Test
     func `fails when delimiter not found`() {
-        let parser = Parser.Prefix.Through<ByteInput>([0xFF])
-        var input: ByteInput = [0x01, 0x02]
+        let parser = Parser.Prefix.Through<Parser.Test.Input>([0xFF])
+        var input: Parser.Test.Input = [0x01, 0x02]
 
         #expect(throws: Parser.Match.Error.self) {
             try parser.parse(&input)
@@ -49,12 +49,12 @@ extension ParserPrefixThroughTests.EdgeCase {
 
     @Test
     func `consumes entire input when delimiter at end`() throws {
-        let parser = Parser.Prefix.Through<ByteInput>([UInt8(ascii: "!")])
-        var input = ByteInput(utf8: "ok!")
+        let parser = Parser.Prefix.Through<Parser.Test.Input>([UInt8(ascii: "!")])
+        var input = Parser.Test.Input(utf8: "ok!")
 
         let result = try parser.parse(&input)
 
-        #expect(result == ByteInput(utf8: "ok!"))
+        #expect(result == Parser.Test.Input(utf8: "ok!"))
         #expect(input.isEmpty)
     }
 }

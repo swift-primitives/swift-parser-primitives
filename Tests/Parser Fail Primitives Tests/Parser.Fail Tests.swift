@@ -14,10 +14,10 @@ struct ParserFailTests {
 extension ParserFailTests.Unit {
     @Test
     func `always throws the provided error`() {
-        let parser = Parser.Fail<ByteInput, Int, Parser.Match.Error>(
+        let parser = Parser.Fail<Parser.Test.Input, Int, Parser.Match.Error>(
             .predicateFailed(description: "test error")
         )
-        var input = ByteInput([0x01, 0x02])
+        var input = Parser.Test.Input([0x01, 0x02])
 
         #expect(throws: Parser.Match.Error.self) {
             try parser.parse(&input)
@@ -30,10 +30,10 @@ extension ParserFailTests.Unit {
 extension ParserFailTests.EdgeCase {
     @Test
     func `throws on empty input without consuming`() {
-        let parser = Parser.Fail<ByteInput, Void, Parser.Constraint.Error>(
+        let parser = Parser.Fail<Parser.Test.Input, Void, Parser.Constraint.Error>(
             .countTooLow(expected: 1, got: 0)
         )
-        var input = ByteInput([])
+        var input = Parser.Test.Input([])
 
         #expect(throws: Parser.Constraint.Error.self) {
             try parser.parse(&input)

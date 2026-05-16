@@ -14,8 +14,8 @@ struct ParserConsumeExactlyTests {
 extension ParserConsumeExactlyTests.Unit {
     @Test
     func `consumes exactly N elements`() throws {
-        let parser = Parser.Consume.Exactly<ByteInput>(3)
-        var input: ByteInput = [0x01, 0x02, 0x03, 0x04, 0x05]
+        let parser = Parser.Consume.Exactly<Parser.Test.Input>(3)
+        var input: Parser.Test.Input = [0x01, 0x02, 0x03, 0x04, 0x05]
 
         let result = try parser.parse(&input)
 
@@ -25,8 +25,8 @@ extension ParserConsumeExactlyTests.Unit {
 
     @Test
     func `consumes all when count equals input length`() throws {
-        let parser = Parser.Consume.Exactly<ByteInput>(3)
-        var input: ByteInput = [0x0A, 0x0B, 0x0C]
+        let parser = Parser.Consume.Exactly<Parser.Test.Input>(3)
+        var input: Parser.Test.Input = [0x0A, 0x0B, 0x0C]
 
         let result = try parser.parse(&input)
 
@@ -40,8 +40,8 @@ extension ParserConsumeExactlyTests.Unit {
 extension ParserConsumeExactlyTests.EdgeCase {
     @Test
     func `fails when input has fewer elements than requested`() {
-        let parser = Parser.Consume.Exactly<ByteInput>(5)
-        var input: ByteInput = [0x01, 0x02]
+        let parser = Parser.Consume.Exactly<Parser.Test.Input>(5)
+        var input: Parser.Test.Input = [0x01, 0x02]
 
         #expect(throws: Parser.Constraint.Error.self) {
             try parser.parse(&input)
@@ -50,8 +50,8 @@ extension ParserConsumeExactlyTests.EdgeCase {
 
     @Test
     func `zero count succeeds without consuming`() throws {
-        let parser = Parser.Consume.Exactly<ByteInput>(0)
-        var input: ByteInput = [0x01]
+        let parser = Parser.Consume.Exactly<Parser.Test.Input>(0)
+        var input: Parser.Test.Input = [0x01]
 
         let result = try parser.parse(&input)
 
@@ -61,8 +61,8 @@ extension ParserConsumeExactlyTests.EdgeCase {
 
     @Test
     func `zero count succeeds on empty input`() throws {
-        let parser = Parser.Consume.Exactly<ByteInput>(0)
-        var input: ByteInput = []
+        let parser = Parser.Consume.Exactly<Parser.Test.Input>(0)
+        var input: Parser.Test.Input = []
 
         let result = try parser.parse(&input)
 

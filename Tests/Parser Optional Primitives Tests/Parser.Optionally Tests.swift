@@ -14,10 +14,10 @@ struct ParserOptionallyTests {
 extension ParserOptionallyTests.Unit {
     @Test
     func `returns value when parser succeeds`() {
-        let parser = Parser.Optionally<Parser.First.Where<ByteInput>> {
-            Parser.First.Where<ByteInput> { $0 == 0x41 }
+        let parser = Parser.Optionally<Parser.First.Where<Parser.Test.Input>> {
+            Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }
         }
-        var input = ByteInput([0x41, 0x42])
+        var input = Parser.Test.Input([0x41, 0x42])
 
         let result = parser.parse(&input)
 
@@ -27,10 +27,10 @@ extension ParserOptionallyTests.Unit {
 
     @Test
     func `returns nil when parser fails`() {
-        let parser = Parser.Optionally<Parser.First.Where<ByteInput>> {
-            Parser.First.Where<ByteInput> { $0 == 0x41 }
+        let parser = Parser.Optionally<Parser.First.Where<Parser.Test.Input>> {
+            Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }
         }
-        var input = ByteInput([0x42])
+        var input = Parser.Test.Input([0x42])
 
         let result = parser.parse(&input)
 
@@ -43,10 +43,10 @@ extension ParserOptionallyTests.Unit {
 extension ParserOptionallyTests.EdgeCase {
     @Test
     func `backtracks on failure`() {
-        let parser = Parser.Optionally<Parser.First.Where<ByteInput>> {
-            Parser.First.Where<ByteInput> { $0 == 0xFF }
+        let parser = Parser.Optionally<Parser.First.Where<Parser.Test.Input>> {
+            Parser.First.Where<Parser.Test.Input> { $0 == 0xFF }
         }
-        var input = ByteInput([0x01, 0x02])
+        var input = Parser.Test.Input([0x01, 0x02])
 
         _ = parser.parse(&input)
 
@@ -55,10 +55,10 @@ extension ParserOptionallyTests.EdgeCase {
 
     @Test
     func `returns nil on empty input`() {
-        let parser = Parser.Optionally<Parser.First.Element<ByteInput>> {
-            Parser.First.Element<ByteInput>()
+        let parser = Parser.Optionally<Parser.First.Element<Parser.Test.Input>> {
+            Parser.First.Element<Parser.Test.Input>()
         }
-        var input = ByteInput([])
+        var input = Parser.Test.Input([])
 
         let result = parser.parse(&input)
 

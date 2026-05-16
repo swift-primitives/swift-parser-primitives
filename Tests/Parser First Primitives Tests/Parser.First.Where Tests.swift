@@ -14,10 +14,10 @@ struct ParserFirstWhereTests {
 extension ParserFirstWhereTests.Unit {
     @Test
     func `returns element when predicate matches`() throws {
-        let parser = Parser.First.Where<ByteInput>(expected: "digit") {
+        let parser = Parser.First.Where<Parser.Test.Input>(expected: "digit") {
             $0 >= 0x30 && $0 <= 0x39
         }
-        var input = ByteInput([0x35, 0x41])
+        var input = Parser.Test.Input([0x35, 0x41])
 
         let result = try parser.parse(&input)
 
@@ -31,8 +31,8 @@ extension ParserFirstWhereTests.Unit {
 extension ParserFirstWhereTests.EdgeCase {
     @Test
     func `fails on empty input with EndOfInput error`() {
-        let parser = Parser.First.Where<ByteInput> { _ in true }
-        var input = ByteInput([])
+        let parser = Parser.First.Where<Parser.Test.Input> { _ in true }
+        var input = Parser.Test.Input([])
 
         #expect {
             try parser.parse(&input)
@@ -46,10 +46,10 @@ extension ParserFirstWhereTests.EdgeCase {
 
     @Test
     func `fails when predicate returns false`() {
-        let parser = Parser.First.Where<ByteInput>(expected: "uppercase") {
+        let parser = Parser.First.Where<Parser.Test.Input>(expected: "uppercase") {
             $0 >= 0x41 && $0 <= 0x5A
         }
-        var input = ByteInput([0x61])
+        var input = Parser.Test.Input([0x61])
 
         #expect {
             try parser.parse(&input)

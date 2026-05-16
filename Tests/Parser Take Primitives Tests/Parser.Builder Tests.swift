@@ -441,8 +441,8 @@ extension TwoDigitNumber: Parser.`Protocol` {
 extension ParserBuilderTests.Unit {
     @Test
     func `leaf parser has Body == Never`() throws {
-        let parser = Digit<ByteInput>()
-        var input = ByteInput([0x35])
+        let parser = Digit<Parser.Test.Input>()
+        var input = Parser.Test.Input([0x35])
 
         let result = try parser.parse(&input)
 
@@ -452,8 +452,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `single parser pass-through via var body`() throws {
-        let parser = SingleDigit<ByteInput>()
-        var input = ByteInput([0x37])
+        let parser = SingleDigit<Parser.Test.Input>()
+        var input = Parser.Test.Input([0x37])
 
         let result = try parser.parse(&input)
 
@@ -462,8 +462,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `two values compose into tuple`() throws {
-        let parser = TwoDigits<ByteInput>()
-        var input = ByteInput([0x31, 0x32])
+        let parser = TwoDigits<Parser.Test.Input>()
+        var input = Parser.Test.Input([0x31, 0x32])
 
         let (a, b) = try parser.parse(&input)
 
@@ -473,8 +473,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `void output from first parser is skipped`() throws {
-        let parser = SkipThenDigit<ByteInput>()
-        var input = ByteInput(utf8: "  5")
+        let parser = SkipThenDigit<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "  5")
 
         let result = try parser.parse(&input)
 
@@ -483,8 +483,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `void output from second parser is skipped`() throws {
-        let parser = DigitThenSkip<ByteInput>()
-        var input = ByteInput(utf8: "5  ")
+        let parser = DigitThenSkip<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "5  ")
 
         let result = try parser.parse(&input)
 
@@ -493,8 +493,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `five parsers flatten with void-skipping and tuple flattening`() throws {
-        let parser = Version.Parser<ByteInput>()
-        var input = ByteInput(utf8: "1.2.3")
+        let parser = Version.Parser<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "1.2.3")
 
         let version = try parser.parse(&input)
 
@@ -503,8 +503,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `output mapping transforms parsed tuple`() throws {
-        let parser = TwoDigitNumber<ByteInput>()
-        var input = ByteInput(utf8: "42")
+        let parser = TwoDigitNumber<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "42")
 
         let result = try parser.parse(&input)
 
@@ -513,18 +513,18 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `error mapping converts Either tree to domain error`() {
-        let parser = TwoDigits<ByteInput>()
-        var input = ByteInput(utf8: "1x")
+        let parser = TwoDigits<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "1x")
 
-        #expect(throws: TwoDigits<ByteInput>.Error.second) {
+        #expect(throws: TwoDigits<Parser.Test.Input>.Error.second) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `infallible body produces Never failure`() {
-        let parser = SkipWhitespaceCountRest<ByteInput>()
-        var input = ByteInput(utf8: "   hello")
+        let parser = SkipWhitespaceCountRest<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "   hello")
 
         let count = parser.parse(&input)
 
@@ -533,8 +533,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `nested declarative parsers compose`() throws {
-        let parser = WhitespaceVersion<ByteInput>()
-        var input = ByteInput(utf8: "  1.0.9")
+        let parser = WhitespaceVersion<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "  1.0.9")
 
         let version = try parser.parse(&input)
 
@@ -543,9 +543,9 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `default parse delegates to body`() throws {
-        let parser = Version.Parser<ByteInput>()
-        var input1 = ByteInput(utf8: "3.1.4")
-        var input2 = ByteInput(utf8: "3.1.4")
+        let parser = Version.Parser<Parser.Test.Input>()
+        var input1 = Parser.Test.Input(utf8: "3.1.4")
+        var input2 = Parser.Test.Input(utf8: "3.1.4")
 
         let fromBody = try parser.body.parse(&input1)
         let fromParse = try parser.parse(&input2)
@@ -555,8 +555,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `input is consumed correctly through var body`() throws {
-        let parser = SkipThenDigit<ByteInput>()
-        var input = ByteInput(utf8: " 7rest")
+        let parser = SkipThenDigit<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: " 7rest")
 
         _ = try parser.parse(&input)
 
@@ -565,8 +565,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `version parser consumes exactly five bytes`() throws {
-        let parser = Version.Parser<ByteInput>()
-        var input = ByteInput(utf8: "1.2.3 extra")
+        let parser = Version.Parser<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "1.2.3 extra")
 
         _ = try parser.parse(&input)
 
@@ -575,8 +575,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `version parser boundary values`() throws {
-        let parser = Version.Parser<ByteInput>()
-        var input = ByteInput(utf8: "0.0.0")
+        let parser = Version.Parser<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "0.0.0")
 
         let version = try parser.parse(&input)
 
@@ -585,8 +585,8 @@ extension ParserBuilderTests.Unit {
 
     @Test
     func `version parser max single digits`() throws {
-        let parser = Version.Parser<ByteInput>()
-        var input = ByteInput(utf8: "9.9.9")
+        let parser = Version.Parser<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "9.9.9")
 
         let version = try parser.parse(&input)
 
@@ -599,58 +599,58 @@ extension ParserBuilderTests.Unit {
 extension ParserBuilderTests.EdgeCase {
     @Test
     func `single pass-through body propagates failure`() {
-        let parser = SingleDigit<ByteInput>()
-        var input = ByteInput(utf8: "x")
+        let parser = SingleDigit<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "x")
 
-        #expect(throws: Digit<ByteInput>.Error.expectedDigit) {
+        #expect(throws: Digit<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `single pass-through body fails on empty input`() {
-        let parser = SingleDigit<ByteInput>()
-        var input = ByteInput([])
+        let parser = SingleDigit<Parser.Test.Input>()
+        var input = Parser.Test.Input([])
 
-        #expect(throws: Digit<ByteInput>.Error.expectedDigit) {
+        #expect(throws: Digit<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `two digits first failure maps to domain error`() {
-        let parser = TwoDigits<ByteInput>()
-        var input = ByteInput(utf8: "x")
+        let parser = TwoDigits<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "x")
 
-        #expect(throws: TwoDigits<ByteInput>.Error.first) {
+        #expect(throws: TwoDigits<Parser.Test.Input>.Error.first) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `two digits second failure maps to domain error`() {
-        let parser = TwoDigits<ByteInput>()
-        var input = ByteInput(utf8: "1x")
+        let parser = TwoDigits<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "1x")
 
-        #expect(throws: TwoDigits<ByteInput>.Error.second) {
+        #expect(throws: TwoDigits<Parser.Test.Input>.Error.second) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `two digits empty input maps to first`() {
-        let parser = TwoDigits<ByteInput>()
-        var input = ByteInput([])
+        let parser = TwoDigits<Parser.Test.Input>()
+        var input = Parser.Test.Input([])
 
-        #expect(throws: TwoDigits<ByteInput>.Error.first) {
+        #expect(throws: TwoDigits<Parser.Test.Input>.Error.first) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `version parser reports expectedMajor on empty`() {
-        let parser = Version.Parser<ByteInput>()
-        var input = ByteInput([])
+        let parser = Version.Parser<Parser.Test.Input>()
+        var input = Parser.Test.Input([])
 
         #expect(throws: Version.Error.expectedMajor) {
             try parser.parse(&input)
@@ -659,8 +659,8 @@ extension ParserBuilderTests.EdgeCase {
 
     @Test
     func `version parser reports expectedDot after major`() {
-        let parser = Version.Parser<ByteInput>()
-        var input = ByteInput(utf8: "1x")
+        let parser = Version.Parser<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "1x")
 
         #expect(throws: Version.Error.expectedDot) {
             try parser.parse(&input)
@@ -669,8 +669,8 @@ extension ParserBuilderTests.EdgeCase {
 
     @Test
     func `version parser reports expectedMinor after first dot`() {
-        let parser = Version.Parser<ByteInput>()
-        var input = ByteInput(utf8: "1.x")
+        let parser = Version.Parser<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "1.x")
 
         #expect(throws: Version.Error.expectedMinor) {
             try parser.parse(&input)
@@ -679,8 +679,8 @@ extension ParserBuilderTests.EdgeCase {
 
     @Test
     func `version parser reports expectedPatch after second dot`() {
-        let parser = Version.Parser<ByteInput>()
-        var input = ByteInput(utf8: "1.2.x")
+        let parser = Version.Parser<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "1.2.x")
 
         #expect(throws: Version.Error.expectedPatch) {
             try parser.parse(&input)
@@ -689,8 +689,8 @@ extension ParserBuilderTests.EdgeCase {
 
     @Test
     func `version parser reports expectedDot on truncated input`() {
-        let parser = Version.Parser<ByteInput>()
-        var input = ByteInput(utf8: "1")
+        let parser = Version.Parser<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "1")
 
         #expect(throws: Version.Error.expectedDot) {
             try parser.parse(&input)
@@ -699,8 +699,8 @@ extension ParserBuilderTests.EdgeCase {
 
     @Test
     func `nested declarative parser propagates inner errors`() {
-        let parser = WhitespaceVersion<ByteInput>()
-        var input = ByteInput(utf8: "  1.2.x")
+        let parser = WhitespaceVersion<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "  1.2.x")
 
         #expect(throws: Version.Error.expectedPatch) {
             try parser.parse(&input)
@@ -709,8 +709,8 @@ extension ParserBuilderTests.EdgeCase {
 
     @Test
     func `nested declarative parser fails on empty after whitespace`() {
-        let parser = WhitespaceVersion<ByteInput>()
-        var input = ByteInput(utf8: "   ")
+        let parser = WhitespaceVersion<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "   ")
 
         #expect(throws: Version.Error.expectedMajor) {
             try parser.parse(&input)
@@ -719,8 +719,8 @@ extension ParserBuilderTests.EdgeCase {
 
     @Test
     func `infallible parser returns zero on empty input`() {
-        let parser = SkipWhitespaceCountRest<ByteInput>()
-        var input = ByteInput([])
+        let parser = SkipWhitespaceCountRest<Parser.Test.Input>()
+        var input = Parser.Test.Input([])
 
         let count = parser.parse(&input)
 
@@ -729,8 +729,8 @@ extension ParserBuilderTests.EdgeCase {
 
     @Test
     func `infallible parser counts only non-whitespace`() {
-        let parser = SkipWhitespaceCountRest<ByteInput>()
-        var input = ByteInput(utf8: "     ")
+        let parser = SkipWhitespaceCountRest<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "     ")
 
         let count = parser.parse(&input)
 
@@ -739,28 +739,28 @@ extension ParserBuilderTests.EdgeCase {
 
     @Test
     func `void-skip left with empty input delegates error`() {
-        let parser = SkipThenDigit<ByteInput>()
-        var input = ByteInput([])
+        let parser = SkipThenDigit<Parser.Test.Input>()
+        var input = Parser.Test.Input([])
 
-        #expect(throws: Digit<ByteInput>.Error.expectedDigit) {
+        #expect(throws: Digit<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `void-skip left with only whitespace delegates error`() {
-        let parser = SkipThenDigit<ByteInput>()
-        var input = ByteInput(utf8: "   ")
+        let parser = SkipThenDigit<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "   ")
 
-        #expect(throws: Digit<ByteInput>.Error.expectedDigit) {
+        #expect(throws: Digit<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `void-skip right preserves value with no trailing whitespace`() throws {
-        let parser = DigitThenSkip<ByteInput>()
-        var input = ByteInput(utf8: "9")
+        let parser = DigitThenSkip<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "9")
 
         let result = try parser.parse(&input)
 
@@ -769,20 +769,20 @@ extension ParserBuilderTests.EdgeCase {
 
     @Test
     func `output mapping fails on non-digit`() {
-        let parser = TwoDigitNumber<ByteInput>()
-        var input = ByteInput(utf8: "x")
+        let parser = TwoDigitNumber<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "x")
 
-        #expect(throws: TwoDigitNumber<ByteInput>.Error.expectedDigit) {
+        #expect(throws: TwoDigitNumber<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `output mapping fails on single digit`() {
-        let parser = TwoDigitNumber<ByteInput>()
-        var input = ByteInput(utf8: "4x")
+        let parser = TwoDigitNumber<Parser.Test.Input>()
+        var input = Parser.Test.Input(utf8: "4x")
 
-        #expect(throws: TwoDigitNumber<ByteInput>.Error.expectedDigit) {
+        #expect(throws: TwoDigitNumber<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }

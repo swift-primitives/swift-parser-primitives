@@ -14,8 +14,8 @@ struct ParserEndTests {
 extension ParserEndTests.Unit {
     @Test
     func `succeeds on empty input`() throws {
-        let parser = Parser.End<ByteInput>()
-        var input: ByteInput = []
+        let parser = Parser.End<Parser.Test.Input>()
+        var input: Parser.Test.Input = []
 
         try parser.parse(&input)
     }
@@ -26,8 +26,8 @@ extension ParserEndTests.Unit {
 extension ParserEndTests.EdgeCase {
     @Test
     func `fails with remaining input`() {
-        let parser = Parser.End<ByteInput>()
-        var input: ByteInput = [0x01, 0x02]
+        let parser = Parser.End<Parser.Test.Input>()
+        var input: Parser.Test.Input = [0x01, 0x02]
 
         #expect(throws: Parser.Match.Error.self) {
             try parser.parse(&input)
@@ -36,8 +36,8 @@ extension ParserEndTests.EdgeCase {
 
     @Test
     func `fails with single remaining byte`() {
-        let parser = Parser.End<ByteInput>()
-        var input: ByteInput = [0xFF]
+        let parser = Parser.End<Parser.Test.Input>()
+        var input: Parser.Test.Input = [0xFF]
 
         #expect(throws: Parser.Match.Error.self) {
             try parser.parse(&input)

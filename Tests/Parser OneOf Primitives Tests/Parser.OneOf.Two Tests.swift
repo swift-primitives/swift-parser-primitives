@@ -15,10 +15,10 @@ extension ParserOneOfTwoTests.Unit {
     @Test
     func `returns first parser result when it succeeds`() throws {
         let parser = Parser.OneOf.Two(
-            Parser.First.Where<ByteInput> { $0 == 0x41 }.map { _ in "A" },
-            Parser.First.Where<ByteInput> { $0 == 0x42 }.map { _ in "B" }
+            Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }.map { _ in "A" },
+            Parser.First.Where<Parser.Test.Input> { $0 == 0x42 }.map { _ in "B" }
         )
-        var input = ByteInput([0x41])
+        var input = Parser.Test.Input([0x41])
 
         let result = try parser.parse(&input)
 
@@ -28,10 +28,10 @@ extension ParserOneOfTwoTests.Unit {
     @Test
     func `falls back to second parser when first fails`() throws {
         let parser = Parser.OneOf.Two(
-            Parser.First.Where<ByteInput> { $0 == 0x41 }.map { _ in "A" },
-            Parser.First.Where<ByteInput> { $0 == 0x42 }.map { _ in "B" }
+            Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }.map { _ in "A" },
+            Parser.First.Where<Parser.Test.Input> { $0 == 0x42 }.map { _ in "B" }
         )
-        var input = ByteInput([0x42])
+        var input = Parser.Test.Input([0x42])
 
         let result = try parser.parse(&input)
 
@@ -45,10 +45,10 @@ extension ParserOneOfTwoTests.EdgeCase {
     @Test
     func `fails when both alternatives fail`() {
         let parser = Parser.OneOf.Two(
-            Parser.First.Where<ByteInput> { $0 == 0x41 },
-            Parser.First.Where<ByteInput> { $0 == 0x42 }
+            Parser.First.Where<Parser.Test.Input> { $0 == 0x41 },
+            Parser.First.Where<Parser.Test.Input> { $0 == 0x42 }
         )
-        var input = ByteInput([0x43])
+        var input = Parser.Test.Input([0x43])
 
         #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
@@ -58,10 +58,10 @@ extension ParserOneOfTwoTests.EdgeCase {
     @Test
     func `backtracks first attempt before trying second`() throws {
         let parser = Parser.OneOf.Two(
-            Parser.First.Where<ByteInput> { $0 == 0xFF }.map { _ in "first" },
-            Parser.First.Element<ByteInput>().map { _ in "second" }
+            Parser.First.Where<Parser.Test.Input> { $0 == 0xFF }.map { _ in "first" },
+            Parser.First.Element<Parser.Test.Input>().map { _ in "second" }
         )
-        var input = ByteInput([0x42])
+        var input = Parser.Test.Input([0x42])
 
         let result = try parser.parse(&input)
 

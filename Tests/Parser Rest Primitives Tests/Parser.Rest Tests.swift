@@ -14,8 +14,8 @@ struct ParserRestTests {
 extension ParserRestTests.Unit {
     @Test
     func `consumes all remaining input`() {
-        let parser = Parser.Rest<ByteInput>()
-        var input: ByteInput = [0x01, 0x02, 0x03]
+        let parser = Parser.Rest<Parser.Test.Input>()
+        var input: Parser.Test.Input = [0x01, 0x02, 0x03]
 
         let result = parser.parse(&input)
 
@@ -29,8 +29,8 @@ extension ParserRestTests.Unit {
 extension ParserRestTests.EdgeCase {
     @Test
     func `returns empty slice on empty input`() {
-        let parser = Parser.Rest<ByteInput>()
-        var input: ByteInput = []
+        let parser = Parser.Rest<Parser.Test.Input>()
+        var input: Parser.Test.Input = []
 
         let result = parser.parse(&input)
 
@@ -40,8 +40,8 @@ extension ParserRestTests.EdgeCase {
 
     @Test
     func `returns single element`() {
-        let parser = Parser.Rest<ByteInput>()
-        var input: ByteInput = [0xFF]
+        let parser = Parser.Rest<Parser.Test.Input>()
+        var input: Parser.Test.Input = [0xFF]
 
         let result = parser.parse(&input)
 

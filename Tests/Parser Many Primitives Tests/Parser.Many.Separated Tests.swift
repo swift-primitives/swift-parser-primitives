@@ -15,11 +15,11 @@ extension ParserManySeparatedTests.Unit {
     @Test
     func `parses comma-separated bytes`() throws {
         let parser = Parser.Many.Separated {
-            Parser.First.Element<ByteInput>()
+            Parser.First.Element<Parser.Test.Input>()
         } separator: {
-            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: ",") }
+            Parser.First.Where<Parser.Test.Input> { $0 == UInt8(ascii: ",") }
         }
-        var input = ByteInput(utf8: "a,b,c")
+        var input = Parser.Test.Input(utf8: "a,b,c")
 
         let result = try parser.parse(&input)
 
@@ -32,11 +32,11 @@ extension ParserManySeparatedTests.Unit {
     @Test
     func `single element without separator`() throws {
         let parser = Parser.Many.Separated {
-            Parser.First.Element<ByteInput>()
+            Parser.First.Element<Parser.Test.Input>()
         } separator: {
-            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: ",") }
+            Parser.First.Where<Parser.Test.Input> { $0 == UInt8(ascii: ",") }
         }
-        var input = ByteInput([0x42])
+        var input = Parser.Test.Input([0x42])
 
         let result = try parser.parse(&input)
 
@@ -50,11 +50,11 @@ extension ParserManySeparatedTests.EdgeCase {
     @Test
     func `empty input returns empty array`() throws {
         let parser = Parser.Many.Separated {
-            Parser.First.Where<ByteInput> { $0 == 0x41 }
+            Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }
         } separator: {
-            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: ",") }
+            Parser.First.Where<Parser.Test.Input> { $0 == UInt8(ascii: ",") }
         }
-        var input = ByteInput([])
+        var input = Parser.Test.Input([])
 
         let result = try parser.parse(&input)
 
@@ -64,11 +64,11 @@ extension ParserManySeparatedTests.EdgeCase {
     @Test
     func `trailing separator not consumed`() throws {
         let parser = Parser.Many.Separated {
-            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: "x") }
+            Parser.First.Where<Parser.Test.Input> { $0 == UInt8(ascii: "x") }
         } separator: {
-            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: ",") }
+            Parser.First.Where<Parser.Test.Input> { $0 == UInt8(ascii: ",") }
         }
-        var input = ByteInput(utf8: "x,x,")
+        var input = Parser.Test.Input(utf8: "x,x,")
 
         let result = try parser.parse(&input)
 
@@ -79,13 +79,13 @@ extension ParserManySeparatedTests.EdgeCase {
     @Test
     func `minimum count enforcement`() {
         let parser = Parser.Many.Separated(3...) {
-            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: "a") }
+            Parser.First.Where<Parser.Test.Input> { $0 == UInt8(ascii: "a") }
         } separator: {
-            Parser.First.Where<ByteInput> { $0 == UInt8(ascii: ",") }
+            Parser.First.Where<Parser.Test.Input> { $0 == UInt8(ascii: ",") }
         }
-        var input = ByteInput(utf8: "a,a")
+        var input = Parser.Test.Input(utf8: "a,a")
 
-        #expect(throws: Parser.Many<ByteInput, Parser.First.Where<ByteInput>>.Error.self) {
+        #expect(throws: Parser.Many<Parser.Test.Input, Parser.First.Where<Parser.Test.Input>>.Error.self) {
             try parser.parse(&input)
         }
     }

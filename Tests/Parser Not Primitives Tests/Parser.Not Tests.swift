@@ -14,8 +14,8 @@ struct ParserNotTests {
 extension ParserNotTests.Unit {
     @Test
     func `succeeds when upstream fails`() throws {
-        let parser = Parser.First.Where<ByteInput> { $0 == 0x41 }.not()
-        var input = ByteInput([0x42])
+        let parser = Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }.not()
+        var input = Parser.Test.Input([0x42])
 
         try parser.parse(&input)
 
@@ -25,10 +25,10 @@ extension ParserNotTests.Unit {
 
     @Test
     func `never consumes input on success`() throws {
-        let parser = Parser.First.Element<ByteInput>()
+        let parser = Parser.First.Element<Parser.Test.Input>()
             .filter { $0 == 0xFF }
             .not()
-        var input = ByteInput([0x01, 0x02])
+        var input = Parser.Test.Input([0x01, 0x02])
 
         try parser.parse(&input)
 
@@ -41,18 +41,18 @@ extension ParserNotTests.Unit {
 extension ParserNotTests.EdgeCase {
     @Test
     func `fails when upstream succeeds`() {
-        let parser = Parser.First.Where<ByteInput> { $0 == 0x41 }.not()
-        var input = ByteInput([0x41])
+        let parser = Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }.not()
+        var input = Parser.Test.Input([0x41])
 
-        #expect(throws: Parser.Not<Parser.First.Where<ByteInput>>.Error.self) {
+        #expect(throws: Parser.Not<Parser.First.Where<Parser.Test.Input>>.Error.self) {
             try parser.parse(&input)
         }
     }
 
     @Test
     func `never consumes input on failure`() {
-        let parser = Parser.First.Where<ByteInput> { $0 == 0x41 }.not()
-        var input = ByteInput([0x41, 0x42])
+        let parser = Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }.not()
+        var input = Parser.Test.Input([0x41, 0x42])
 
         _ = try? parser.parse(&input)
 
@@ -61,8 +61,8 @@ extension ParserNotTests.EdgeCase {
 
     @Test
     func `succeeds on empty input when upstream requires elements`() throws {
-        let parser = Parser.First.Element<ByteInput>().not()
-        var input = ByteInput([])
+        let parser = Parser.First.Element<Parser.Test.Input>().not()
+        var input = Parser.Test.Input([])
 
         try parser.parse(&input)
     }

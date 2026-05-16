@@ -14,23 +14,23 @@ struct ParserPrefixUpToTests {
 extension ParserPrefixUpToTests.Unit {
     @Test
     func `consumes up to delimiter without including it`() {
-        let parser = Parser.Prefix.UpTo<ByteInput>([UInt8(ascii: ",")])
-        var input = ByteInput(utf8: "hello,world")
+        let parser = Parser.Prefix.UpTo<Parser.Test.Input>([UInt8(ascii: ",")])
+        var input = Parser.Test.Input(utf8: "hello,world")
 
         let result = parser.parse(&input)
 
-        #expect(result == ByteInput(utf8: "hello"))
+        #expect(result == Parser.Test.Input(utf8: "hello"))
         #expect(input.first == UInt8(ascii: ","))
     }
 
     @Test
     func `handles multi-byte delimiter`() {
-        let parser = Parser.Prefix.UpTo<ByteInput>(Swift.Array("-->".utf8))
-        var input = ByteInput(utf8: "content-->rest")
+        let parser = Parser.Prefix.UpTo<Parser.Test.Input>(Swift.Array("-->".utf8))
+        var input = Parser.Test.Input(utf8: "content-->rest")
 
         let result = parser.parse(&input)
 
-        #expect(result == ByteInput(utf8: "content"))
+        #expect(result == Parser.Test.Input(utf8: "content"))
     }
 }
 
@@ -39,8 +39,8 @@ extension ParserPrefixUpToTests.Unit {
 extension ParserPrefixUpToTests.EdgeCase {
     @Test
     func `consumes all when delimiter not found`() {
-        let parser = Parser.Prefix.UpTo<ByteInput>([0xFF])
-        var input: ByteInput = [0x01, 0x02, 0x03]
+        let parser = Parser.Prefix.UpTo<Parser.Test.Input>([0xFF])
+        var input: Parser.Test.Input = [0x01, 0x02, 0x03]
 
         let result = parser.parse(&input)
 
@@ -49,8 +49,8 @@ extension ParserPrefixUpToTests.EdgeCase {
 
     @Test
     func `returns empty when delimiter at start`() {
-        let parser = Parser.Prefix.UpTo<ByteInput>([UInt8(ascii: "x")])
-        var input = ByteInput(utf8: "xyz")
+        let parser = Parser.Prefix.UpTo<Parser.Test.Input>([UInt8(ascii: "x")])
+        var input = Parser.Test.Input(utf8: "xyz")
 
         let result = parser.parse(&input)
 
@@ -60,8 +60,8 @@ extension ParserPrefixUpToTests.EdgeCase {
 
     @Test
     func `empty input returns empty result`() {
-        let parser = Parser.Prefix.UpTo<ByteInput>([0x00])
-        var input: ByteInput = []
+        let parser = Parser.Prefix.UpTo<Parser.Test.Input>([0x00])
+        var input: Parser.Test.Input = []
 
         let result = parser.parse(&input)
 

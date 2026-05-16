@@ -14,9 +14,9 @@ struct ParserMapTransformTests {
 extension ParserMapTransformTests.Unit {
     @Test
     func `transforms output of upstream parser`() throws {
-        let parser = Parser.First.Element<ByteInput>()
+        let parser = Parser.First.Element<Parser.Test.Input>()
             .map { Int($0) }
-        var input = ByteInput([0x0A])
+        var input = Parser.Test.Input([0x0A])
 
         let result = try parser.parse(&input)
 
@@ -25,9 +25,9 @@ extension ParserMapTransformTests.Unit {
 
     @Test
     func `preserves input consumption from upstream`() throws {
-        let parser = Parser.First.Element<ByteInput>()
+        let parser = Parser.First.Element<Parser.Test.Input>()
             .map { String($0, radix: 16) }
-        var input = ByteInput([0xFF, 0x01])
+        var input = Parser.Test.Input([0xFF, 0x01])
 
         _ = try parser.parse(&input)
 
@@ -40,9 +40,9 @@ extension ParserMapTransformTests.Unit {
 extension ParserMapTransformTests.EdgeCase {
     @Test
     func `upstream failure propagates through map`() {
-        let parser = Parser.First.Element<ByteInput>()
+        let parser = Parser.First.Element<Parser.Test.Input>()
             .map { $0 * 2 }
-        var input = ByteInput([])
+        var input = Parser.Test.Input([])
 
         #expect(throws: Parser.EndOfInput.Error.self) {
             try parser.parse(&input)

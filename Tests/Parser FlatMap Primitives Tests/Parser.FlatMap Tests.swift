@@ -14,11 +14,11 @@ struct ParserFlatMapTests {
 extension ParserFlatMapTests.Unit {
     @Test
     func `chains parsers where second depends on first output`() throws {
-        let parser = Parser.First.Element<ByteInput>()
-            .flatMap { count -> Parser.Consume.Exactly<ByteInput> in
+        let parser = Parser.First.Element<Parser.Test.Input>()
+            .flatMap { count -> Parser.Consume.Exactly<Parser.Test.Input> in
                 Parser.Consume.Exactly(Int(count))
             }
-        var input = ByteInput([0x03, 0x0A, 0x0B, 0x0C, 0xFF])
+        var input = Parser.Test.Input([0x03, 0x0A, 0x0B, 0x0C, 0xFF])
 
         let result = try parser.parse(&input)
 
@@ -32,9 +32,9 @@ extension ParserFlatMapTests.Unit {
 extension ParserFlatMapTests.EdgeCase {
     @Test
     func `upstream failure prevents downstream execution`() {
-        let parser = Parser.First.Element<ByteInput>()
-            .flatMap { _ in Parser.Always<ByteInput, Int>(0) }
-        var input = ByteInput([])
+        let parser = Parser.First.Element<Parser.Test.Input>()
+            .flatMap { _ in Parser.Always<Parser.Test.Input, Int>(0) }
+        var input = Parser.Test.Input([])
 
         #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
@@ -43,11 +43,11 @@ extension ParserFlatMapTests.EdgeCase {
 
     @Test
     func `downstream failure propagates as right error`() {
-        let parser = Parser.Always<ByteInput, UInt8>(5)
-            .flatMap { count -> Parser.Consume.Exactly<ByteInput> in
+        let parser = Parser.Always<Parser.Test.Input, UInt8>(5)
+            .flatMap { count -> Parser.Consume.Exactly<Parser.Test.Input> in
                 Parser.Consume.Exactly(Int(count))
             }
-        var input = ByteInput([0x01, 0x02])
+        var input = Parser.Test.Input([0x01, 0x02])
 
         #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)

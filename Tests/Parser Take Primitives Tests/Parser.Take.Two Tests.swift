@@ -15,10 +15,10 @@ extension ParserTakeTwoTests.Unit {
     @Test
     func `runs both parsers and collects outputs`() throws {
         let parser = Parser.Take.Two(
-            Parser.First.Element<ByteInput>(),
-            Parser.First.Element<ByteInput>()
+            Parser.First.Element<Parser.Test.Input>(),
+            Parser.First.Element<Parser.Test.Input>()
         )
-        var input = ByteInput([0x0A, 0x0B, 0x0C])
+        var input = Parser.Test.Input([0x0A, 0x0B, 0x0C])
 
         let (first, second) = try parser.parse(&input)
 
@@ -30,10 +30,10 @@ extension ParserTakeTwoTests.Unit {
     @Test
     func `map transforms tuple output`() throws {
         let parser = Parser.Take.Two(
-            Parser.First.Element<ByteInput>(),
-            Parser.First.Element<ByteInput>()
+            Parser.First.Element<Parser.Test.Input>(),
+            Parser.First.Element<Parser.Test.Input>()
         ).map { a, b in Int(a) + Int(b) }
-        var input = ByteInput([0x01, 0x02])
+        var input = Parser.Test.Input([0x01, 0x02])
 
         let result = try parser.parse(&input)
 
@@ -47,10 +47,10 @@ extension ParserTakeTwoTests.EdgeCase {
     @Test
     func `fails when first parser fails`() {
         let parser = Parser.Take.Two(
-            Parser.First.Element<ByteInput>(),
-            Parser.First.Element<ByteInput>()
+            Parser.First.Element<Parser.Test.Input>(),
+            Parser.First.Element<Parser.Test.Input>()
         )
-        var input = ByteInput([])
+        var input = Parser.Test.Input([])
 
         #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
@@ -60,10 +60,10 @@ extension ParserTakeTwoTests.EdgeCase {
     @Test
     func `fails when second parser fails after first succeeds`() {
         let parser = Parser.Take.Two(
-            Parser.First.Element<ByteInput>(),
-            Parser.First.Element<ByteInput>()
+            Parser.First.Element<Parser.Test.Input>(),
+            Parser.First.Element<Parser.Test.Input>()
         )
-        var input = ByteInput([0x01])
+        var input = Parser.Test.Input([0x01])
 
         #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)

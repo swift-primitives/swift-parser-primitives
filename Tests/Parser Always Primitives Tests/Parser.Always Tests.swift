@@ -15,8 +15,8 @@ struct ParserAlwaysTests {
 extension ParserAlwaysTests.Unit {
     @Test
     func `returns provided value without consuming input`() {
-        let parser = Parser.Always<ByteInput, Int>(42)
-        var input = ByteInput([0x01, 0x02, 0x03])
+        let parser = Parser.Always<Parser.Test.Input, Int>(42)
+        var input = Parser.Test.Input([0x01, 0x02, 0x03])
 
         let result = parser.parse(&input)
 
@@ -26,8 +26,8 @@ extension ParserAlwaysTests.Unit {
 
     @Test
     func `produces Void output`() {
-        let parser = Parser.Always<ByteInput, Void>(())
-        var input = ByteInput([0xFF])
+        let parser = Parser.Always<Parser.Test.Input, Void>(())
+        var input = Parser.Test.Input([0xFF])
 
         parser.parse(&input)
 
@@ -40,8 +40,8 @@ extension ParserAlwaysTests.Unit {
 extension ParserAlwaysTests.EdgeCase {
     @Test
     func `succeeds on empty input`() {
-        let parser = Parser.Always<ByteInput, String>("hello")
-        var input = ByteInput([])
+        let parser = Parser.Always<Parser.Test.Input, String>("hello")
+        var input = Parser.Test.Input([])
 
         let result = parser.parse(&input)
 

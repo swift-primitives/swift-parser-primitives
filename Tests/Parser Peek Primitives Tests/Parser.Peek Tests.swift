@@ -14,8 +14,8 @@ struct ParserPeekTests {
 extension ParserPeekTests.Unit {
     @Test
     func `returns output without consuming input`() throws {
-        let parser = Parser.First.Element<ByteInput>().peek()
-        var input = ByteInput([0x41, 0x42])
+        let parser = Parser.First.Element<Parser.Test.Input>().peek()
+        var input = Parser.Test.Input([0x41, 0x42])
 
         let result = try parser.parse(&input)
 
@@ -25,8 +25,8 @@ extension ParserPeekTests.Unit {
 
     @Test
     func `repeated peeks return same value`() throws {
-        let parser = Parser.First.Element<ByteInput>().peek()
-        var input = ByteInput([0xFF])
+        let parser = Parser.First.Element<Parser.Test.Input>().peek()
+        var input = Parser.Test.Input([0xFF])
 
         let first = try parser.parse(&input)
         let second = try parser.parse(&input)
@@ -41,8 +41,8 @@ extension ParserPeekTests.Unit {
 extension ParserPeekTests.EdgeCase {
     @Test
     func `upstream failure does not consume input`() {
-        let parser = Parser.First.Where<ByteInput> { $0 == 0x41 }.peek()
-        var input = ByteInput([0x42])
+        let parser = Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }.peek()
+        var input = Parser.Test.Input([0x42])
 
         #expect(throws: (any Swift.Error).self) {
             try parser.parse(&input)
@@ -52,8 +52,8 @@ extension ParserPeekTests.EdgeCase {
 
     @Test
     func `empty input propagates upstream error`() {
-        let parser = Parser.First.Element<ByteInput>().peek()
-        var input = ByteInput([])
+        let parser = Parser.First.Element<Parser.Test.Input>().peek()
+        var input = Parser.Test.Input([])
 
         #expect(throws: Parser.EndOfInput.Error.self) {
             try parser.parse(&input)
