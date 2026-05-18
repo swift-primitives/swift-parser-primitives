@@ -33,9 +33,18 @@ extension Parser {
     /// The discoverable accessor `parser.parse.compiled()` remains
     /// `Copyable`-only — Swift 6.3.2 rejects `consuming get` on protocol
     /// extensions returning a generic wrapper that captures `Self`
-    /// (compile error: "'self' is borrowed and cannot be consumed"). For
-    /// `~Copyable` parsers, construct `Parse` manually or use the direct
-    /// Machine constructor:
+    /// (compile error: "'self' is borrowed and cannot be consumed").
+    /// This is intentional move-checker behavior, not a compiler bug:
+    /// diagnostic `sil_movechecking_capture_consumed` at
+    /// `swiftlang/swift/include/swift/AST/DiagnosticsSIL.def:886`; test
+    /// fixture `swiftlang/swift/test/SILGen/resilient_consuming_getter_nonescapable_test.swift`
+    /// validates the intended rejection. Empirical refutation at
+    /// `swift-parser-primitives/Experiments/owned-consuming-get-on-protocol-extension/`
+    /// (V5, 2026-05-14). For full analysis see
+    /// `swift-institute/Research/2026-05-18-consuming-get-protocol-extension-noncopyable-limitation.md`.
+    ///
+    /// For `~Copyable` parsers, construct `Parse` manually or use the
+    /// direct Machine constructor:
     ///
     /// ```swift
     /// // Copyable parser — discoverable accessor:
