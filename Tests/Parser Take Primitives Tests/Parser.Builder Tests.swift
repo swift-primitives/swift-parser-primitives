@@ -160,7 +160,7 @@ extension TwoDigits: Parser.`Protocol` {
             Digit<Input>()
             Digit<Input>()
         }
-        .error.map { (either) -> TwoDigits<Input>.Error in
+        .error.map { either -> TwoDigits<Input>.Error in
             switch either {
             case .left: .first
             case .right: .second
@@ -295,7 +295,7 @@ extension Version.Parser: Parser_Primitives.Parser.`Protocol` {
         .map { major, minor, patch in
             Version(major, minor, patch)
         }
-        .error.map { (either) -> Version.Error in
+        .error.map { either -> Version.Error in
             // Left-nested Either tree from 5 parsers (after Void-skipping):
             //   Either<Either<Either<Either<Digit.E, Expect.E>, Digit.E>, Expect.E>, Digit.E>
             // Peel from the right — each .right is the Nth parser's error.
@@ -361,7 +361,7 @@ extension SkipWhitespaceCountRest: Parser.`Protocol` {
             Whitespace<Input>()
             CountRest<Input>()
         }
-        .error.map { (either) -> Never in
+        .error.map { either -> Never in
             switch either {
             case .left(let never): switch never {}
             case .right(let never): switch never {}
@@ -436,7 +436,7 @@ extension TwoDigitNumber: Parser.`Protocol` {
             Digit<Input>()
         }
         .map { tens, ones in Int(tens) * 10 + Int(ones) }
-        .error.map { (_) -> TwoDigitNumber<Input>.Error in .expectedDigit }
+        .error.map { _ -> TwoDigitNumber<Input>.Error in .expectedDigit }
     }
 }
 
