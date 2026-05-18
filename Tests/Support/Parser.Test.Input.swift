@@ -28,6 +28,6 @@ extension Input.Slice where Base == Parser.Test.Bytes {
 
     /// Creates a byte input from a string's UTF-8 representation.
     public init(utf8 string: Swift.String) {
-        self.init(Parser.Test.Bytes(Swift.Array<UInt8>(string.utf8)))
+        self.init(Parser.Test.Bytes([UInt8](string.utf8)))
     }
 }
