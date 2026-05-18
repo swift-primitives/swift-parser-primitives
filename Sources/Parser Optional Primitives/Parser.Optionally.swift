@@ -52,6 +52,12 @@ where Wrapped: Parser.Printer {
     @inlinable
     public func print(_ output: Wrapped.Output?, into input: inout Input) throws(Failure) {
         guard let output else { return }
+        // Four-part template complete (WORKAROUND / WHY / WHEN TO REMOVE / TRACKING)
+        // below; the SwiftLint regex is a manual-check prompt that fires on every
+        // WORKAROUND marker (`//\s*WORKAROUND:`), not a four-part-template validator.
+        // The full template check is deferred to a future AST swift-linter F-rule
+        // per the institute config's Wave 2b decision 1.
+        // swiftlint:disable:next workaround_marker_present
         // WORKAROUND: Silently swallow printer errors
         // WHY: Optionally is infallible (Failure == Never) so we cannot propagate
         //   Wrapped.Failure. The type system prevents expressing partial failure here.
