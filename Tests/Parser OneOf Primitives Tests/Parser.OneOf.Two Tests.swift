@@ -13,7 +13,7 @@ struct ParserOneOfTwoTests {
 
 extension ParserOneOfTwoTests.Unit {
     @Test
-    func `returns first parser result when it succeeds`() throws {
+    func `returns first parser result when it succeeds`() throws(any Swift.Error) {
         let parser = Parser.OneOf.Two(
             Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }.map { _ in "A" },
             Parser.First.Where<Parser.Test.Input> { $0 == 0x42 }.map { _ in "B" }
@@ -26,7 +26,7 @@ extension ParserOneOfTwoTests.Unit {
     }
 
     @Test
-    func `falls back to second parser when first fails`() throws {
+    func `falls back to second parser when first fails`() throws(any Swift.Error) {
         let parser = Parser.OneOf.Two(
             Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }.map { _ in "A" },
             Parser.First.Where<Parser.Test.Input> { $0 == 0x42 }.map { _ in "B" }
@@ -56,7 +56,7 @@ extension ParserOneOfTwoTests.EdgeCase {
     }
 
     @Test
-    func `backtracks first attempt before trying second`() throws {
+    func `backtracks first attempt before trying second`() throws(any Swift.Error) {
         let parser = Parser.OneOf.Two(
             Parser.First.Where<Parser.Test.Input> { $0 == 0xFF }.map { _ in "first" },
             Parser.First.Element<Parser.Test.Input>().map { _ in "second" }

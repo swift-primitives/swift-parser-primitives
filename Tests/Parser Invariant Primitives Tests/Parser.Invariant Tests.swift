@@ -40,7 +40,7 @@ extension ParserInvariantTests.InputPosition {
     }
 
     @Test
-    func `Peek does not advance input on success`() throws {
+    func `Peek does not advance input on success`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>().peek()
         var input = Parser.Test.Input([0x41, 0x42])
         let checkpoint = input.checkpoint
@@ -51,7 +51,7 @@ extension ParserInvariantTests.InputPosition {
     }
 
     @Test
-    func `Not does not advance input on success`() throws {
+    func `Not does not advance input on success`() throws(any Swift.Error) {
         let parser = Parser.First.Where<Parser.Test.Input> { $0 == 0xFF }.not()
         var input = Parser.Test.Input([0x01, 0x02])
         let checkpoint = input.checkpoint
@@ -62,7 +62,7 @@ extension ParserInvariantTests.InputPosition {
     }
 
     @Test
-    func `End does not advance input`() throws {
+    func `End does not advance input`() throws(any Swift.Error) {
         let parser = Parser.End<Parser.Test.Input>()
         var input = Parser.Test.Input([])
         let checkpoint = input.checkpoint
@@ -75,7 +75,7 @@ extension ParserInvariantTests.InputPosition {
     // MARK: - Input Position: Consuming Parsers
 
     @Test
-    func `First.Element advances exactly one position`() throws {
+    func `First.Element advances exactly one position`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>()
         var input = Parser.Test.Input([0x0A, 0x0B, 0x0C])
 
@@ -85,7 +85,7 @@ extension ParserInvariantTests.InputPosition {
     }
 
     @Test
-    func `Consume.Exactly advances by count`() throws {
+    func `Consume.Exactly advances by count`() throws(any Swift.Error) {
         let parser = Parser.Consume.Exactly<Parser.Test.Input>(4)
         var input = Parser.Test.Input([0x0A, 0x0B, 0x0C, 0x0D, 0x0E])
 
@@ -95,7 +95,7 @@ extension ParserInvariantTests.InputPosition {
     }
 
     @Test
-    func `Prefix.While advances by matched prefix length`() throws {
+    func `Prefix.While advances by matched prefix length`() throws(any Swift.Error) {
         let parser = Parser.Prefix.While<Parser.Test.Input> { $0 < 0x05 }
         var input = Parser.Test.Input([0x01, 0x02, 0x03, 0x04, 0x05, 0x06])
 
@@ -118,7 +118,7 @@ extension ParserInvariantTests.InputPosition {
     // MARK: - Input Position: Backtracking
 
     @Test
-    func `OneOf restores position on failed first branch`() throws {
+    func `OneOf restores position on failed first branch`() throws(any Swift.Error) {
         let parser = Parser.OneOf.Two(
             Parser.First.Where<Parser.Test.Input> { $0 == 0xFF },
             Parser.First.Where<Parser.Test.Input> { $0 == 0x42 }
@@ -148,7 +148,7 @@ extension ParserInvariantTests.InputPosition {
 
 extension ParserInvariantTests.Algebra {
     @Test
-    func `map identity law`() throws {
+    func `map identity law`() throws(any Swift.Error) {
         let base = Parser.First.Element<Parser.Test.Input>()
         let mapped = base.map { $0 }
         var input1 = Parser.Test.Input([0x42])
@@ -162,7 +162,7 @@ extension ParserInvariantTests.Algebra {
     }
 
     @Test
-    func `map composition law`() throws {
+    func `map composition law`() throws(any Swift.Error) {
         let f: @Sendable (UInt8) -> Int = { Int($0) }
         let g: @Sendable (Int) -> String = { "\($0)" }
 
@@ -180,7 +180,7 @@ extension ParserInvariantTests.Algebra {
     }
 
     @Test
-    func `flatMap left identity`() throws {
+    func `flatMap left identity`() throws(any Swift.Error) {
         let value: UInt8 = 0x05
         let f: @Sendable (UInt8) -> Parser.Consume.Exactly<Parser.Test.Input> = { count in
             Parser.Consume.Exactly(Int(count))
@@ -200,7 +200,7 @@ extension ParserInvariantTests.Algebra {
     }
 
     @Test
-    func `flatMap right identity`() throws {
+    func `flatMap right identity`() throws(any Swift.Error) {
         let base = Parser.First.Element<Parser.Test.Input>()
         let lifted = base.flatMap { Parser.Always<Parser.Test.Input, UInt8>($0) }
 
@@ -298,7 +298,7 @@ extension ParserInvariantTests.ErrorPropagation {
 
 extension ParserInvariantTests.CheckpointRestore {
     @Test
-    func `OneOf.Two restores position on first-branch failure`() throws {
+    func `OneOf.Two restores position on first-branch failure`() throws(any Swift.Error) {
         let parser = Parser.OneOf.Two(
             Parser.First.Where<Parser.Test.Input> { $0 == 0xFF }.map { _ in "first" },
             Parser.First.Element<Parser.Test.Input>().map { _ in "second" }
@@ -312,7 +312,7 @@ extension ParserInvariantTests.CheckpointRestore {
     }
 
     @Test
-    func `Peek does not consume on success`() throws {
+    func `Peek does not consume on success`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>().peek()
         var input = Parser.Test.Input([0x41, 0x42])
         let before = input.checkpoint
@@ -323,7 +323,7 @@ extension ParserInvariantTests.CheckpointRestore {
     }
 
     @Test
-    func `Not does not consume on success when inner fails`() throws {
+    func `Not does not consume on success when inner fails`() throws(any Swift.Error) {
         let parser = Parser.First.Where<Parser.Test.Input> { $0 == 0xFF }.not()
         var input = Parser.Test.Input([0x01])
         let before = input.checkpoint
@@ -372,7 +372,7 @@ extension ParserInvariantTests.Boundary {
     }
 
     @Test
-    func `empty input - End succeeds`() throws {
+    func `empty input - End succeeds`() throws(any Swift.Error) {
         let parser = Parser.End<Parser.Test.Input>()
         var input = Parser.Test.Input([])
 
@@ -380,7 +380,7 @@ extension ParserInvariantTests.Boundary {
     }
 
     @Test
-    func `single element - First.Element consumes all`() throws {
+    func `single element - First.Element consumes all`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>()
         var input = Parser.Test.Input([0xFF])
 
@@ -390,7 +390,7 @@ extension ParserInvariantTests.Boundary {
     }
 
     @Test
-    func `many with large input`() throws {
+    func `many with large input`() throws(any Swift.Error) {
         let bytes = [UInt8](repeating: 0x41, count: 1000) + [0x42]
         let parser = Parser.Prefix.While<Parser.Test.Input> { $0 == 0x41 }
         var input = Parser.Test.Input(bytes)

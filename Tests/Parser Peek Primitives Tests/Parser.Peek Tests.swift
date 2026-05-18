@@ -13,7 +13,7 @@ struct ParserPeekTests {
 
 extension ParserPeekTests.Unit {
     @Test
-    func `returns output without consuming input`() throws {
+    func `returns output without consuming input`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>().peek()
         var input = Parser.Test.Input([0x41, 0x42])
 
@@ -24,7 +24,7 @@ extension ParserPeekTests.Unit {
     }
 
     @Test
-    func `repeated peeks return same value`() throws {
+    func `repeated peeks return same value`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>().peek()
         var input = Parser.Test.Input([0xFF])
 

@@ -13,7 +13,7 @@ struct ParserPrefixWhileTests {
 
 extension ParserPrefixWhileTests.Unit {
     @Test
-    func `consumes while predicate holds`() throws {
+    func `consumes while predicate holds`() throws(any Swift.Error) {
         let digits = Parser.Prefix.While<Parser.Test.Input> {
             $0 >= 0x30 && $0 <= 0x39
         }
@@ -27,7 +27,7 @@ extension ParserPrefixWhileTests.Unit {
     }
 
     @Test
-    func `consumes all input when predicate always holds`() throws {
+    func `consumes all input when predicate always holds`() throws(any Swift.Error) {
         let all = Parser.Prefix.While<Parser.Test.Input> { _ in true }
         var input = Parser.Test.Input([0x01, 0x02, 0x03])
 
@@ -42,7 +42,7 @@ extension ParserPrefixWhileTests.Unit {
 
 extension ParserPrefixWhileTests.EdgeCase {
     @Test
-    func `returns empty when predicate immediately fails`() throws {
+    func `returns empty when predicate immediately fails`() throws(any Swift.Error) {
         let parser = Parser.Prefix.While<Parser.Test.Input> { _ in false }
         var input = Parser.Test.Input([0x01, 0x02])
 
@@ -65,7 +65,7 @@ extension ParserPrefixWhileTests.EdgeCase {
     }
 
     @Test
-    func `maxLength caps consumed count`() throws {
+    func `maxLength caps consumed count`() throws(any Swift.Error) {
         let parser = Parser.Prefix.While<Parser.Test.Input>(maxLength: 2) { _ in true }
         var input = Parser.Test.Input([0x01, 0x02, 0x03, 0x04])
 
@@ -76,7 +76,7 @@ extension ParserPrefixWhileTests.EdgeCase {
     }
 
     @Test
-    func `empty input returns empty result`() throws {
+    func `empty input returns empty result`() throws(any Swift.Error) {
         let parser = Parser.Prefix.While<Parser.Test.Input> { _ in true }
         var input: Parser.Test.Input = []
 

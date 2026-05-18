@@ -13,7 +13,7 @@ struct ParserManySimpleTests {
 
 extension ParserManySimpleTests.Unit {
     @Test
-    func `zero or more collects all matching elements`() throws {
+    func `zero or more collects all matching elements`() throws(any Swift.Error) {
         let parser = Parser.Many {
             Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }
         }
@@ -26,7 +26,7 @@ extension ParserManySimpleTests.Unit {
     }
 
     @Test
-    func `one or more requires at least one match`() throws {
+    func `one or more requires at least one match`() throws(any Swift.Error) {
         let parser = Parser.Many(1...) {
             Parser.First.Element<Parser.Test.Input>()
         }
@@ -38,7 +38,7 @@ extension ParserManySimpleTests.Unit {
     }
 
     @Test
-    func `exact count with closed range`() throws {
+    func `exact count with closed range`() throws(any Swift.Error) {
         let parser = Parser.Many(2...2) {
             Parser.First.Element<Parser.Test.Input>()
         }
@@ -55,7 +55,7 @@ extension ParserManySimpleTests.Unit {
 
 extension ParserManySimpleTests.EdgeCase {
     @Test
-    func `zero or more returns empty on no match`() throws {
+    func `zero or more returns empty on no match`() throws(any Swift.Error) {
         let parser = Parser.Many {
             Parser.First.Where<Parser.Test.Input> { $0 == 0xFF }
         }
@@ -80,7 +80,7 @@ extension ParserManySimpleTests.EdgeCase {
     }
 
     @Test
-    func `zero or more succeeds on empty input`() throws {
+    func `zero or more succeeds on empty input`() throws(any Swift.Error) {
         let parser = Parser.Many {
             Parser.First.Element<Parser.Test.Input>()
         }

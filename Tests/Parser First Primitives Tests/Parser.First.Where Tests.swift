@@ -13,7 +13,7 @@ struct ParserFirstWhereTests {
 
 extension ParserFirstWhereTests.Unit {
     @Test
-    func `returns element when predicate matches`() throws {
+    func `returns element when predicate matches`() throws(any Swift.Error) {
         let parser = Parser.First.Where<Parser.Test.Input>(expected: "digit") {
             $0 >= 0x30 && $0 <= 0x39
         }

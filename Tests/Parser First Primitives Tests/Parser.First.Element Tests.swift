@@ -13,7 +13,7 @@ struct ParserFirstElementTests {
 
 extension ParserFirstElementTests.Unit {
     @Test
-    func `returns first element and advances`() throws {
+    func `returns first element and advances`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>()
         var input = Parser.Test.Input([0x41, 0x42, 0x43])
 
@@ -24,7 +24,7 @@ extension ParserFirstElementTests.Unit {
     }
 
     @Test
-    func `consumes last element leaving input empty`() throws {
+    func `consumes last element leaving input empty`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>()
         var input = Parser.Test.Input([0xFF])
 

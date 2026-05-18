@@ -13,7 +13,7 @@ struct ParserFilterTests {
 
 extension ParserFilterTests.Unit {
     @Test
-    func `passes when predicate returns true`() throws {
+    func `passes when predicate returns true`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>()
             .filter { $0 > 0x00 }
         var input = Parser.Test.Input([0x42])

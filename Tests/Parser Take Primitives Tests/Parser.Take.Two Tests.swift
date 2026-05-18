@@ -13,7 +13,7 @@ struct ParserTakeTwoTests {
 
 extension ParserTakeTwoTests.Unit {
     @Test
-    func `runs both parsers and collects outputs`() throws {
+    func `runs both parsers and collects outputs`() throws(any Swift.Error) {
         let parser = Parser.Take.Two(
             Parser.First.Element<Parser.Test.Input>(),
             Parser.First.Element<Parser.Test.Input>()
@@ -28,7 +28,7 @@ extension ParserTakeTwoTests.Unit {
     }
 
     @Test
-    func `map transforms tuple output`() throws {
+    func `map transforms tuple output`() throws(any Swift.Error) {
         let parser = Parser.Take.Two(
             Parser.First.Element<Parser.Test.Input>(),
             Parser.First.Element<Parser.Test.Input>()

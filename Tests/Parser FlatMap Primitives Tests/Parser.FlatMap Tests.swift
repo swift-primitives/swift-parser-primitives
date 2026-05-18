@@ -13,7 +13,7 @@ struct ParserFlatMapTests {
 
 extension ParserFlatMapTests.Unit {
     @Test
-    func `chains parsers where second depends on first output`() throws {
+    func `chains parsers where second depends on first output`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>()
             .flatMap { count -> Parser.Consume.Exactly<Parser.Test.Input> in
                 Parser.Consume.Exactly(Int(count))

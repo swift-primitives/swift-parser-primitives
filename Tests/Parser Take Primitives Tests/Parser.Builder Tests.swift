@@ -433,7 +433,7 @@ extension TwoDigitNumber: Parser.`Protocol` {
 
 extension ParserBuilderTests.Unit {
     @Test
-    func `leaf parser has Body == Never`() throws {
+    func `leaf parser has Body == Never`() throws(any Swift.Error) {
         let parser = Digit<Parser.Test.Input>()
         var input = Parser.Test.Input([0x35])
 
@@ -444,7 +444,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `single parser pass-through via var body`() throws {
+    func `single parser pass-through via var body`() throws(any Swift.Error) {
         let parser = SingleDigit<Parser.Test.Input>()
         var input = Parser.Test.Input([0x37])
 
@@ -454,7 +454,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `two values compose into tuple`() throws {
+    func `two values compose into tuple`() throws(any Swift.Error) {
         let parser = TwoDigits<Parser.Test.Input>()
         var input = Parser.Test.Input([0x31, 0x32])
 
@@ -465,7 +465,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `void output from first parser is skipped`() throws {
+    func `void output from first parser is skipped`() throws(any Swift.Error) {
         let parser = SkipThenDigit<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "  5")
 
@@ -475,7 +475,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `void output from second parser is skipped`() throws {
+    func `void output from second parser is skipped`() throws(any Swift.Error) {
         let parser = DigitThenSkip<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "5  ")
 
@@ -485,7 +485,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `five parsers flatten with void-skipping and tuple flattening`() throws {
+    func `five parsers flatten with void-skipping and tuple flattening`() throws(any Swift.Error) {
         let parser = Version.Parser<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "1.2.3")
 
@@ -495,7 +495,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `output mapping transforms parsed tuple`() throws {
+    func `output mapping transforms parsed tuple`() throws(any Swift.Error) {
         let parser = TwoDigitNumber<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "42")
 
@@ -525,7 +525,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `nested declarative parsers compose`() throws {
+    func `nested declarative parsers compose`() throws(any Swift.Error) {
         let parser = WhitespaceVersion<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "  1.0.9")
 
@@ -535,7 +535,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `default parse delegates to body`() throws {
+    func `default parse delegates to body`() throws(any Swift.Error) {
         let parser = Version.Parser<Parser.Test.Input>()
         var input1 = Parser.Test.Input(utf8: "3.1.4")
         var input2 = Parser.Test.Input(utf8: "3.1.4")
@@ -547,7 +547,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `input is consumed correctly through var body`() throws {
+    func `input is consumed correctly through var body`() throws(any Swift.Error) {
         let parser = SkipThenDigit<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: " 7rest")
 
@@ -557,7 +557,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `version parser consumes exactly five bytes`() throws {
+    func `version parser consumes exactly five bytes`() throws(any Swift.Error) {
         let parser = Version.Parser<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "1.2.3 extra")
 
@@ -567,7 +567,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `version parser boundary values`() throws {
+    func `version parser boundary values`() throws(any Swift.Error) {
         let parser = Version.Parser<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "0.0.0")
 
@@ -577,7 +577,7 @@ extension ParserBuilderTests.Unit {
     }
 
     @Test
-    func `version parser max single digits`() throws {
+    func `version parser max single digits`() throws(any Swift.Error) {
         let parser = Version.Parser<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "9.9.9")
 
@@ -751,7 +751,7 @@ extension ParserBuilderTests.EdgeCase {
     }
 
     @Test
-    func `void-skip right preserves value with no trailing whitespace`() throws {
+    func `void-skip right preserves value with no trailing whitespace`() throws(any Swift.Error) {
         let parser = DigitThenSkip<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "9")
 

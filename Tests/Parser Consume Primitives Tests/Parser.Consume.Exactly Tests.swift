@@ -13,7 +13,7 @@ struct ParserConsumeExactlyTests {
 
 extension ParserConsumeExactlyTests.Unit {
     @Test
-    func `consumes exactly N elements`() throws {
+    func `consumes exactly N elements`() throws(any Swift.Error) {
         let parser = Parser.Consume.Exactly<Parser.Test.Input>(3)
         var input: Parser.Test.Input = [0x01, 0x02, 0x03, 0x04, 0x05]
 
@@ -24,7 +24,7 @@ extension ParserConsumeExactlyTests.Unit {
     }
 
     @Test
-    func `consumes all when count equals input length`() throws {
+    func `consumes all when count equals input length`() throws(any Swift.Error) {
         let parser = Parser.Consume.Exactly<Parser.Test.Input>(3)
         var input: Parser.Test.Input = [0x0A, 0x0B, 0x0C]
 
@@ -49,7 +49,7 @@ extension ParserConsumeExactlyTests.EdgeCase {
     }
 
     @Test
-    func `zero count succeeds without consuming`() throws {
+    func `zero count succeeds without consuming`() throws(any Swift.Error) {
         let parser = Parser.Consume.Exactly<Parser.Test.Input>(0)
         var input: Parser.Test.Input = [0x01]
 
@@ -60,7 +60,7 @@ extension ParserConsumeExactlyTests.EdgeCase {
     }
 
     @Test
-    func `zero count succeeds on empty input`() throws {
+    func `zero count succeeds on empty input`() throws(any Swift.Error) {
         let parser = Parser.Consume.Exactly<Parser.Test.Input>(0)
         var input: Parser.Test.Input = []
 

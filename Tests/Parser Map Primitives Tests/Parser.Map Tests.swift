@@ -13,7 +13,7 @@ struct ParserMapTransformTests {
 
 extension ParserMapTransformTests.Unit {
     @Test
-    func `transforms output of upstream parser`() throws {
+    func `transforms output of upstream parser`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>()
             .map { Int($0) }
         var input = Parser.Test.Input([0x0A])
@@ -24,7 +24,7 @@ extension ParserMapTransformTests.Unit {
     }
 
     @Test
-    func `preserves input consumption from upstream`() throws {
+    func `preserves input consumption from upstream`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>()
             .map { String($0, radix: 16) }
         var input = Parser.Test.Input([0xFF, 0x01])

@@ -13,7 +13,7 @@ struct ParserNotTests {
 
 extension ParserNotTests.Unit {
     @Test
-    func `succeeds when upstream fails`() throws {
+    func `succeeds when upstream fails`() throws(any Swift.Error) {
         let parser = Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }.not()
         var input = Parser.Test.Input([0x42])
 
@@ -24,7 +24,7 @@ extension ParserNotTests.Unit {
     }
 
     @Test
-    func `never consumes input on success`() throws {
+    func `never consumes input on success`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>()
             .filter { $0 == 0xFF }
             .not()
@@ -60,7 +60,7 @@ extension ParserNotTests.EdgeCase {
     }
 
     @Test
-    func `succeeds on empty input when upstream requires elements`() throws {
+    func `succeeds on empty input when upstream requires elements`() throws(any Swift.Error) {
         let parser = Parser.First.Element<Parser.Test.Input>().not()
         var input = Parser.Test.Input([])
 

@@ -13,7 +13,7 @@ struct ParserManySeparatedTests {
 
 extension ParserManySeparatedTests.Unit {
     @Test
-    func `parses comma-separated bytes`() throws {
+    func `parses comma-separated bytes`() throws(any Swift.Error) {
         let parser = Parser.Many.Separated {
             Parser.First.Element<Parser.Test.Input>()
         } separator: {
@@ -30,7 +30,7 @@ extension ParserManySeparatedTests.Unit {
     }
 
     @Test
-    func `single element without separator`() throws {
+    func `single element without separator`() throws(any Swift.Error) {
         let parser = Parser.Many.Separated {
             Parser.First.Element<Parser.Test.Input>()
         } separator: {
@@ -48,7 +48,7 @@ extension ParserManySeparatedTests.Unit {
 
 extension ParserManySeparatedTests.EdgeCase {
     @Test
-    func `empty input returns empty array`() throws {
+    func `empty input returns empty array`() throws(any Swift.Error) {
         let parser = Parser.Many.Separated {
             Parser.First.Where<Parser.Test.Input> { $0 == 0x41 }
         } separator: {
@@ -62,7 +62,7 @@ extension ParserManySeparatedTests.EdgeCase {
     }
 
     @Test
-    func `trailing separator not consumed`() throws {
+    func `trailing separator not consumed`() throws(any Swift.Error) {
         let parser = Parser.Many.Separated {
             Parser.First.Where<Parser.Test.Input> { $0 == UInt8(ascii: "x") }
         } separator: {
