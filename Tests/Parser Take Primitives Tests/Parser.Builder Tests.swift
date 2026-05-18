@@ -14,7 +14,6 @@ struct ParserBuilderTests {
 /// Parses one ASCII digit, returns its integer value.
 struct Digit<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
-    init() {}
 }
 
 extension Digit {
@@ -64,7 +63,6 @@ extension Expect: Parser.`Protocol` {
 /// Skips ASCII spaces, returns Void, never fails.
 struct Whitespace<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
-    init() {}
 }
 
 extension Whitespace: Parser.`Protocol` {
@@ -83,7 +81,6 @@ extension Whitespace: Parser.`Protocol` {
 /// Consumes all remaining input, returns byte count. Never fails.
 struct CountRest<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
-    init() {}
 }
 
 extension CountRest: Parser.`Protocol` {
@@ -115,7 +112,6 @@ extension CountRest: Parser.`Protocol` {
 
 struct SingleDigit<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
-    init() {}
 }
 
 extension SingleDigit: Parser.`Protocol` {
@@ -141,7 +137,6 @@ extension SingleDigit: Parser.`Protocol` {
 
 struct TwoDigits<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
-    init() {}
 }
 
 extension TwoDigits {
@@ -184,7 +179,6 @@ extension TwoDigits: Parser.`Protocol` {
 
 struct SkipThenDigit<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
-    init() {}
 }
 
 extension SkipThenDigit: Parser.`Protocol` {
@@ -215,7 +209,6 @@ extension SkipThenDigit: Parser.`Protocol` {
 
 struct DigitThenSkip<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
-    init() {}
 }
 
 extension DigitThenSkip: Parser.`Protocol` {
@@ -276,7 +269,6 @@ extension Version {
 extension Version {
     struct Parser<Input: Collection.Slice.`Protocol`>: Sendable
     where Input: Sendable, Input.Element == UInt8 {
-        init() {}
     }
 }
 
@@ -349,7 +341,6 @@ extension Version.Parser: Parser_Primitives.Parser.`Protocol` {
 
 struct SkipWhitespaceCountRest<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
-    init() {}
 }
 
 extension SkipWhitespaceCountRest: Parser.`Protocol` {
@@ -385,7 +376,6 @@ extension SkipWhitespaceCountRest: Parser.`Protocol` {
 
 struct WhitespaceVersion<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
-    init() {}
 }
 
 extension WhitespaceVersion: Parser.`Protocol` {
@@ -417,7 +407,6 @@ extension WhitespaceVersion: Parser.`Protocol` {
 
 struct TwoDigitNumber<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
-    init() {}
 }
 
 extension TwoDigitNumber {
