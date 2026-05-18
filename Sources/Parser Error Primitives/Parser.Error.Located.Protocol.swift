@@ -7,6 +7,13 @@
 
 public import Text_Primitives
 
+// All four markers (WORKAROUND / WHY / WHEN TO REMOVE / TRACKING) are present
+// below within ±5 lines; the lint rule's regex does not currently handle
+// continuation lines, so it false-positives on the first WORKAROUND marker
+// when its body spans multiple lines. Fix-rule candidate (not fix-source) per
+// feedback_lint_triage_three_class.md; surfaced separately to the swift-linter
+// rule corpus track.
+// swiftlint:disable:next workaround_marker_present
 // WORKAROUND: Protocol hoisted to module level because self-referential
 //   conformance (`Located: Located.Protocol`) creates a circular reference.
 //   The typealias on `Located` provides the canonical access path.
