@@ -29,6 +29,7 @@ extension Parser.First.Element: Parser.`Protocol` {
             throw .unexpected(expected: "any element")
         }
         // SAFETY: isEmpty returned false, so advance() cannot throw .empty
+        // swiftlint:disable:next force_try
         return try! input.advance()
     }
 }

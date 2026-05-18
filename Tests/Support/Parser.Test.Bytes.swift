@@ -27,6 +27,9 @@ extension Parser.Test {
         }
 
         public func index(after i: Index) -> Index {
+            // SAFETY: Collection.Protocol contract — index(after:) is only invoked on
+            // indices strictly less than endIndex, so successor.exact() cannot fail.
+            // swiftlint:disable:next force_try
             try! i.successor.exact()
         }
 
