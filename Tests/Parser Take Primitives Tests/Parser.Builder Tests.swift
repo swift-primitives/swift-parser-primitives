@@ -302,18 +302,22 @@ extension Version.Parser: Parser_Primitives.Parser.`Protocol` {
             switch either {
             case .right:
                 return .expectedPatch  // 5th: Digit
+
             case .left(let e4):
                 switch e4 {
                 case .right:
                     return .expectedDot  // 4th: Expect('.')
+
                 case .left(let e3):
                     switch e3 {
                     case .right:
                         return .expectedMinor  // 3rd: Digit
+
                     case .left(let e2):
                         switch e2 {
                         case .right:
                             return .expectedDot  // 2nd: Expect('.')
+
                         case .left:
                             return .expectedMajor  // 1st: Digit
                         }

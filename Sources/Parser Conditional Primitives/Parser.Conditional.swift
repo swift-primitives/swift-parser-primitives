@@ -33,6 +33,7 @@ extension Parser.Conditional: Parser.`Protocol` {
             } catch {
                 throw .left(error)
             }
+
         case .second(let parser):
             do {
                 return try parser.parse(&input)
@@ -56,6 +57,7 @@ where First: Parser.Printer, Second: Parser.Printer {
             } catch {
                 throw .left(error)
             }
+
         case .second(let printer):
             do {
                 try printer.print(output, into: &input)
