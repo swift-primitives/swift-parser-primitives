@@ -66,6 +66,11 @@ extension Parser.Not: Parser.`Protocol` {
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) {
         let checkpoint = input.checkpoint
+        // Negative lookahead semantics: we need the bool success/failure of
+        // upstream, not the typed error. `try?` IS the canonical idiom here —
+        // the error is intentionally discarded because lookahead does not
+        // propagate upstream failures, it inverts them. [IMPL-108]-compliant.
+        // swiftlint:disable:next no_try_optional
         if (try? upstream.parse(&input)) != nil {
             // Upstream succeeded - restore and fail
             input.restore.to(__unchecked: (), checkpoint)
