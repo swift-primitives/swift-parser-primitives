@@ -125,14 +125,14 @@ extension Parser.Tracked: Input_Primitives.Input.`Protocol` {
     }
 
     @inlinable
-    public var checkpointRange: ClosedRange<Checkpoint> {
-        let baseRange = base.checkpointRange
+    public var bounds: ClosedRange<Checkpoint> {
+        let baseRange = base.bounds
         return Checkpoint(baseCheckpoint: baseRange.lowerBound, trackedOffset: .zero)...Checkpoint(baseCheckpoint: baseRange.upperBound, trackedOffset: .zero)
     }
 
     @inlinable
-    public mutating func setPosition(to checkpoint: Checkpoint) {
-        base.setPosition(to: checkpoint.baseCheckpoint)
+    public mutating func seek(to checkpoint: Checkpoint) {
+        base.seek(to: checkpoint.baseCheckpoint)
         offset = checkpoint.trackedOffset
     }
 
