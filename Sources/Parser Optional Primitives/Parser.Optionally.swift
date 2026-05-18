@@ -51,7 +51,7 @@ extension Parser.Optionally: Parser.Printer
 where Wrapped: Parser.Printer {
     @inlinable
     public func print(_ output: Wrapped.Output?, into input: inout Input) throws(Failure) {
-        guard let output = output else { return }
+        guard let output else { return }
         // WORKAROUND: Silently swallow printer errors
         // WHY: Optionally is infallible (Failure == Never) so we cannot propagate
         //   Wrapped.Failure. The type system prevents expressing partial failure here.

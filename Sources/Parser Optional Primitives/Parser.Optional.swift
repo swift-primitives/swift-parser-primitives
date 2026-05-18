@@ -27,7 +27,7 @@ extension Parser.Optional: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Output {
-        guard let wrapped = wrapped else {
+        guard let wrapped else {
             return nil
         }
         return try wrapped.parse(&input)
@@ -40,7 +40,7 @@ extension Parser.Optional: Parser.Printer
 where Wrapped: Parser.Printer {
     @inlinable
     public func print(_ output: Wrapped.Output?, into input: inout Input) throws(Failure) {
-        guard let wrapped = wrapped, let output = output else { return }
+        guard let wrapped, let output else { return }
         try wrapped.print(output, into: &input)
     }
 }
