@@ -57,6 +57,7 @@ where Wrapped: Parser.Printer {
         //   Wrapped.Failure. The type system prevents expressing partial failure here.
         // WHEN TO REMOVE: When Parser.Printer supports a separate Failure type from
         //   the parser's Failure, allowing the printer to throw independently.
+        // TRACKING: Parser.Printer ABI — no upstream Swift Evolution proposal yet.
         do {
             try wrapped.print(output, into: &input)
         } catch {}
