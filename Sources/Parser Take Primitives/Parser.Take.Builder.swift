@@ -195,25 +195,10 @@ extension Parser.Take.Builder {
     }
 }
 
-// Byte-specific buildExpression overloads (string literal → Parser.Literal)
-// moved to swift-byte-parser-primitives' target `Byte Parser Primitives` in
-// Wave 3 of the byte-extraction arc.
-
-// MARK: - Byte Array Literal Support
-
-extension Parser.Take.Builder where Input == ArraySlice<UInt8> {
-    /// Converts a `[UInt8]` array literal to a parser.
-    ///
-    /// This enables using byte arrays directly in builders:
-    /// ```swift
-    /// Parser.Many.Separated(1...) {
-    ///     element
-    /// } separator: {
-    ///     [0x2C]  // Comma byte
-    /// }
-    /// ```
-    @inlinable
-    public static func buildExpression(_ bytes: [UInt8]) -> [UInt8] {
-        bytes
-    }
-}
+// Byte-specific buildExpression overloads (string literal → Parser.Literal;
+// byte-array literal → [Byte] passthrough) live in
+// swift-byte-parser-primitives' target `Byte Parser Primitives`. The
+// extraction was performed in Wave 3 of the byte-extraction arc; the
+// remaining byte-array-literal overload moved 2026-05-19 as part of the
+// L1 byte-domain cleanup (Tier B). swift-parser-primitives has no
+// byte-domain dependency.
