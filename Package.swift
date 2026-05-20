@@ -165,6 +165,7 @@ let package = Package(
         .package(path: "../swift-effect-primitives"),
         .package(path: "../swift-array-primitives"),
         .package(path: "../swift-text-primitives"),
+        .package(path: "../swift-tagged-primitives"),
     ],
     targets: [
         // MARK: - Namespace
@@ -182,6 +183,7 @@ let package = Package(
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Array Primitives Core", package: "swift-array-primitives"),
                 .product(name: "Array Dynamic Primitives", package: "swift-array-primitives"),
+                .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
             ]
         ),
 
