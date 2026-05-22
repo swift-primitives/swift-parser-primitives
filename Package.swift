@@ -14,8 +14,8 @@ let package = Package(
     products: [
         // MARK: - Namespace
         .library(
-            name: "Parser Namespace",
-            targets: ["Parser Namespace"]
+            name: "Parser Primitive",
+            targets: ["Parser Primitive"]
         ),
         .library(
             name: "Parser Primitives",
@@ -170,7 +170,7 @@ let package = Package(
     targets: [
         // MARK: - Namespace
         .target(
-            name: "Parser Namespace",
+            name: "Parser Primitive",
             dependencies: []
         ),
 
@@ -179,7 +179,7 @@ let package = Package(
         .target(
             name: "Parser Primitives Core",
             dependencies: [
-                "Parser Namespace",
+                "Parser Primitive",
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Array Primitives Core", package: "swift-array-primitives"),
                 .product(name: "Array Dynamic Primitives", package: "swift-array-primitives"),
@@ -450,7 +450,7 @@ let package = Package(
         .target(
             name: "Parser Primitives",
             dependencies: [
-                "Parser Namespace",
+                "Parser Primitive",
                 "Parser Primitives Core",
                 "Parser Error Primitives",
                 "Parser Match Primitives",
