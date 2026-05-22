@@ -78,6 +78,10 @@ let package = Package(
             targets: ["Parser Take Primitives"]
         ),
         .library(
+            name: "Parser Pair Primitives",
+            targets: ["Parser Pair Primitives"]
+        ),
+        .library(
             name: "Parser Consume Primitives",
             targets: ["Parser Consume Primitives"]
         ),
@@ -160,6 +164,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../swift-either-primitives"),
+        .package(path: "../swift-pair-primitives"),
         .package(url: "https://github.com/swift-primitives/swift-product-primitives.git", branch: "main"),
         .package(path: "../swift-input-primitives"),
         .package(path: "../swift-effect-primitives"),
@@ -288,6 +293,14 @@ let package = Package(
                 "Parser Conditional Primitives",
                 "Parser Optional Primitives",
                 "Parser Always Primitives",
+            ]
+        ),
+        .target(
+            name: "Parser Pair Primitives",
+            dependencies: [
+                "Parser Primitives Core",
+                "Parser Error Primitives",
+                .product(name: "Pair Primitives", package: "swift-pair-primitives"),
             ]
         ),
 
@@ -465,6 +478,7 @@ let package = Package(
                 "Parser Skip Primitives",
                 "Parser Many Primitives",
                 "Parser Take Primitives",
+                "Parser Pair Primitives",
                 "Parser Consume Primitives",
                 "Parser Discard Primitives",
                 "Parser Prefix Primitives",
@@ -569,6 +583,10 @@ let package = Package(
         ),
         .testTarget(
             name: "Parser Take Primitives Tests",
+            dependencies: ["Parser Primitives Test Support"]
+        ),
+        .testTarget(
+            name: "Parser Pair Primitives Tests",
             dependencies: ["Parser Primitives Test Support"]
         ),
         .testTarget(
