@@ -163,14 +163,14 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../swift-either-primitives"),
-        .package(path: "../swift-pair-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-either-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-pair-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-product-primitives.git", branch: "main"),
-        .package(path: "../swift-input-primitives"),
-        .package(path: "../swift-effect-primitives"),
-        .package(path: "../swift-array-primitives"),
-        .package(path: "../swift-text-primitives"),
-        .package(path: "../swift-tagged-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-input-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-effect-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-array-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-text-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
     ],
     targets: [
         // MARK: - Namespace
