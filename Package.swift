@@ -186,8 +186,7 @@ let package = Package(
             dependencies: [
                 "Parser Primitive",
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
-                .product(name: "Array Primitives Core", package: "swift-array-primitives"),
-                .product(name: "Array Dynamic Primitives", package: "swift-array-primitives"),
+                .product(name: "Array Primitives", package: "swift-array-primitives"),
                 .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
             ]
         ),
