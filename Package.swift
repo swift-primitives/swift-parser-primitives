@@ -146,10 +146,6 @@ let package = Package(
             targets: ["Parser Trace Primitives"]
         ),
         .library(
-            name: "Parser Backtrack Primitives",
-            targets: ["Parser Backtrack Primitives"]
-        ),
-        .library(
             name: "Parser Parse Primitives",
             targets: ["Parser Parse Primitives"]
         ),
@@ -167,7 +163,6 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-pair-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-product-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-input-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-effect-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-array-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-text-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
@@ -435,13 +430,6 @@ let package = Package(
             ]
         ),
         .target(
-            name: "Parser Backtrack Primitives",
-            dependencies: [
-                "Parser Primitives Core",
-                .product(name: "Effect Primitives", package: "swift-effect-primitives"),
-            ]
-        ),
-        .target(
             name: "Parser Parse Primitives",
             dependencies: [
                 "Parser Primitives Core",
@@ -494,7 +482,6 @@ let package = Package(
                 "Parser End Primitives",
                 "Parser Lazy Primitives",
                 "Parser Trace Primitives",
-                "Parser Backtrack Primitives",
                 "Parser Parse Primitives",
                 "Parser Conformance Primitives",
             ]
