@@ -41,6 +41,5 @@ extension Parser.Test {
 }
 
 // Parser.Test.Bytes conforms Iterable via the Collection.Protocol: Iterable refine edge
-// (its makeIterator above is the witness); no explicit conformance needed. A redundant explicit
-// `extension Parser.Test.Bytes: Iterable {}` emits a conflicting witness table that SIGSEGVs the
-// subscript witness on Swift 6.3.2.
+// (its makeIterator above is the witness); the previously-explicit `extension Parser.Test.Bytes:
+// Iterable {}` is removed as redundant (it duplicated the now-inherited conformance).
