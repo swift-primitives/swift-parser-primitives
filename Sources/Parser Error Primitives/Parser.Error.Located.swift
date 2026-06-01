@@ -56,7 +56,7 @@ extension Parser.Error.Located {
     ///
     /// Boundary overload per [IMPL-010]: retags the index to `Text.Position`.
     @inlinable
-    public init<Element: ~Copyable>(_ error: E, at offset: Index<Element>) {
+    public init<Element: ~Copyable & ~Escapable>(_ error: E, at offset: Index<Element>) {
         self.init(error, at: offset.retag(Text.self))
     }
 }
