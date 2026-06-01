@@ -16,17 +16,21 @@ struct Digit<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
 }
 
-// Hoisted out of the generic `Digit<Input>` so the typed-throws error type is
-// NON-generic: the error never used `Input`, and the accidental generality
-// `DigitError` triggered a FunctionSignatureOpts crash under -O
-// (catalog § A13). De-genericizing is behaviour-preserving.
-enum DigitError: Swift.Error, Sendable, Equatable {
+// `Digit.Error` is preserved as the error spelling ([API-NAME-001] Nest.Name),
+// but its backing enum is hoisted to module scope so the typed-throws error type
+// is NON-generic. The error never used `Input`; the accidental generality of
+// `Digit<Input>.Error` being parameterised by `Input` is what triggered the
+// FunctionSignatureOpts crash under -O (catalog § A13). The nested `typealias
+// Error` ([API-ERR-007]) keeps every `Digit<Input>.Error` call site working.
+// De-genericizing is behaviour-preserving.
+enum __DigitError: Swift.Error, Sendable, Equatable {
     case expectedDigit
 }
+extension Digit { typealias Error = __DigitError }
 
 extension Digit: Parser.`Protocol` {
     typealias Output = UInt8
-    typealias Failure = DigitError
+    typealias Failure = Digit<Input>.Error
 
     func parse(_ input: inout Input) throws(Failure) -> UInt8 {
         guard input.startIndex < input.endIndex else { throw .expectedDigit }
@@ -44,13 +48,14 @@ where Input: Sendable, Input.Element == UInt8 {
     init(_ byte: UInt8) { self.byte = byte }
 }
 
-enum ExpectError: Swift.Error, Sendable, Equatable {
+enum __ExpectError: Swift.Error, Sendable, Equatable {
     case expected(UInt8)
 }
+extension Expect { typealias Error = __ExpectError }
 
 extension Expect: Parser.`Protocol` {
     typealias Output = Void
-    typealias Failure = ExpectError
+    typealias Failure = Expect<Input>.Error
 
     func parse(_ input: inout Input) throws(Failure) {
         guard input.startIndex < input.endIndex,
@@ -116,9 +121,9 @@ where Input: Sendable, Input.Element == UInt8 {
 
 extension SingleDigit: Parser.`Protocol` {
     typealias Output = UInt8
-    typealias Failure = DigitError
+    typealias Failure = Digit<Input>.Error
 
-    var body: some Parser.`Protocol`<Input, UInt8, DigitError> {
+    var body: some Parser.`Protocol`<Input, UInt8, Digit<Input>.Error> {
         Digit<Input>()
     }
 }
@@ -139,21 +144,22 @@ struct TwoDigits<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
 }
 
-enum TwoDigitsError: Swift.Error, Sendable, Equatable {
+enum __TwoDigitsError: Swift.Error, Sendable, Equatable {
     case first
     case second
 }
+extension TwoDigits { typealias Error = __TwoDigitsError }
 
 extension TwoDigits: Parser.`Protocol` {
     typealias Output = (UInt8, UInt8)
-    typealias Failure = TwoDigitsError
+    typealias Failure = TwoDigits<Input>.Error
 
-    var body: some Parser.`Protocol`<Input, (UInt8, UInt8), TwoDigitsError> {
+    var body: some Parser.`Protocol`<Input, (UInt8, UInt8), TwoDigits<Input>.Error> {
         Parser.Take.Sequence {
             Digit<Input>()
             Digit<Input>()
         }
-        .error.map { either -> TwoDigitsError in
+        .error.map { either -> TwoDigits<Input>.Error in
             switch either {
             case .left: .first
             case .right: .second
@@ -181,9 +187,9 @@ where Input: Sendable, Input.Element == UInt8 {
 
 extension SkipThenDigit: Parser.`Protocol` {
     typealias Output = UInt8
-    typealias Failure = DigitError
+    typealias Failure = Digit<Input>.Error
 
-    var body: some Parser.`Protocol`<Input, UInt8, DigitError> {
+    var body: some Parser.`Protocol`<Input, UInt8, Digit<Input>.Error> {
         Parser.Take.Sequence {
             Whitespace<Input>()
             Digit<Input>()
@@ -211,9 +217,9 @@ where Input: Sendable, Input.Element == UInt8 {
 
 extension DigitThenSkip: Parser.`Protocol` {
     typealias Output = UInt8
-    typealias Failure = DigitError
+    typealias Failure = Digit<Input>.Error
 
-    var body: some Parser.`Protocol`<Input, UInt8, DigitError> {
+    var body: some Parser.`Protocol`<Input, UInt8, Digit<Input>.Error> {
         Parser.Take.Sequence {
             Digit<Input>()
             Whitespace<Input>()
@@ -407,21 +413,22 @@ struct TwoDigitNumber<Input: Collection.Slice.`Protocol`>: Sendable
 where Input: Sendable, Input.Element == UInt8 {
 }
 
-enum TwoDigitNumberError: Swift.Error, Sendable, Equatable {
+enum __TwoDigitNumberError: Swift.Error, Sendable, Equatable {
     case expectedDigit
 }
+extension TwoDigitNumber { typealias Error = __TwoDigitNumberError }
 
 extension TwoDigitNumber: Parser.`Protocol` {
     typealias Output = Int
-    typealias Failure = TwoDigitNumberError
+    typealias Failure = TwoDigitNumber<Input>.Error
 
-    var body: some Parser.`Protocol`<Input, Int, TwoDigitNumberError> {
+    var body: some Parser.`Protocol`<Input, Int, TwoDigitNumber<Input>.Error> {
         Parser.Take.Sequence {
             Digit<Input>()
             Digit<Input>()
         }
         .map { tens, ones in Int(tens) * 10 + Int(ones) }
-        .error.map { _ -> TwoDigitNumberError in .expectedDigit }
+        .error.map { _ -> TwoDigitNumber<Input>.Error in .expectedDigit }
     }
 }
 
@@ -505,7 +512,7 @@ extension ParserBuilderTests.Unit {
         let parser = TwoDigits<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "1x")
 
-        #expect(throws: TwoDigitsError.second) {
+        #expect(throws: TwoDigits<Parser.Test.Input>.Error.second) {
             try parser.parse(&input)
         }
     }
@@ -591,7 +598,7 @@ extension ParserBuilderTests.EdgeCase {
         let parser = SingleDigit<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "x")
 
-        #expect(throws: DigitError.expectedDigit) {
+        #expect(throws: Digit<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
@@ -601,7 +608,7 @@ extension ParserBuilderTests.EdgeCase {
         let parser = SingleDigit<Parser.Test.Input>()
         var input = Parser.Test.Input([])
 
-        #expect(throws: DigitError.expectedDigit) {
+        #expect(throws: Digit<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
@@ -611,7 +618,7 @@ extension ParserBuilderTests.EdgeCase {
         let parser = TwoDigits<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "x")
 
-        #expect(throws: TwoDigitsError.first) {
+        #expect(throws: TwoDigits<Parser.Test.Input>.Error.first) {
             try parser.parse(&input)
         }
     }
@@ -621,7 +628,7 @@ extension ParserBuilderTests.EdgeCase {
         let parser = TwoDigits<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "1x")
 
-        #expect(throws: TwoDigitsError.second) {
+        #expect(throws: TwoDigits<Parser.Test.Input>.Error.second) {
             try parser.parse(&input)
         }
     }
@@ -631,7 +638,7 @@ extension ParserBuilderTests.EdgeCase {
         let parser = TwoDigits<Parser.Test.Input>()
         var input = Parser.Test.Input([])
 
-        #expect(throws: TwoDigitsError.first) {
+        #expect(throws: TwoDigits<Parser.Test.Input>.Error.first) {
             try parser.parse(&input)
         }
     }
@@ -731,7 +738,7 @@ extension ParserBuilderTests.EdgeCase {
         let parser = SkipThenDigit<Parser.Test.Input>()
         var input = Parser.Test.Input([])
 
-        #expect(throws: DigitError.expectedDigit) {
+        #expect(throws: Digit<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
@@ -741,7 +748,7 @@ extension ParserBuilderTests.EdgeCase {
         let parser = SkipThenDigit<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "   ")
 
-        #expect(throws: DigitError.expectedDigit) {
+        #expect(throws: Digit<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
@@ -761,7 +768,7 @@ extension ParserBuilderTests.EdgeCase {
         let parser = TwoDigitNumber<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "x")
 
-        #expect(throws: TwoDigitNumberError.expectedDigit) {
+        #expect(throws: TwoDigitNumber<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
@@ -771,7 +778,7 @@ extension ParserBuilderTests.EdgeCase {
         let parser = TwoDigitNumber<Parser.Test.Input>()
         var input = Parser.Test.Input(utf8: "4x")
 
-        #expect(throws: TwoDigitNumberError.expectedDigit) {
+        #expect(throws: TwoDigitNumber<Parser.Test.Input>.Error.expectedDigit) {
             try parser.parse(&input)
         }
     }
