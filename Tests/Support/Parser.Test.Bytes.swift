@@ -1,4 +1,5 @@
 public import Collection_Primitives
+public import Iterable
 public import Parser_Primitives
 
 extension Parser.Test {
@@ -33,8 +34,12 @@ extension Parser.Test {
             try! i.successor.exact()
         }
 
-        public func makeIterator() -> Parser.Test.Iterator {
+        public borrowing func makeIterator() -> Parser.Test.Iterator {
             Parser.Test.Iterator(storage)
         }
     }
 }
+
+// MARK: - Parser.Test.Bytes: Iterable (the bulk Iterator already conforms Iterator.Chunk.Protocol)
+
+extension Parser.Test.Bytes: Iterable {}

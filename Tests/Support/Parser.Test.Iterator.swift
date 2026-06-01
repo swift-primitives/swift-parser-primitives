@@ -1,12 +1,15 @@
 public import Collection_Primitives
+public import Iterator_Chunk_Primitives
 public import Parser_Primitives
 
 extension Parser.Test {
-    /// Iterator over `[UInt8]` conforming to `Sequence.Iterator.Protocol`.
+    /// Iterator over `[UInt8]` conforming to `Iterator.Chunk.Protocol`.
     ///
     /// Stores the array and an index for span-based iteration via
     /// `_elements.span.extracting()`.
-    public struct Iterator: Sequence.Iterator.`Protocol`, IteratorProtocol, Sendable {
+    public struct Iterator: __IteratorChunkProtocol, IteratorProtocol, Sendable {
+        public typealias Failure = Never
+
         @usableFromInline
         var _elements: [UInt8]
 
@@ -21,9 +24,9 @@ extension Parser.Test {
 
         @_lifetime(&self)
         @inlinable
-        public mutating func nextSpan(maximumCount: Cardinal) -> Swift.Span<UInt8> {
+        public mutating func next(maximumCount: some Carrier.`Protocol`<Cardinal>) -> Swift.Span<UInt8> {
             let remaining = _elements.count - _index
-            let take = min(Int(maximumCount.rawValue), remaining)
+            let take = min(Int(maximumCount.underlying.rawValue), remaining)
             guard take > 0 else { return _elements.span.extracting(first: 0) }
             let start = _index
             _index += take

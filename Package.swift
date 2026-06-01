@@ -166,6 +166,7 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-array-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-text-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-iterator-primitives.git", branch: "main"),
     ],
     targets: [
         // MARK: - Namespace
@@ -495,6 +496,8 @@ let package = Package(
                 "Parser Primitives",
                 .product(name: "Input Primitives Test Support", package: "swift-input-primitives"),
                 .product(name: "Array Primitives Test Support", package: "swift-array-primitives"),
+                .product(name: "Iterator Chunk Primitives", package: "swift-iterator-primitives"),
+                .product(name: "Iterable", package: "swift-iterator-primitives"),
             ],
             path: "Tests/Support"
         ),
