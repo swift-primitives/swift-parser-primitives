@@ -40,6 +40,7 @@ extension Parser.Test {
     }
 }
 
-// MARK: - Parser.Test.Bytes: Iterable (the bulk Iterator already conforms Iterator.Chunk.Protocol)
-
-extension Parser.Test.Bytes: Iterable {}
+// Parser.Test.Bytes conforms Iterable via the Collection.Protocol: Iterable refine edge
+// (its makeIterator above is the witness); no explicit conformance needed. A redundant explicit
+// `extension Parser.Test.Bytes: Iterable {}` emits a conflicting witness table that SIGSEGVs the
+// subscript witness on Swift 6.3.2.
