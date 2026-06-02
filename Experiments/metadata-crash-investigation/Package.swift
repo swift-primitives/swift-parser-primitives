@@ -5,8 +5,8 @@ let package = Package(
     name: "metadata-crash-investigation",
     platforms: [.macOS(.v26)],
     dependencies: [
-        .package(path: "../../../swift-buffer-primitives"),
-        .package(path: "../../../swift-input-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-buffer-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-input-primitives.git", branch: "main"),
         .package(path: "../../../swift-parser-primitives"),
     ],
     targets: [

@@ -6,8 +6,8 @@ let package = Package(
     name: "parser-protocol-self-noncopyable-witness-tables",
     platforms: [.macOS(.v26)],
     dependencies: [
-        .package(path: "../../../swift-input-primitives"),
-        .package(path: "../../../swift-buffer-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-input-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-buffer-primitives.git", branch: "main"),
     ],
     targets: [
         // Module A: defines a Parser-shape protocol with Self: ~Copyable

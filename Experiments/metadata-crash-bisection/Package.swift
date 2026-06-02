@@ -6,9 +6,9 @@ let package = Package(
     name: "metadata-crash-bisection",
     platforms: [.macOS(.v26)],
     dependencies: [
-        .package(path: "../../../swift-input-primitives"),
-        .package(path: "../../../swift-array-primitives"),
-        .package(path: "../../../swift-buffer-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-input-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-array-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-buffer-primitives.git", branch: "main"),
     ],
     targets: [
         // Minimal module: only Parser.Protocol + Parser.Always (no retroactive conformances)

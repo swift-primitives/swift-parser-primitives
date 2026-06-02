@@ -6,10 +6,10 @@ let package = Package(
     platforms: [.macOS(.v26)],
     dependencies: [
         .package(path: "../.."),
-        .package(path: "../../../swift-ascii-parser-primitives"),
-        .package(path: "../../../swift-byte-parser-primitives"),
-        .package(path: "../../../swift-collection-primitives"),
-        .package(path: "../../../swift-input-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-ascii-parser-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-byte-parser-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-collection-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-input-primitives.git", branch: "main"),
     ],
     targets: [
         .testTarget(
