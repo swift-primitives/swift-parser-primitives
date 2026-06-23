@@ -5,6 +5,8 @@
 //  Runtime optional parser (backtracks on failure).
 //
 
+public import Input_Primitives
+
 extension Parser {
     /// A parser that tries to parse but succeeds with nil on failure.
     ///

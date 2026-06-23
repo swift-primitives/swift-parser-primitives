@@ -5,6 +5,8 @@
 //  Value wrapper with source span.
 //
 
+public import Index_Primitives
+
 extension Parser {
     /// A value with its source span.
     ///

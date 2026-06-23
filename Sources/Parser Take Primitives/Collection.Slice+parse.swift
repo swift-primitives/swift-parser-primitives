@@ -5,6 +5,9 @@
 //  Inline parsing entry points on input types.
 //
 
+public import Collection_Primitives
+public import Input_Primitives
+
 extension Collection.Slice.`Protocol` where Self: Input_Primitives.Input.Streaming {
     /// Parses inline using a builder closure. Input type is inferred from `self`.
     ///

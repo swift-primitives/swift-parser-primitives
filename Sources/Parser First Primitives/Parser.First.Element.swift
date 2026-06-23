@@ -5,6 +5,8 @@
 //  Parse first element unconditionally.
 //
 
+public import Input_Primitives
+
 extension Parser.First {
     /// A parser that consumes and returns the first element.
     ///

@@ -5,6 +5,8 @@
 //  Two-parser alternative combinator.
 //
 
+public import Input_Primitives
+
 extension Parser.OneOf {
     /// A parser that tries two alternatives.
     ///

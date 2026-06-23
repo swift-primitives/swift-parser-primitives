@@ -5,6 +5,8 @@
 //  Input wrapper that tracks byte offset.
 //
 
+public import Input_Primitives
+
 extension Parser {
     /// An input wrapper that tracks the current byte offset.
     ///

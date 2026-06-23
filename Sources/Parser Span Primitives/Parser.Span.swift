@@ -5,6 +5,8 @@
 //  Span parser that wraps output with source location.
 //
 
+public import Input_Primitives
+
 extension Parser {
     /// A parser that wraps output with its source span.
     ///

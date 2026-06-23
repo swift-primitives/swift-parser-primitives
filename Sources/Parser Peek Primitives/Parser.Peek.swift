@@ -5,6 +5,8 @@
 //  Lookahead parser that doesn't consume input.
 //
 
+public import Input_Primitives
+
 extension Parser {
     /// A parser that runs upstream without consuming input.
     ///

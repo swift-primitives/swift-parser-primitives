@@ -1,3 +1,5 @@
+public import Collection_Primitives
+
 extension Parser.`Protocol` {
     /// Parses a complete input, requiring all bytes to be consumed.
     ///

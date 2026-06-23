@@ -5,6 +5,8 @@
 //  Repetition — repeat a parser zero or more times.
 //
 
+public import Input_Primitives
+
 extension Parser {
     /// A parser that applies another parser repeatedly (no separator).
     ///

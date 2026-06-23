@@ -26,6 +26,14 @@ let package = Package(
             targets: ["Parser Primitives Core"]
         ),
         .library(
+            name: "Parser Remaining Primitives",
+            targets: ["Parser Remaining Primitives"]
+        ),
+        .library(
+            name: "Parser Tagged Primitives",
+            targets: ["Parser Tagged Primitives"]
+        ),
+        .library(
             name: "Parser Error Primitives",
             targets: ["Parser Error Primitives"]
         ),
@@ -164,6 +172,8 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-product-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-input-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-array-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-collection-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-index-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-text-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-iterator-primitives.git", branch: "main"),
@@ -175,14 +185,36 @@ let package = Package(
             dependencies: []
         ),
 
-        // MARK: - Core
+        // MARK: - Core (DEPRECATED transitional shim — L1 core-dissolution sweep 2026-06-23)
+        // Exports-only re-export of the dissolved Core surface (root + the
+        // Remaining/Tagged sub-namespaces that received relocated decls + the
+        // funneled Array / Collection / Input / Sequence modules). Removed in
+        // the cleanup wave once consumers repoint to the umbrella / root.
 
         .target(
             name: "Parser Primitives Core",
             dependencies: [
                 "Parser Primitive",
+                "Parser Remaining Primitives",
+                "Parser Tagged Primitives",
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Array Primitives", package: "swift-array-primitives"),
+            ]
+        ),
+
+        // MARK: - Relocated Core content (external-dep-bearing sub-namespaces)
+
+        .target(
+            name: "Parser Remaining Primitives",
+            dependencies: [
+                "Parser Primitive",
+                .product(name: "Collection Primitives", package: "swift-collection-primitives"),
+            ]
+        ),
+        .target(
+            name: "Parser Tagged Primitives",
+            dependencies: [
+                "Parser Primitive",
                 .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
             ]
         ),
@@ -192,16 +224,18 @@ let package = Package(
         .target(
             name: "Parser Error Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 .product(name: "Either Primitives", package: "swift-either-primitives"),
                 .product(name: "Product Primitives", package: "swift-product-primitives"),
                 .product(name: "Text Primitives", package: "swift-text-primitives"),
+                .product(name: "Index Primitives", package: "swift-index-primitives"),
             ]
         ),
         .target(
             name: "Parser Match Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
+                "Parser Remaining Primitives",
                 "Parser Error Primitives",
             ]
         ),
@@ -211,13 +245,13 @@ let package = Package(
         .target(
             name: "Parser EndOfInput Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
             ]
         ),
         .target(
             name: "Parser Constraint Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
             ]
         ),
 
@@ -226,28 +260,29 @@ let package = Package(
         .target(
             name: "Parser OneOf Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Error Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
         .target(
             name: "Parser Map Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Error Primitives",
             ]
         ),
         .target(
             name: "Parser FlatMap Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Error Primitives",
             ]
         ),
         .target(
             name: "Parser Filter Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Constraint Primitives",
                 "Parser Error Primitives",
             ]
@@ -255,45 +290,49 @@ let package = Package(
         .target(
             name: "Parser Conditional Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Error Primitives",
             ]
         ),
         .target(
             name: "Parser Optional Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
         .target(
             name: "Parser Skip Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Error Primitives",
             ]
         ),
         .target(
             name: "Parser Many Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Take Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
         .target(
             name: "Parser Take Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Error Primitives",
                 "Parser Skip Primitives",
                 "Parser Conditional Primitives",
                 "Parser Optional Primitives",
                 "Parser Always Primitives",
+                .product(name: "Collection Primitives", package: "swift-collection-primitives"),
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
         .target(
             name: "Parser Pair Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Error Primitives",
                 .product(name: "Pair Primitives", package: "swift-pair-primitives"),
             ]
@@ -304,16 +343,18 @@ let package = Package(
         .target(
             name: "Parser Consume Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Constraint Primitives",
+                .product(name: "Collection Primitives", package: "swift-collection-primitives"),
             ]
         ),
         .target(
             name: "Parser Discard Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Constraint Primitives",
                 "Parser Consume Primitives",
+                .product(name: "Collection Primitives", package: "swift-collection-primitives"),
             ]
         ),
 
@@ -322,9 +363,10 @@ let package = Package(
         .target(
             name: "Parser Prefix Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Constraint Primitives",
                 "Parser Match Primitives",
+                .product(name: "Collection Primitives", package: "swift-collection-primitives"),
             ]
         ),
 
@@ -333,9 +375,10 @@ let package = Package(
         .target(
             name: "Parser First Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Match Primitives",
                 "Parser EndOfInput Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
 
@@ -344,31 +387,35 @@ let package = Package(
         .target(
             name: "Parser Tracked Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Error Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
         .target(
             name: "Parser Spanned Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
+                .product(name: "Index Primitives", package: "swift-index-primitives"),
             ]
         ),
         .target(
             name: "Parser Span Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Error Primitives",
                 "Parser Tracked Primitives",
                 "Parser Spanned Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
         .target(
             name: "Parser Locate Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Error Primitives",
                 "Parser Tracked Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
 
@@ -377,14 +424,16 @@ let package = Package(
         .target(
             name: "Parser Peek Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
         .target(
             name: "Parser Not Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Match Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
             ]
         ),
 
@@ -393,25 +442,27 @@ let package = Package(
         .target(
             name: "Parser Always Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
             ]
         ),
         .target(
             name: "Parser Fail Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
             ]
         ),
         .target(
             name: "Parser Rest Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
+                .product(name: "Collection Primitives", package: "swift-collection-primitives"),
             ]
         ),
         .target(
             name: "Parser End Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
+                "Parser Remaining Primitives",
                 "Parser Match Primitives",
             ]
         ),
@@ -421,19 +472,19 @@ let package = Package(
         .target(
             name: "Parser Lazy Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
             ]
         ),
         .target(
             name: "Parser Trace Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
             ]
         ),
         .target(
             name: "Parser Parse Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
             ]
         ),
 
@@ -442,7 +493,7 @@ let package = Package(
         .target(
             name: "Parser Conformance Primitives",
             dependencies: [
-                "Parser Primitives Core",
+                "Parser Primitive",
                 "Parser Match Primitives",
             ]
         ),
@@ -452,7 +503,8 @@ let package = Package(
             name: "Parser Primitives",
             dependencies: [
                 "Parser Primitive",
-                "Parser Primitives Core",
+                "Parser Remaining Primitives",
+                "Parser Tagged Primitives",
                 "Parser Error Primitives",
                 "Parser Match Primitives",
                 "Parser EndOfInput Primitives",
@@ -494,6 +546,7 @@ let package = Package(
             name: "Parser Primitives Test Support",
             dependencies: [
                 "Parser Primitives",
+                .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Input Primitives Test Support", package: "swift-input-primitives"),
                 .product(name: "Array Primitives Test Support", package: "swift-array-primitives"),
                 .product(name: "Iterator Chunk Primitives", package: "swift-iterator-primitives"),

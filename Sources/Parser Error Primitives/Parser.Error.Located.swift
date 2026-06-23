@@ -6,6 +6,7 @@
 //
 
 public import Text_Primitives
+public import Index_Primitives
 
 extension Parser.Error {
     /// An error with source location information.

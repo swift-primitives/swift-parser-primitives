@@ -5,6 +5,8 @@
 //  Parser that wraps errors with location information.
 //
 
+public import Input_Primitives
+
 extension Parser {
     /// A parser that wraps errors with their location.
     ///

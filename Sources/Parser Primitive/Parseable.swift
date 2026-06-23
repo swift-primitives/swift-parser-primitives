@@ -25,7 +25,7 @@
 /// protocol, not a parser-domain core concern.
 public protocol Parseable {
     /// The canonical parser type for this value.
-    associatedtype Parser: Parser_Primitives_Core.Parser.`Protocol`
+    associatedtype Parser: Parser_Primitive.Parser.`Protocol`
 
     /// The canonical parser instance.
     static var parser: Parser { get }

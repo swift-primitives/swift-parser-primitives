@@ -5,8 +5,6 @@
 //  Core Parser protocol definition.
 //
 
-public import Collection_Primitives
-
 extension Parser {
     /// A type that can parse a value from an input.
     ///
@@ -152,22 +150,5 @@ where
     @inlinable
     public borrowing func parse(_ input: inout Input) throws(Failure) -> Output {
         try body.parse(&input)
-    }
-}
-
-// MARK: - Remaining Count
-
-extension Collection.Slice.`Protocol` {
-    /// Counts remaining elements by walking indices.
-    ///
-    /// Used for error reporting when a typed count is not available.
-    public var remainingCount: Int {
-        var count = 0
-        var i = startIndex
-        while i < endIndex {
-            i = index(after: i)
-            count += 1
-        }
-        return count
     }
 }

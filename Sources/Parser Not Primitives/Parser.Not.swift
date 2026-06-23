@@ -5,6 +5,8 @@
 //  Negative lookahead parser.
 //
 
+public import Input_Primitives
+
 extension Parser {
     /// A parser that succeeds if upstream fails.
     ///

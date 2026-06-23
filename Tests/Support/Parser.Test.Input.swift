@@ -1,3 +1,4 @@
+public import Input_Primitives
 public import Parser_Primitives
 
 extension Parser.Test {
@@ -6,7 +7,7 @@ extension Parser.Test {
     /// Uses a locally-defined `Parser.Test.Bytes` type as the backing collection.
     /// This avoids a Swift runtime SIGSEGV that occurs when composing
     /// parser types over `Input.Slice<Buffer<Storage<UInt8>.Contiguous<Memory.Heap<UInt8>>>.Linear>` across modules.
-    public typealias Input = Parser_Primitives.Input.Slice<Parser.Test.Bytes>
+    public typealias Input = Input_Primitives.Input.Slice<Parser.Test.Bytes>
 }
 
 // MARK: - ExpressibleByArrayLiteral

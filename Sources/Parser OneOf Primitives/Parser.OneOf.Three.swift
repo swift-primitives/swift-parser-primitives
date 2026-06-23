@@ -5,6 +5,8 @@
 //  Three-parser alternative combinator.
 //
 
+public import Input_Primitives
+
 extension Parser.OneOf {
     /// A parser that tries three alternatives.
     public struct Three<P0: Parser.`Protocol`, P1: Parser.`Protocol`, P2: Parser.`Protocol`>

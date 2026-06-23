@@ -5,6 +5,8 @@
 //  Parse first element matching predicate.
 //
 
+public import Input_Primitives
+
 extension Parser.First {
     /// A parser that consumes the first element if it matches a predicate.
     ///

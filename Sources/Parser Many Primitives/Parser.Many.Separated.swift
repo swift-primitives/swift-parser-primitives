@@ -5,6 +5,8 @@
 //  Repetition parser with separators.
 //
 
+public import Input_Primitives
+
 extension Parser.Many {
     /// A parser that applies another parser repeatedly with separators.
     ///
