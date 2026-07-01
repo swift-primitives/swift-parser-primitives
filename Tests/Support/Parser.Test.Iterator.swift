@@ -7,7 +7,21 @@ extension Parser.Test {
     ///
     /// Stores the array and an index for span-based iteration via
     /// `_elements.span.extracting()`.
-    public struct Iterator: __IteratorChunkProtocol, IteratorProtocol, Sendable {
+    ///
+    /// WORKAROUND: this type does NOT conform to stdlib `IteratorProtocol`.
+    /// WHY: Swift 6.3.3 (+Asserts, e.g. the Windows CI toolchain) crashes type-checking
+    ///      a type that conforms to BOTH the chunk protocol and stdlib `IteratorProtocol` —
+    ///      Assertion `getEffects(req).contains(getEffects(witness))` (TypeCheckProtocol.cpp:1311):
+    ///      the chunk protocol's `where Element: Copyable` derived `next() throws(Never)` competes
+    ///      with the non-throwing `IteratorProtocol.next()` requirement and trips an effects check.
+    ///      The stdlib conformance was unused here — `Parser.Test.Bytes` reaches `Iterable` via
+    ///      `Collection.Protocol` and needs only `Iterator.Chunk.Protocol`, not stdlib iteration.
+    ///      Mirrors the `swift-input-primitives` fix (4262602).
+    /// TRACKING: swift-institute/Issues/swift-issue-typed-throws-never-witness-effects-assertion
+    ///           (compiler-bug-catalog §A17). Fixed on Swift 6.5-dev.
+    /// WHEN TO REMOVE: restore `, IteratorProtocol` (and the `next() -> UInt8?` witness) once the
+    ///      Windows CI toolchain ships a Swift carrying the fix.
+    public struct Iterator: __IteratorChunkProtocol, Sendable {
         public typealias Failure = Never
 
         @usableFromInline
@@ -33,13 +47,6 @@ extension Parser.Test {
             return _elements.span
                 .extracting(droppingFirst: start)
                 .extracting(first: take)
-        }
-
-        @inlinable
-        public mutating func next() -> UInt8? {
-            guard _index < _elements.count else { return nil }
-            defer { _index += 1 }
-            return _elements[_index]
         }
     }
 }
