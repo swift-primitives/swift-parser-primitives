@@ -32,3 +32,4 @@
 @_exported public import Parser_Take_Primitives
 @_exported public import Parser_Trace_Primitives
 @_exported public import Parser_Tracked_Primitives
+@_exported public import Parser_Witness_Primitives

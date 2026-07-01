@@ -11,9 +11,11 @@ extension Parser {
     /// ``Parser/Protocol``.
     ///
     /// `Parser.Witness` stores a parse closure and exposes it as the methods
-    /// required by ``Parser/Protocol``. Conformance is declared in the
-    /// `Parser Primitives Core` target so the closure storage stays in this
-    /// namespace target.
+    /// required by ``Parser/Protocol``. Both the struct and its conformance
+    /// live in the dedicated `Parser Witness Primitives` target — deliberately
+    /// **outside** the `Parser Primitive` module that defines
+    /// ``Parser/Protocol`` — so the defining module holds no `Body == Never`
+    /// leaf conformer (see the module's ``Parser.Witness`` relocation note).
     ///
     /// ## Example
     ///
@@ -34,7 +36,7 @@ extension Parser {
     /// ## Storage
     ///
     /// `_parse` is `public` so `@inlinable` methods declared in the
-    /// `Parser Primitives Core` target can inline through. The underscore
+    /// `Parser Witness Primitives` target can inline through. The underscore
     /// signals "implementation hatch — consumers should call ``parse(_:)``
     /// rather than invoke the closure directly."
     public struct Witness<Input: ~Copyable & ~Escapable, Output, Failure: Swift.Error> {

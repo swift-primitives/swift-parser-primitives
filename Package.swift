@@ -33,6 +33,11 @@ let package = Package(
             name: "Parser Tagged Primitives",
             targets: ["Parser Tagged Primitives"]
         ),
+        // MARK: - Witness (closure-backed leaf conformer)
+        .library(
+            name: "Parser Witness Primitives",
+            targets: ["Parser Witness Primitives"]
+        ),
         .library(
             name: "Parser Error Primitives",
             targets: ["Parser Error Primitives"]
@@ -197,6 +202,7 @@ let package = Package(
                 "Parser Primitive",
                 "Parser Remaining Primitives",
                 "Parser Tagged Primitives",
+                "Parser Witness Primitives",
                 .product(name: "Input Primitives", package: "swift-input-primitives"),
                 .product(name: "Array Primitives", package: "swift-array-primitives"),
             ]
@@ -216,6 +222,24 @@ let package = Package(
             dependencies: [
                 "Parser Primitive",
                 .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
+            ]
+        ),
+
+        // MARK: - Witness (closure-backed leaf conformer)
+        // Hosted in its OWN target (NOT in "Parser Primitive") so the module that
+        // DEFINES Parser.Protocol contains no `Body == Never` conformer. With an
+        // in-defining-module leaf conformer present, the `@inlinable` leaf-default
+        // `var body: Never` `read` accessor is serialized into Parser_Primitive and
+        // re-emitted BODYLESS into every consumer module conforming a `Body == Never`
+        // type (Trace, Lazy, Parse, …) — a SIL-verification crash on Windows (+Asserts),
+        // Embedded, and any `-sil-verify-all` build. Relocating the only such conformer
+        // (Parser.Witness) out of the defining module is the verified fix; mirrors the
+        // swift-serializer-primitives fix (a652cec). See:
+        //   swift-institute/Issues/swift-issue-noncopyable-assoctype-never-bodyless-witness
+        .target(
+            name: "Parser Witness Primitives",
+            dependencies: [
+                "Parser Primitive",
             ]
         ),
 
@@ -505,6 +529,7 @@ let package = Package(
                 "Parser Primitive",
                 "Parser Remaining Primitives",
                 "Parser Tagged Primitives",
+                "Parser Witness Primitives",
                 "Parser Error Primitives",
                 "Parser Match Primitives",
                 "Parser EndOfInput Primitives",

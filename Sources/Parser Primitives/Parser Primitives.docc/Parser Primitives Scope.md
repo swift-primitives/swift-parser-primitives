@@ -12,9 +12,10 @@ with no Foundation dependency.
 The package follows `[MOD-031]` per-sub-namespace decomposition. `Parser
 Primitive` is the layer-invariant namespace target per `[MOD-017]` — it owns
 `public enum Parser`, the core `Parser.Protocol` / `Parser.Printer` /
-`Parser.Bidirectional` protocols, the `Parser.Builder` result builder, the
-`Parser.Witness` closure conformer, and the `Parseable` attachment protocol,
-all zero-external-dependency. Each combinator is its own sub-namespace target
+`Parser.Bidirectional` protocols, the `Parser.Builder` result builder, and the
+`Parseable` attachment protocol, all zero-external-dependency. The `Parser.Witness`
+closure conformer lives in a **dedicated `Parser Witness Primitives` target**, held
+deliberately outside `Parser Primitive` (see Owner targets). Each combinator is its own sub-namespace target
 (`Parser.Map`, `Parser.OneOf`, `Parser.Take`, …). The external-dependency-bearing
 content that the legacy `[MOD-001]` Core funnelled splits into dedicated
 sub-namespaces:
@@ -42,9 +43,18 @@ that wave.
 ## Owner targets
 
 - **Parser Primitive** — the `public enum Parser` namespace + the core parsing
-  protocols / builder / witness / `Parseable`. Zero external deps per `[MOD-017]`.
+  protocols / builder / `Parseable`. Zero external deps per `[MOD-017]`.
 - **Parser Remaining Primitives**, **Parser Tagged Primitives** — the
   external-dependency-bearing relocations described above.
+- **Parser Witness Primitives** — the `Parser.Witness` closure-backed leaf
+  conformer (`Body == Never`) + its `Parser.Protocol` conformance. Held in its
+  own target, **not** in `Parser Primitive`, so the defining module contains no
+  `Body == Never` conformer — otherwise the `@inlinable` leaf-default
+  `var body: Never` `read` accessor is serialized into `Parser_Primitive` and
+  re-emitted bodyless into consumer leaf modules, crashing SIL verification on
+  Windows (+Asserts) / Embedded / `-sil-verify-all`. Mirrors the
+  `swift-serializer-primitives` `Serializer Witness Primitives` split. Depends
+  only on `Parser Primitive`.
 - **Parser \<Combinator\> Primitives** — one target per combinator
   (`Error`, `Match`, `Map`, `FlatMap`, `Filter`, `OneOf`, `Optional`, `Skip`,
   `Take`, `Many`, `Pair`, `Consume`, `Discard`, `Prefix`, `First`, `Tracked`,
